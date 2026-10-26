@@ -1,7 +1,6 @@
 package com.cochonbank2.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -117,7 +116,7 @@ class OfxImportServiceTest {
         assertEquals(new BigDecimal("-42.15"), groceries.amount());
         assertEquals("DEBIT", groceries.paymentType());
         assertEquals("", groceries.description());
-        assertEquals(0L, groceries.billId());
+        assertEquals("", groceries.billId());
 
         assertEquals(1L, result.transactions().get(1).categoryId());
         assertEquals("carrefour city", result.transactions().get(1).title());
@@ -134,10 +133,12 @@ class OfxImportServiceTest {
 
         assertEquals(0L, result.transactions().get(5).categoryId());
         assertEquals("MYSTERY MERCHANT", result.transactions().get(5).title());
-        assertNull(result.transactions().get(5).realDate());
+        assertEquals(LocalDate.of(2026, 10, 22), result.transactions().get(5).realDate(),
+                "missing real date falls back to the bank date");
 
         assertEquals("BROKEN 32/13/26", result.transactions().get(6).title());
-        assertNull(result.transactions().get(6).realDate());
+        assertEquals(LocalDate.of(2026, 10, 23), result.transactions().get(6).realDate(),
+                "an invalid real date falls back to the bank date");
     }
 
     @Test

@@ -122,6 +122,10 @@ class Cochonbank2IntegrationTest {
         assertEquals("-42.15", carrefour.get("amount").decimalValue().toPlainString());
         assertEquals("2026-10-13", carrefour.get("bankDate").asText());
         assertEquals("2026-10-12", carrefour.get("realDate").asText());
+        assertTrue(carrefour.get("billId").isTextual());
+        assertEquals("", carrefour.get("billId").asText());
+        carrefour = ((tools.jackson.databind.node.ObjectNode) carrefour)
+                .put("billId", "INV-42");
 
         JsonNode salary = byTitle(transactions, "SALAIRE OCTOBRE");
         assertEquals(9, salary.get("categoryId").asLong());
@@ -142,12 +146,15 @@ class Cochonbank2IntegrationTest {
         assertEquals(5, saved.size());
         assertEquals("VIREMENT PONT", saved.get(0).get("title").asText(),
                 "transactions are returned newest first");
+        assertEquals("INV-42", byTitle(saved, "CARREFOUR MARKET").get("billId").asText());
+        assertTrue(byTitle(saved, "SALAIRE OCTOBRE").get("billId").isTextual());
 
         List<String> lines = Files.readAllLines(DATA_DIR.resolve("transactions.csv"), StandardCharsets.UTF_8);
         assertEquals(6, lines.size());
         assertEquals("Id,Category_Id,PaymentType,Amount,BankDate,RealDate,Title,Description,Bill_Id",
                 lines.get(0));
-        assertTrue(lines.get(1).startsWith("1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,"));
+        assertTrue(lines.get(1).startsWith(
+                "1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-42"));
     }
 
     @Test

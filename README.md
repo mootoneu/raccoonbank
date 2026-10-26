@@ -11,13 +11,21 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
 - **OFX import** — upload a bank statement and get an editable preview. Nothing is written
   until you press **Save all transactions**.
 - **Editable review table** — every field can be changed before saving: category, type, amount,
-  bank date, real date, title, description, bill id. Rows can be removed.
+  bank date, real date, title, description, bill id. Bill ids are free-form strings
+  (`INV-2026-01`, `42`, …). Rows can be removed.
+- **Duplicate highlighting** — statements that already exist in `transactions.csv` are tinted
+  amber and marked **Saved** in the review table. A row counts as a duplicate when its amount,
+  bank date and trimmed title all match a saved transaction. Duplicates remain editable and can
+  still be saved if you really want them.
 - **Automatic categorization** — the title is matched against `defaultcategories.csv`
   (case-insensitive, longest pattern wins) and the matching category is preselected.
-- **Category colors** — the review table shows each category name with its color as the
-  background and an automatically chosen readable text color.
+- **Category colors** — the category dropdown shows a colored line per option, and the review
+  table shows each category name with its color as the background and an automatically chosen
+  readable text color.
 - **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
   Click any colored segment to list the transactions behind it.
+- **Rolling backups** — every application start copies the three CSV files into
+  `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
 - **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
 
 ## Requirements
@@ -72,6 +80,22 @@ from `src/main/resources/seed/`:
 Existing files are never overwritten, so the app can be restarted safely. Delete the `data/`
 directory to start over from the seed files.
 
+## Startup backups
+
+Each time the application starts, the current data files are copied into a timestamped folder:
+
+```
+data/backup/backup-20261026-143012-412/
+  transactions.csv
+  categories.csv
+  defaultcategories.csv
+```
+
+Only the three most recent snapshots are kept; older ones are deleted automatically. The backup
+runs before any data file is created, so a fresh install with no data yet does not produce an
+empty snapshot. A copy failure stops startup instead of risking data loss. To restore a backup,
+stop the app and copy the three files from the snapshot back into `data/`.
+
 ### Try it
 
 Import [`samples/sample.ofx`](samples/sample.ofx) from the dashboard. It contains five French
@@ -81,7 +105,7 @@ then save.
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 23 tests: CSV, OFX parser, import mapping, services, REST flow
+mvnw.cmd test          # 28 tests: CSV, OFX parser, import mapping, backups, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```
@@ -95,12 +119,14 @@ data files; amounts use `.` as the decimal separator.
 
 ```csv
 Id,Category_Id,PaymentType,Amount,BankDate,RealDate,Title,Description,Bill_Id
-1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,0
+1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-2026-01
 ```
 
 Ids are assigned by the backend on save and are never reused. `Category_Id` refers to
 `categories.csv`; `0` means *Uncategorized* (the synthetic category is not stored in
-`categories.csv`). `RealDate` may be empty.
+`categories.csv`). `RealDate` is never empty: when the bank statement has no usable real date,
+it is set to `BankDate`. `Bill_Id` is free-form text and may be empty; older files used `0` to
+mean "no bill", which is still read as empty.
 
 ### `categories.csv`
 
@@ -136,11 +162,12 @@ encoding from the OFX header.
 
 `NAME` is expected to end with a date in `dd/MM/yy` form, e.g. `CARREFOUR MARKET 12/10/26`.
 That date becomes `RealDate` and is removed from the title. A two-digit year is read as `20yy`.
-If the trailing date is missing or invalid, the whole name is kept as the title and
-`RealDate` is left empty. Import warnings (encoding issues, malformed dates, unknown fields)
+If the trailing date is missing or invalid, the whole name is kept as the title and `RealDate`
+falls back to `BankDate`. Import warnings (encoding issues, malformed dates, unknown fields)
 are shown above the preview table.
 
-`Description` and `Bill_Id` start empty (`""` and `0`) and can be filled in during review.
+`Description` and `Bill_Id` start empty (`""`) and can be filled in during review. Bill ids may
+contain any text, not only digits.
 
 ## REST API
 
@@ -166,7 +193,7 @@ Example preview response:
       "realDate": "2026-10-12",
       "title": "CARREFOUR MARKET",
       "description": "",
-      "billId": 0
+      "billId": ""
     }
   ],
   "warnings": []
@@ -180,7 +207,7 @@ curl -X POST http://localhost:8080/api/transactions \
   -H "Content-Type: application/json" \
   -d '[{"categoryId":1,"paymentType":"DEBIT","amount":-42.15,
         "bankDate":"2026-10-13","realDate":"2026-10-12",
-        "title":"CARREFOUR MARKET","description":"","billId":0}]'
+        "title":"CARREFOUR MARKET","description":"","billId":"INV-42"}]'
 ```
 
 ## Configuration
@@ -200,7 +227,7 @@ location.
 
 ```
 src/main/java/com/cochonbank2/
-  config/       startup, data-directory properties
+  config/       startup, data-directory properties, rolling backups
   csv/          dependency-free RFC 4180 reader/writer and repositories
   domain/       Transaction, TransactionDraft, Category, DefaultCategory
   ofx/          SGML/XML OFX parser

@@ -1198,8 +1198,9 @@
             if (transaction.description) {
                 notes.push(transaction.description);
             }
-            if (Number(transaction.billId)) {
-                notes.push('Bill #' + transaction.billId);
+            const billId = String(transaction.billId || '').trim();
+            if (billId) {
+                notes.push('Bill ' + billId);
             }
             const note = notes.length
                 ? '<div class="tx-sub" title="' + esc(notes.join(' · ')) + '">'
@@ -1367,8 +1368,8 @@
                 ? ''
                 : Number(transaction.amount).toFixed(2);
             const billId = transaction.billId === null || transaction.billId === undefined
-                ? 0
-                : transaction.billId;
+                ? ''
+                : String(transaction.billId).trim();
 
             return '<tr>'
                 + '<td><select class="category-select" aria-label="Category, row ' + (index + 1) + '"'
@@ -1392,9 +1393,10 @@
                 + '<td><input class="cell-input description-input" type="text"'
                     + ' aria-label="Description, row ' + (index + 1) + '"'
                     + ' value="' + esc(transaction.description || '') + '" placeholder="Optional note"></td>'
-                + '<td><input class="cell-input bill-input" type="number" step="1" min="0"'
+                + '<td><input class="cell-input bill-input" type="text"'
                     + ' aria-label="Bill identifier, row ' + (index + 1) + '"'
-                    + ' value="' + esc(billId) + '"></td>'
+                    + ' value="' + esc(billId) + '" placeholder="Ref."></td>'
+                + '<td class="status-cell" aria-live="polite"></td>'
                 + '<td><button type="button" class="row-remove" title="Remove this row"'
                     + ' aria-label="Remove row ' + (index + 1) + '">'
                     + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"'
@@ -1417,7 +1419,10 @@
         }
         return categories.map(category => {
             const id = Number(category.id);
-            return '<option value="' + id + '"' + (id === selected ? ' selected' : '') + '>'
+            const background = safeColor(category.color);
+            const foreground = readableTextColor(background);
+            return '<option value="' + id + '"' + (id === selected ? ' selected' : '')
+                + ' style="background-color:' + background + ';color:' + foreground + ';">'
                 + esc(category.name) + '</option>';
         }).join('');
     }
@@ -1443,16 +1448,76 @@
         });
     }
 
+    /**
+     * A saved row is a duplicate when the amount (in cents), the bank date and
+     * the trimmed title all match. Amounts are compared as integers so that
+     * floating point noise cannot hide a duplicate.
+     */
+    function importRowKey(amount, bankDate, title) {
+        if (amount === null || amount === undefined || amount === '') {
+            return null;
+        }
+        const cents = Math.round(Number(amount) * 100);
+        const day = String(bankDate || '').trim();
+        const label = String(title || '').trim();
+        if (!Number.isFinite(cents) || !day || !label) {
+            return null;
+        }
+        return cents + '|' + day + '|' + label;
+    }
+
+    function savedImportKeys() {
+        const keys = new Set();
+        state.transactions.forEach(transaction => {
+            const key = importRowKey(transaction.amount, transaction.bankDate, transaction.title);
+            if (key !== null) {
+                keys.add(key);
+            }
+        });
+        return keys;
+    }
+
     function updateImportSummary() {
         const $rows = $('#import-tbody tr');
+        const savedKeys = savedImportKeys();
+        let duplicates = 0;
         let net = 0;
         $rows.each(function () {
-            const raw = $(this).find('.amount-input').val();
+            const $row = $(this);
+            const raw = $row.find('.amount-input').val();
             const amount = Number(raw);
             if (raw !== '' && Number.isFinite(amount)) {
                 net += amount;
             }
+
+            const key = importRowKey(
+                raw,
+                $row.find('.bank-date-input').val(),
+                $row.find('.title-input').val());
+            const duplicate = key !== null && savedKeys.has(key);
+            if (duplicate) {
+                duplicates += 1;
+            }
+            $row.toggleClass('is-duplicate', duplicate);
+
+            const $status = $row.find('.status-cell');
+            if (duplicate && !$status.hasClass('is-marked')) {
+                $status.addClass('is-marked').html(
+                    '<span class="duplicate-badge" title="This amount, bank date and title'
+                    + ' already exist in transactions.csv">Saved</span>');
+            } else if (!duplicate && $status.hasClass('is-marked')) {
+                $status.removeClass('is-marked').empty();
+            }
         });
+
+        const $note = $('#import-duplicate-note');
+        if (duplicates > 0) {
+            $note.text(duplicates === 1
+                ? '1 row is already saved'
+                : duplicates + ' rows are already saved').prop('hidden', false);
+        } else {
+            $note.prop('hidden', true).text('');
+        }
 
         $('#import-count').text($rows.length);
         $('#import-count-label').text($rows.length === 1 ? 'transaction' : 'transactions');
@@ -1552,15 +1617,6 @@
             }
 
             const billRaw = String($bill.val() || '').trim();
-            let billId = 0;
-            if (billRaw !== '') {
-                const parsedBill = Number(billRaw);
-                if (!Number.isInteger(parsedBill) || parsedBill < 0) {
-                    mark($bill);
-                } else {
-                    billId = parsedBill;
-                }
-            }
 
             if (invalid) {
                 return;
@@ -1574,7 +1630,7 @@
                 realDate: $realDate.val() || null,
                 title: String($title.val() || '').trim(),
                 description: String($description.val() || '').trim(),
-                billId: billId
+                billId: billRaw
             });
         });
 

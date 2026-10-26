@@ -15,5 +15,5 @@ public record Transaction(
         LocalDate realDate,
         String title,
         String description,
-        long billId) {
+        String billId) {
 }

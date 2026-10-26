@@ -13,8 +13,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates the data directory on first launch and copies the bundled seed files
- * (categories and default category rules). Existing user data is never touched.
+ * Creates the data directory on first launch, copies the bundled seed files
+ * (categories and default category rules), and stores a backup of the current
+ * data files. Existing user data is never overwritten.
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -25,15 +26,18 @@ public class DataInitializer implements ApplicationRunner {
     };
 
     private final CochonbankProperties properties;
+    private final DataBackupService backupService;
 
-    public DataInitializer(CochonbankProperties properties) {
+    public DataInitializer(CochonbankProperties properties, DataBackupService backupService) {
         this.properties = properties;
+        this.backupService = backupService;
     }
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
         Path directory = properties.dataPath();
         Files.createDirectories(directory);
+        backupService.backupOnStartup();
 
         for (String fileName : FILES) {
             Path target = directory.resolve(fileName);

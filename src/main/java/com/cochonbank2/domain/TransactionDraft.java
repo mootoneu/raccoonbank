@@ -15,5 +15,5 @@ public record TransactionDraft(
         LocalDate realDate,
         String title,
         String description,
-        Long billId) {
+        String billId) {
 }

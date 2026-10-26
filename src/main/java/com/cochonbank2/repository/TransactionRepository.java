@@ -31,7 +31,7 @@ public class TransactionRepository extends AbstractCsvRepository<Transaction> {
                 optionalDate(row, 5, "RealDate"),
                 text(row, 6),
                 text(row, 7),
-                optionalLong(row, 8, 0));
+                billId(row, 8));
     }
 
     @Override
@@ -45,7 +45,16 @@ public class TransactionRepository extends AbstractCsvRepository<Transaction> {
                 value.realDate() == null ? "" : value.realDate().toString(),
                 nullToEmpty(value.title()),
                 nullToEmpty(value.description()),
-                Long.toString(value.billId()));
+                nullToEmpty(value.billId()));
+    }
+
+    /**
+     * Bill identifiers used to be integers and {@code 0} meant "no bill". They
+     * are now free-form strings, so the old sentinel is read as blank.
+     */
+    private static String billId(List<String> row, int index) {
+        String value = text(row, index);
+        return "0".equals(value) ? "" : value;
     }
 
     private static String formatAmount(BigDecimal amount) {

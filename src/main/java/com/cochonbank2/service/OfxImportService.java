@@ -1,6 +1,7 @@
 package com.cochonbank2.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -70,15 +71,18 @@ public class OfxImportService {
         for (OfxStatement statement : parsed.statements()) {
             TitleAndDate titleAndDate = splitTitleAndDate(statement.name());
             long categoryId = findCategoryId(titleAndDate.title(), rules);
+            LocalDate realDate = titleAndDate.realDate() == null
+                    ? statement.bankDate()
+                    : titleAndDate.realDate();
             drafts.add(new TransactionDraft(
                     categoryId,
                     statement.transactionType(),
                     statement.amount(),
                     statement.bankDate(),
-                    titleAndDate.realDate(),
+                    realDate,
                     titleAndDate.title(),
                     "",
-                    0L));
+                    ""));
         }
 
         String fileName = file.getOriginalFilename();
@@ -102,7 +106,7 @@ public class OfxImportService {
     /**
      * The bank statement NAME is "title dd/MM/yy". The date is removed from the
      * title and becomes the real date. Names without a trailing date are kept
-     * as-is and have no real date.
+     * as-is; the caller falls back to the bank date.
      */
     static TitleAndDate splitTitleAndDate(String rawName) {
         String name = rawName == null ? "" : rawName.replaceAll("\\s+", " ").trim();
@@ -130,6 +134,6 @@ public class OfxImportService {
         }
     }
 
-    record TitleAndDate(String title, java.time.LocalDate realDate) {
+    record TitleAndDate(String title, LocalDate realDate) {
     }
 }

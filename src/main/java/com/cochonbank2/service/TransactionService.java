@@ -1,6 +1,7 @@
 package com.cochonbank2.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -85,16 +86,18 @@ public class TransactionService {
                 throw new IllegalArgumentException(prefix + "title is required.");
             }
 
+            LocalDate realDate = draft.realDate() == null ? draft.bankDate() : draft.realDate();
+
             transactions.add(new Transaction(
                     nextId++,
                     categoryId,
                     trimToEmpty(draft.paymentType()),
                     amount,
                     draft.bankDate(),
-                    draft.realDate(),
+                    realDate,
                     title,
                     trimToEmpty(draft.description()),
-                    draft.billId() == null ? 0L : draft.billId()));
+                    trimToEmpty(draft.billId())));
         }
 
         transactionRepository.appendAll(transactions);
