@@ -1035,6 +1035,220 @@ code {
 }
 
 /* ==========================================================================
+   Overview cash flow chart
+   ========================================================================== */
+
+.cashflow-card {
+    min-width: 0;
+    margin-bottom: 22px;
+    padding: 24px 24px 18px;
+}
+
+.cashflow-head {
+    margin-bottom: 14px;
+}
+
+.cashflow-range {
+    flex-shrink: 0;
+}
+
+.cashflow-range .segment-btn {
+    padding: 6px 10px;
+    font-size: 11.5px;
+}
+
+.cashflow-summary {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px 30px;
+    margin-bottom: 10px;
+}
+
+.cashflow-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 96px;
+}
+
+.cashflow-label {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.cashflow-value {
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 740;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.cashflow-value.positive {
+    color: var(--green);
+}
+
+.cashflow-value.negative {
+    color: var(--accent-ink);
+}
+
+.cashflow-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+    padding-bottom: 3px;
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.cashflow-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.key-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.key-dot.income,
+.cf-tt-dot.income {
+    background: var(--green);
+}
+
+.key-dot.expense,
+.cf-tt-dot.expense {
+    background: var(--accent);
+}
+
+.cashflow-scroll {
+    padding-bottom: 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.cashflow-visual {
+    position: relative;
+    width: max-content;
+    min-width: 100%;
+}
+
+#cashflow-chart {
+    display: block;
+    max-width: none;
+    overflow: visible;
+}
+
+.cashflow-bar {
+    transition: opacity 0.12s ease;
+}
+
+.cashflow-bar.earned {
+    fill: var(--green);
+}
+
+.cashflow-bar.spent {
+    fill: var(--accent);
+}
+
+.cashflow-month {
+    transition: opacity 0.12s ease;
+}
+
+.cashflow-month.is-dim {
+    opacity: 0.32;
+}
+
+.cashflow-tooltip {
+    position: fixed;
+    z-index: 60;
+    min-width: 176px;
+    padding: 9px 11px;
+    line-height: 1.45;
+    text-align: left;
+    white-space: normal;
+}
+
+.cashflow-tooltip.is-below {
+    transform: translate(-50%, 14px);
+}
+
+.cf-tt-month {
+    display: block;
+    color: #FFFFFF;
+    font-size: 11.5px;
+    font-weight: 750;
+}
+
+.cf-tt-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+    color: #D9E2DE;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.cf-tt-row b {
+    margin-left: auto;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.cf-tt-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cf-tt-net {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    color: #D9E2DE;
+    font-size: 11px;
+}
+
+.cf-tt-net b {
+    color: #FFFFFF;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.cashflow-empty {
+    margin-top: 8px;
+    padding: 34px 20px 38px;
+    border: 1.5px dashed var(--line);
+    border-radius: 16px;
+    background: rgba(251, 249, 244, 0.5);
+    color: var(--muted);
+    font-size: 12.5px;
+    text-align: center;
+}
+
+.cashflow-empty p {
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.55;
+}
+
+/* ==========================================================================
    Spending view
    ========================================================================== */
 
@@ -1958,8 +2172,32 @@ code {
     }
 
     .chart-card,
-    .recent-card {
+    .recent-card,
+    .cashflow-card {
         padding: 19px 17px 16px;
+    }
+
+    .cashflow-card {
+        margin-bottom: 18px;
+    }
+
+    .cashflow-head {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .cashflow-summary {
+        gap: 10px 20px;
+    }
+
+    .cashflow-value {
+        font-size: 18px;
+    }
+
+    .cashflow-legend {
+        width: 100%;
+        margin-left: 0;
+        padding-bottom: 0;
     }
 
     .spending-controls {
@@ -2083,6 +2321,19 @@ code {
     .segment-btn {
         flex: 1;
         padding: 8px 6px;
+    }
+
+    .cashflow-stat {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .cashflow-value {
+        font-size: 16.5px;
+    }
+
+    .cashflow-label {
+        font-size: 9.5px;
     }
 
     .hero h1 {

@@ -5,8 +5,9 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
 
 ## Features
 
-- **Dashboard** — total balance, monthly spending and income, an all-time D3 donut chart by
-  category, and the most recent saved transactions.
+- **Dashboard** — total balance, monthly spending and income, a 24-month earnings-vs-spending
+  chart (with a 12/24/36-month switch), an all-time D3 donut chart by category, and the most
+  recent saved transactions.
 - **OFX import** — upload a bank statement and get an editable preview. Nothing is written
   until you press **Save all transactions**.
 - **Editable review table** — every field can be changed before saving: category, type, amount,
@@ -36,6 +37,13 @@ mvnw.cmd spring-boot:run
 ```
 
 Then open <http://localhost:8080>.
+
+## Overview cash flow chart
+
+The dashboard shows monthly earnings (positive amounts) and spending (negative amounts) as
+grouped bars ending with the current month. The default window is 24 months; use the **12m**,
+**24m** or **36m** switch to change it. The card totals earned, spent and net for the selected
+window, and hovering a month shows its earnings, spending and net.
 
 ## Spending view
 

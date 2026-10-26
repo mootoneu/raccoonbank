@@ -1,0 +1,1 @@
+Add a new graph in the overview tab, that displays the total earnings, total spending for the last 24 months (by default).

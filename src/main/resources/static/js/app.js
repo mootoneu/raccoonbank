@@ -35,6 +35,8 @@
         importOriginalCount: 0,
         importWarnings: [],
         saving: false,
+        cashflowMonths: 24,
+        cashflowResizeTimer: null,
         spendingRange: 'month',
         spendingMonth: null,
         spendingYear: null,
@@ -65,6 +67,15 @@
         $('#import-btn, #import-btn-header, #empty-import-btn, #retry-import, #empty-retry-import, '
             + '#spending-import-btn, #histogram-import-btn').on('click', triggerFilePicker);
 
+        $('#cashflow-range').on('click', '.segment-btn', function () {
+            const months = Number(this.getAttribute('data-months'));
+            if (!months || months === state.cashflowMonths) {
+                return;
+            }
+            state.cashflowMonths = months;
+            renderCashflow();
+        });
+
         $('#spending-range').on('click', '.segment-btn', function () {
             const range = this.getAttribute('data-range');
             if (!range || range === state.spendingRange) {
@@ -93,15 +104,23 @@
         });
 
         $(window).on('resize', function () {
-            if ($('#spending-view').prop('hidden') || !state.spendingData) {
-                return;
+            if (!$('#home-view').prop('hidden')) {
+                window.clearTimeout(state.cashflowResizeTimer);
+                state.cashflowResizeTimer = window.setTimeout(function () {
+                    if (!$('#home-view').prop('hidden')) {
+                        renderCashflow();
+                    }
+                }, 140);
             }
-            window.clearTimeout(state.spendingResizeTimer);
-            state.spendingResizeTimer = window.setTimeout(function () {
-                if (!$('#spending-view').prop('hidden') && state.spendingData) {
-                    renderHistogram(state.spendingData);
-                }
-            }, 140);
+
+            if (!$('#spending-view').prop('hidden') && state.spendingData) {
+                window.clearTimeout(state.spendingResizeTimer);
+                state.spendingResizeTimer = window.setTimeout(function () {
+                    if (!$('#spending-view').prop('hidden') && state.spendingData) {
+                        renderHistogram(state.spendingData);
+                    }
+                }, 140);
+            }
         });
 
         $('#ofx-file').on('change', function () {
@@ -234,6 +253,7 @@
 
     function renderHome() {
         renderStats();
+        renderCashflow();
         renderChart();
         renderRecentTransactions();
     }
@@ -429,6 +449,258 @@
                 $('<span>', { class: 'legend-value', text: money.format(entry.value) })
             ).appendTo($legend);
         });
+    }
+
+    /* ----------------------------------------------------------------------
+       Overview cash flow chart
+       ---------------------------------------------------------------------- */
+
+    function buildCashflowModel() {
+        const months = state.cashflowMonths;
+        const today = new Date();
+        const end = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        const start = new Date(today.getFullYear(), today.getMonth() - months + 1, 1);
+
+        const buckets = Array.from({ length: months }, (_, index) => {
+            const date = new Date(start.getFullYear(), start.getMonth() + index, 1);
+            return {
+                key: monthKey(date),
+                label: date.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }),
+                fullLabel: date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
+                earned: 0,
+                spent: 0
+            };
+        });
+        const bucketByKey = new Map(buckets.map(bucket => [bucket.key, bucket]));
+
+        state.transactions.forEach(transaction => {
+            const amount = toNumber(transaction.amount);
+            const date = parseIsoDate(transaction.bankDate);
+            if (!date || amount === 0) {
+                return;
+            }
+            const bucket = bucketByKey.get(monthKey(date));
+            if (!bucket) {
+                return;
+            }
+            if (amount > 0) {
+                bucket.earned += amount;
+            } else {
+                bucket.spent += Math.abs(amount);
+            }
+        });
+
+        const earned = d3.sum(buckets, bucket => bucket.earned);
+        const spent = d3.sum(buckets, bucket => bucket.spent);
+        const last = new Date(end.getFullYear(), end.getMonth() - 1, 1);
+
+        return {
+            months: months,
+            buckets: buckets,
+            bucketByKey: bucketByKey,
+            earned: earned,
+            spent: spent,
+            net: earned - spent,
+            startLabel: start.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }),
+            endLabel: last.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+        };
+    }
+
+    function renderCashflow() {
+        const model = buildCashflowModel();
+
+        $('#cashflow-range .segment-btn').each(function () {
+            const active = Number(this.getAttribute('data-months')) === model.months;
+            $(this).toggleClass('is-active', active).attr('aria-pressed', String(active));
+        });
+
+        $('#cashflow-earned').text(money.format(model.earned));
+        $('#cashflow-spent').text(money.format(model.spent));
+        $('#cashflow-net')
+            .text(signedMoney(model.net))
+            .toggleClass('positive', model.net > 0)
+            .toggleClass('negative', model.net < 0);
+        $('#cashflow-sub').text('Monthly totals · ' + model.startLabel + ' – ' + model.endLabel + '.');
+
+        const svg = d3.select('#cashflow-chart');
+        svg.selectAll('*').remove();
+        d3.select('#cashflow-tooltip').style('opacity', 0).html('');
+
+        const empty = model.earned <= 0 && model.spent <= 0;
+        $('#cashflow-scroll').prop('hidden', empty);
+        $('#cashflow-empty').prop('hidden', !empty);
+
+        if (empty) {
+            const hasTransactions = state.transactions.length > 0;
+            $('#cashflow-empty-text').text(hasTransactions
+                ? 'No earnings or spending in the last ' + model.months + ' months.'
+                : 'Once you import transactions, your monthly earnings and spending will appear here.');
+            svg.attr('aria-label', 'No earnings or spending in the last ' + model.months + ' months');
+            return;
+        }
+
+        svg.attr('aria-label', 'Earnings and spending for the last ' + model.months + ' months, '
+            + model.startLabel + ' to ' + model.endLabel + '. Earned ' + money.format(model.earned)
+            + ', spent ' + money.format(model.spent) + ', net ' + signedMoney(model.net) + '.');
+
+        const scroll = document.getElementById('cashflow-scroll');
+        const available = Math.max(scroll.clientWidth - 2, 280);
+        const margin = { top: 16, right: 14, bottom: 36, left: 58 };
+        const innerWidth = Math.max(available - margin.left - margin.right, 220);
+        const width = Math.round(innerWidth + margin.left + margin.right);
+        const height = 300;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        svg
+            .attr('viewBox', '0 0 ' + width + ' ' + height)
+            .attr('width', width)
+            .attr('height', height);
+
+        const root = svg.append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        const x = d3.scaleBand()
+            .domain(model.buckets.map(bucket => bucket.key))
+            .range([0, innerWidth])
+            .paddingInner(0.22)
+            .paddingOuter(0.06);
+
+        const maxValue = Math.max(
+            d3.max(model.buckets, bucket => bucket.earned) || 0,
+            d3.max(model.buckets, bucket => bucket.spent) || 0) || 1;
+        const y = d3.scaleLinear()
+            .domain([0, maxValue])
+            .nice()
+            .range([innerHeight, 0]);
+
+        const yAxis = root.append('g')
+            .attr('class', 'cashflow-y-axis')
+            .call(d3.axisLeft(y)
+                .ticks(5)
+                .tickSize(-innerWidth)
+                .tickFormat(value => compactMoney(value)));
+        yAxis.select('.domain').remove();
+        yAxis.selectAll('.tick line')
+            .attr('stroke', '#EFEAE0')
+            .attr('stroke-dasharray', '2 3');
+        yAxis.selectAll('.tick text')
+            .attr('x', -10)
+            .attr('fill', '#5F6D68')
+            .style('font-size', '10.5px');
+
+        const tickEvery = Math.max(1, Math.ceil(40 / x.bandwidth()));
+        const tickIndices = [];
+        for (let index = 0; index < model.buckets.length; index += tickEvery) {
+            tickIndices.push(index);
+        }
+        const lastIndex = model.buckets.length - 1;
+        if (tickIndices[tickIndices.length - 1] !== lastIndex) {
+            if (lastIndex - tickIndices[tickIndices.length - 1] < tickEvery) {
+                tickIndices.pop();
+            }
+            tickIndices.push(lastIndex);
+        }
+        const tickKeys = tickIndices.map(index => model.buckets[index].key);
+        const xAxis = root.append('g')
+            .attr('class', 'cashflow-x-axis')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(d3.axisBottom(x)
+                .tickValues(tickKeys)
+                .tickFormat(key => model.bucketByKey.get(key).label)
+                .tickSize(0)
+                .tickPadding(9));
+        xAxis.select('.domain').attr('stroke', '#E6E0D3');
+        xAxis.selectAll('.tick text')
+            .attr('fill', '#5F6D68')
+            .style('font-size', '10.5px')
+            .style('font-weight', '600')
+            .attr('text-anchor', (key, index, nodes) => {
+                if (index === nodes.length - 1) {
+                    return 'end';
+                }
+                return index === 0 ? 'start' : 'middle';
+            });
+
+        const x1 = d3.scaleBand()
+            .domain(['earned', 'spent'])
+            .range([0, x.bandwidth()])
+            .padding(0.24);
+
+        const groups = root.append('g')
+            .attr('class', 'cashflow-bars')
+            .selectAll('g')
+            .data(model.buckets)
+            .join('g')
+            .attr('class', 'cashflow-month')
+            .attr('transform', bucket => 'translate(' + x(bucket.key) + ',0)');
+
+        groups.append('rect')
+            .attr('class', 'cashflow-bar earned')
+            .attr('x', x1('earned'))
+            .attr('width', x1.bandwidth())
+            .attr('y', bucket => y(bucket.earned))
+            .attr('height', bucket => cashflowBarHeight(bucket.earned, y, innerHeight))
+            .attr('rx', Math.min(3, x1.bandwidth() / 3));
+
+        groups.append('rect')
+            .attr('class', 'cashflow-bar spent')
+            .attr('x', x1('spent'))
+            .attr('width', x1.bandwidth())
+            .attr('y', bucket => y(bucket.spent))
+            .attr('height', bucket => cashflowBarHeight(bucket.spent, y, innerHeight))
+            .attr('rx', Math.min(3, x1.bandwidth() / 3));
+
+        groups.append('rect')
+            .attr('class', 'cashflow-hit')
+            .attr('x', 0)
+            .attr('width', x.bandwidth())
+            .attr('y', 0)
+            .attr('height', innerHeight)
+            .attr('fill', 'transparent')
+            .attr('pointer-events', 'all');
+
+        const tooltip = d3.select('#cashflow-tooltip');
+        groups
+            .on('mouseenter', function (event, bucket) {
+                groups.classed('is-dim', other => other !== bucket);
+                tooltip.html(cashflowTooltip(bucket)).style('opacity', 1);
+            })
+            .on('mousemove', function (event) {
+                const node = tooltip.node();
+                const tipWidth = node.offsetWidth || 190;
+                const tipHeight = node.offsetHeight || 96;
+                const half = tipWidth / 2 + 12;
+                const left = Math.min(Math.max(event.clientX, half), window.innerWidth - half);
+                const flip = event.clientY - tipHeight - 20 < 4;
+                tooltip
+                    .classed('is-below', flip)
+                    .style('left', left + 'px')
+                    .style('top', event.clientY + 'px');
+            })
+            .on('mouseleave', function () {
+                groups.classed('is-dim', false);
+                tooltip.style('opacity', 0);
+            });
+    }
+
+    function cashflowBarHeight(value, y, innerHeight) {
+        if (value <= 0) {
+            return 0;
+        }
+        return Math.max(1.5, innerHeight - y(value));
+    }
+
+    function cashflowTooltip(bucket) {
+        return '<span class="cf-tt-month">' + esc(bucket.fullLabel) + '</span>'
+            + '<span class="cf-tt-row"><span class="cf-tt-dot income"></span>'
+            + '<span>Earned</span><b>' + esc(money.format(bucket.earned)) + '</b></span>'
+            + '<span class="cf-tt-row"><span class="cf-tt-dot expense"></span>'
+            + '<span>Spent</span><b>' + esc(money.format(bucket.spent)) + '</b></span>'
+            + '<span class="cf-tt-net">Net <b>' + esc(signedMoney(bucket.earned - bucket.spent)) + '</b></span>';
+    }
+
+    function signedMoney(value) {
+        return (value > 0 ? '+' : '') + money.format(value);
     }
 
     /* ----------------------------------------------------------------------
@@ -1336,6 +1608,9 @@
         } else {
             $('#nav-home').attr('aria-current', 'page');
             $('#nav-spending').removeAttr('aria-current');
+        }
+        if (name === 'home') {
+            renderCashflow();
         }
         window.scrollTo(0, 0);
     }

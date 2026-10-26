@@ -80,6 +80,9 @@ class Cochonbank2IntegrationTest {
         assertTrue(home.body().contains("id=\"spending-view\""));
         assertTrue(home.body().contains("data-range=\"month\""));
         assertTrue(home.body().contains("id=\"spending-histogram\""));
+        assertTrue(home.body().contains("id=\"cashflow-chart\""));
+        assertTrue(home.body().contains("id=\"cashflow-range\""));
+        assertTrue(home.body().contains("data-months=\"24\""));
 
         assertEquals(200, get("/css/app.css").statusCode());
         assertEquals(200, get("/js/app.js").statusCode());
