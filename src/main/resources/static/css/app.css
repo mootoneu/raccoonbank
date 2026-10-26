@@ -1877,7 +1877,7 @@ code {
     padding-right: 14px;
 }
 
-.col-category { width: 164px; }
+.col-category { width: 190px; }
 .col-type { width: 96px; }
 .col-amount { width: 118px; }
 .col-date { width: 142px; }
@@ -1902,6 +1902,48 @@ code {
 
 .status-cell {
     text-align: center;
+}
+
+.category-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.category-cell .category-select {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.row-default {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px dashed var(--line);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    transition: background 0.13s ease, border-color 0.13s ease, color 0.13s ease;
+}
+
+.row-default svg {
+    width: 13px;
+    height: 13px;
+}
+
+.row-default:hover,
+.row-default:focus-visible {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    color: var(--brand);
+    outline: none;
+}
+
+.row-default:disabled {
+    opacity: 0.45;
+    cursor: progress;
 }
 
 .duplicate-badge {

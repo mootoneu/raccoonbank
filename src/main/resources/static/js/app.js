@@ -152,6 +152,9 @@
                 this.classList.remove('is-invalid');
                 updateImportSummary();
             })
+            .on('click', '.row-default', function () {
+                rememberDefaultCategory(this);
+            })
             .on('click', '.row-remove', function () {
                 $(this).closest('tr').remove();
                 const remaining = $('#import-tbody tr').length;
@@ -845,8 +848,7 @@
             total: entry[1]
         }))
             .filter(entry => entry.total > 0)
-            .sort((a, b) => b.total - a.total
-                || a.category.name.localeCompare(b.category.name));
+            .sort((a, b) => a.id - b.id);
 
         return {
             range: range,
@@ -891,7 +893,9 @@
 
     function renderSpendingStats(model) {
         const average = model.buckets.length ? model.total / model.buckets.length : 0;
-        const top = model.categories[0];
+        const top = model.categories.reduce(
+            (best, entry) => (!best || entry.total > best.total ? entry : best),
+            null);
 
         $('#spending-total').text(money.format(model.total));
         $('#spending-total-sub').text(model.rangeTag);
@@ -1374,8 +1378,16 @@
                 : String(transaction.billId).trim();
 
             return '<tr>'
-                + '<td><select class="category-select" aria-label="Category, row ' + (index + 1) + '">'
-                    + categoryOptions(transaction.categoryId) + '</select></td>'
+                + '<td><div class="category-cell">'
+                    + '<select class="category-select" aria-label="Category, row ' + (index + 1) + '">'
+                    + categoryOptions(transaction.categoryId) + '</select>'
+                    + '<button type="button" class="row-default"'
+                    + ' title="Create a default category from this line"'
+                    + ' aria-label="Create default category, row ' + (index + 1) + '">'
+                    + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"'
+                    + ' fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>'
+                    + '</button>'
+                    + '</div></td>'
                 + '<td><input class="cell-input type-input" type="text" list="payment-types"'
                     + ' aria-label="Payment type, row ' + (index + 1) + '"'
                     + ' value="' + esc(transaction.paymentType || '') + '" placeholder="DEBIT"></td>'
@@ -1423,6 +1435,7 @@
         if (!categories.some(category => Number(category.id) === selected)) {
             categories.push(getCategory(selected));
         }
+        categories.sort((a, b) => Number(a.id) - Number(b.id));
         return categories.map(category => {
             const id = Number(category.id);
             const palette = categoryPalette(category.color);
@@ -1437,6 +1450,45 @@
         const palette = categoryPalette(category.color);
         select.style.backgroundColor = palette.background;
         select.style.color = palette.foreground;
+    }
+
+    /**
+     * Saves the current line as a default category rule: future imports whose
+     * title starts with this line's title get the selected category.
+     */
+    async function rememberDefaultCategory(button) {
+        const $button = $(button);
+        const $row = $button.closest('tr');
+        const $category = $row.find('.category-select');
+        const $title = $row.find('.title-input');
+        const categoryId = Number($category.val()) || 0;
+        const title = String($title.val() || '').trim();
+
+        if (categoryId === 0) {
+            toast('Choose a category on this line before creating a default category.', 'error');
+            $category.trigger('focus');
+            return;
+        }
+        if (!title) {
+            toast('This line needs a title before you can create a default category.', 'error');
+            $title.trigger('focus');
+            return;
+        }
+
+        $button.prop('disabled', true).attr('aria-busy', 'true');
+        try {
+            const created = await $.ajax({
+                url: '/api/default-categories',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ categoryId: categoryId, pattern: title })
+            });
+            toast('Default category created for “' + created.pattern + '”.', 'success');
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+        } finally {
+            $button.prop('disabled', false).removeAttr('aria-busy');
+        }
     }
 
     function renumberRows() {

@@ -158,6 +158,38 @@ class Cochonbank2IntegrationTest {
     }
 
     @Test
+    void createsDefaultCategoryRulesFromAReviewedLine() throws Exception {
+        String body = """
+                {"categoryId":2,"pattern":"  TEST   RULE MERCHANT "}
+                """;
+
+        HttpResponse<String> response = postJson("/api/default-categories", body);
+        assertEquals(201, response.statusCode(), response.body());
+
+        JsonNode created = json(response);
+        assertTrue(created.get("id").asLong() > 0);
+        assertEquals(2, created.get("categoryId").asLong());
+        assertEquals("TEST RULE MERCHANT", created.get("pattern").asText());
+
+        boolean listed = false;
+        for (JsonNode rule : json(get("/api/default-categories"))) {
+            if ("TEST RULE MERCHANT".equals(rule.get("pattern").asText())) {
+                listed = true;
+                assertEquals(2, rule.get("categoryId").asLong());
+            }
+        }
+        assertTrue(listed, "the new rule must be listed");
+
+        HttpResponse<String> duplicate = postJson("/api/default-categories", body);
+        assertEquals(409, duplicate.statusCode());
+        assertTrue(json(duplicate).get("detail").asText().contains("already exists"));
+
+        HttpResponse<String> uncategorized = postJson("/api/default-categories",
+                "{\"categoryId\":0,\"pattern\":\"NO CATEGORY\"}");
+        assertEquals(400, uncategorized.statusCode());
+    }
+
+    @Test
     void rejectsInvalidTransactionsWithAProblemDetail() throws Exception {
         String body = """
                 [{"categoryId":1,"paymentType":"DEBIT","amount":-5.00,"title":"NO DATE"}]
@@ -179,6 +211,15 @@ class Cochonbank2IntegrationTest {
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(10))
                 .GET()
+                .build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> postJson(String path, String body) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .timeout(Duration.ofSeconds(10))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }

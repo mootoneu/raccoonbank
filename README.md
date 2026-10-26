@@ -18,13 +18,17 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
   bank date and title all match a saved transaction; titles are compared trimmed, with repeated
   spaces collapsed. Duplicates remain editable and can still be saved if you really want them.
 - **Automatic categorization** — the title is matched against `defaultcategories.csv`
-  (case-insensitive, longest pattern wins) and the matching category is preselected.
+  (case-insensitive, longest pattern wins) and the matching category is preselected. In the
+  review table, the small **+** button on a line saves that line's title and selected category
+  as a new rule for future imports. A rule needs a real category (not *Uncategorized*) and is
+  refused when an identical title already has one.
 - **Category colors** — the category dropdown shows a colored line per option, and the review
   table shows each category name with its color as the background and an automatically chosen
   readable text color. A handful of mid-tone colors are nudged just enough to keep the text at
   a 4.5:1 contrast ratio.
 - **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
-  Click any colored segment to list the transactions behind it.
+  Categories are ordered by id in the legend and the stack. Click any colored segment to list
+  the transactions behind it.
 - **Rolling backups** — every application start copies the three CSV files into
   `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
 - **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
@@ -116,7 +120,7 @@ preserved. If a date cannot be parsed, startup stops and the original file is le
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 33 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
+mvnw.cmd test          # 38 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```
@@ -189,6 +193,7 @@ contain any text, not only digits.
 | `POST` | `/api/transactions/import` | Upload an OFX file (`multipart/form-data`, field `file`), returns drafts and warnings |
 | `GET` | `/api/categories` | List categories |
 | `GET` | `/api/default-categories` | List title-matching rules |
+| `POST` | `/api/default-categories` | Create a rule from `{"categoryId": n, "pattern": "TITLE"}` |
 
 Example preview response:
 
