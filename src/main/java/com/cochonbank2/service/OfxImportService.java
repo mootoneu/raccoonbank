@@ -1,0 +1,135 @@
+package com.cochonbank2.service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cochonbank2.domain.Category;
+import com.cochonbank2.domain.DefaultCategory;
+import com.cochonbank2.domain.TransactionDraft;
+import com.cochonbank2.ofx.OfxParseResult;
+import com.cochonbank2.ofx.OfxParser;
+import com.cochonbank2.ofx.OfxStatement;
+import com.cochonbank2.repository.CategoryRepository;
+import com.cochonbank2.repository.DefaultCategoryRepository;
+
+/**
+ * Converts the statements of an OFX file into editable transaction drafts. The
+ * drafts are not saved: the user reviews/edits them first.
+ */
+@Service
+public class OfxImportService {
+
+    private static final Pattern TRAILING_DATE = Pattern.compile(
+            "^(.*?)\\s+(\\d{1,2})/(\\d{1,2})/(\\d{2}|\\d{4})\\s*$");
+
+    private final OfxParser parser;
+    private final CategoryRepository categoryRepository;
+    private final DefaultCategoryRepository defaultCategoryRepository;
+
+    public OfxImportService(
+            OfxParser parser,
+            CategoryRepository categoryRepository,
+            DefaultCategoryRepository defaultCategoryRepository) {
+        this.parser = parser;
+        this.categoryRepository = categoryRepository;
+        this.defaultCategoryRepository = defaultCategoryRepository;
+    }
+
+    public OfxImportResult importFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("The selected OFX file is empty.");
+        }
+        byte[] content;
+        try {
+            content = file.getBytes();
+        } catch (IOException ex) {
+            throw new IllegalStateException("Could not read the uploaded OFX file.", ex);
+        }
+
+        Map<Long, Category> categories = categoryRepository.findAll().stream()
+                .collect(java.util.stream.Collectors.toMap(Category::id, category -> category, (a, b) -> a));
+        List<DefaultCategory> rules = defaultCategoryRepository.findAll().stream()
+                .filter(rule -> !rule.pattern().isBlank())
+                .filter(rule -> categories.containsKey(rule.categoryId()))
+                .sorted(Comparator
+                        .comparingInt((DefaultCategory rule) -> rule.pattern().trim().length()).reversed()
+                        .thenComparingLong(DefaultCategory::id))
+                .toList();
+
+        OfxParseResult parsed = parser.parse(content);
+        List<TransactionDraft> drafts = new ArrayList<>();
+        for (OfxStatement statement : parsed.statements()) {
+            TitleAndDate titleAndDate = splitTitleAndDate(statement.name());
+            long categoryId = findCategoryId(titleAndDate.title(), rules);
+            drafts.add(new TransactionDraft(
+                    categoryId,
+                    statement.transactionType(),
+                    statement.amount(),
+                    statement.bankDate(),
+                    titleAndDate.realDate(),
+                    titleAndDate.title(),
+                    "",
+                    0L));
+        }
+
+        String fileName = file.getOriginalFilename();
+        if (fileName == null || fileName.isBlank()) {
+            fileName = "import.ofx";
+        }
+        return new OfxImportResult(fileName, drafts, parsed.warnings());
+    }
+
+    private static long findCategoryId(String title, List<DefaultCategory> rules) {
+        String normalized = title.toLowerCase(Locale.ROOT);
+        for (DefaultCategory rule : rules) {
+            String pattern = rule.pattern().trim().toLowerCase(Locale.ROOT);
+            if (!pattern.isEmpty() && normalized.startsWith(pattern)) {
+                return rule.categoryId();
+            }
+        }
+        return 0L;
+    }
+
+    /**
+     * The bank statement NAME is "title dd/MM/yy". The date is removed from the
+     * title and becomes the real date. Names without a trailing date are kept
+     * as-is and have no real date.
+     */
+    static TitleAndDate splitTitleAndDate(String rawName) {
+        String name = rawName == null ? "" : rawName.replaceAll("\\s+", " ").trim();
+        if (name.isEmpty()) {
+            return new TitleAndDate("Unknown transaction", null);
+        }
+        Matcher matcher = TRAILING_DATE.matcher(name);
+        if (!matcher.matches()) {
+            return new TitleAndDate(name, null);
+        }
+        String title = matcher.group(1).trim();
+        if (title.isEmpty()) {
+            return new TitleAndDate(name, null);
+        }
+        int day = Integer.parseInt(matcher.group(2));
+        int month = Integer.parseInt(matcher.group(3));
+        int year = Integer.parseInt(matcher.group(4));
+        if (matcher.group(4).length() == 2) {
+            year += 2000;
+        }
+        try {
+            return new TitleAndDate(title, java.time.LocalDate.of(year, month, day));
+        } catch (java.time.DateTimeException ex) {
+            return new TitleAndDate(name, null);
+        }
+    }
+
+    record TitleAndDate(String title, java.time.LocalDate realDate) {
+    }
+}

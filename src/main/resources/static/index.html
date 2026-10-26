@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
+    <title>CochonBank2 — Personal finance</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="#" class="brand" id="brand-home" aria-label="CochonBank2 home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" role="presentation">
+                    <ellipse cx="31" cy="35" rx="21" ry="14.5" fill="currentColor"/>
+                    <path d="M17 23c-1-5 2-8 6-8 2 0 3 1 4 3z" fill="currentColor"/>
+                    <ellipse cx="49" cy="33" rx="7.5" ry="6.5" fill="currentColor"/>
+                    <circle cx="50.5" cy="31" r="1.4" fill="#17433C"/>
+                    <circle cx="47" cy="31" r="1.4" fill="#17433C"/>
+                    <circle cx="21" cy="29.5" r="2.1" fill="#17433C"/>
+                    <rect x="25" y="23.5" width="12" height="3.2" rx="1.6" fill="#17433C"/>
+                    <path d="M18 46v4M30 46v4M43 46v4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span class="brand-name">CochonBank<sup>2</sup></span>
+        </a>
+        <div class="header-actions">
+            <span class="header-note">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5.2 3.4 9.4 8 11 4.6-1.6 8-5.8 8-11V5l-8-3Zm-1 14-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6Z" fill="currentColor"/></svg>
+                Stored on this computer
+            </span>
+            <button type="button" class="btn btn-primary btn-sm" id="import-btn-header">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4L8 7M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Import OFX</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main id="main" class="container">
+
+    <!-- ============================= HOME ============================= -->
+    <section id="home-view" class="view">
+        <div id="home-error" class="alert alert-error" role="alert" hidden></div>
+
+        <div class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow"><span id="today-label">Today</span><span class="eyebrow-dot">·</span>Personal finance</p>
+                <h1>Your money,<br><span>in plain sight.</span></h1>
+                <p class="hero-text">
+                    Bring in your bank's OFX statements, check every line, and keep the whole
+                    ledger in simple CSV files that never leave your machine.
+                </p>
+                <div class="hero-actions">
+                    <button type="button" class="btn btn-primary" id="import-btn">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4L8 7M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Import OFX
+                    </button>
+                    <a class="btn btn-ghost" href="#transactions-card">View transactions</a>
+                </div>
+                <p class="trust-note">
+                    <span class="trust-dot" aria-hidden="true"></span>
+                    No cloud, no database — just three CSV files you can open anytime.
+                </p>
+            </div>
+            <div class="hero-panel" aria-hidden="true">
+                <div class="hero-panel-top">
+                    <span class="panel-label">Ledger format</span>
+                    <span class="panel-badge">CSV</span>
+                </div>
+                <div class="hero-lines">
+                    <div class="hero-line"><span class="mock-chip" style="background:#2E7D32"></span><span>Groceries</span><span class="mock-amount">−42.15 €</span></div>
+                    <div class="hero-line"><span class="mock-chip" style="background:#1B5E20"></span><span>Income</span><span class="mock-amount positive">+2 450.00 €</span></div>
+                    <div class="hero-line"><span class="mock-chip" style="background:#F9A825"></span><span>Leisure</span><span class="mock-amount">−13.49 €</span></div>
+                </div>
+                <div class="hero-panel-foot">
+                    <span class="pulse-dot"></span>
+                    <span>transactions.csv</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="stats" aria-label="Account summary">
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#E3EFE9;--icon-ink:#17433C">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm0 0 2-3h12l2 3M8 13h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Total balance</p>
+                    <p class="stat-value" id="stat-balance">—</p>
+                    <p class="stat-sub" id="stat-tx-count">No transactions yet</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#FBE7E0;--icon-ink:#B9422C">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m0-16 5 5m-5-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Spent this month</p>
+                    <p class="stat-value" id="stat-spent">—</p>
+                    <p class="stat-sub" id="stat-month-label">This month</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#E7EEF9;--icon-ink:#24528C">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V4m0 16 5-5m-5 5-5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Earned this month</p>
+                    <p class="stat-value" id="stat-income">—</p>
+                    <p class="stat-sub" id="stat-category-count">Across all categories</p>
+                </div>
+            </article>
+        </section>
+
+        <div class="dashboard-grid">
+            <section class="card chart-card" aria-labelledby="chart-title">
+                <div class="card-head">
+                    <div>
+                        <h2 id="chart-title">Spending by category</h2>
+                        <p class="card-sub">All saved expenses, grouped by category.</p>
+                    </div>
+                    <span class="card-tag">All time</span>
+                </div>
+                <div class="chart-body">
+                    <div class="chart-visual">
+                        <svg id="spending-chart" viewBox="0 0 320 320" role="img" aria-label="Donut chart of spending by category"></svg>
+                        <div id="chart-tooltip" class="chart-tooltip" role="presentation"></div>
+                        <div id="chart-empty" class="chart-empty" hidden>
+                            <span class="chart-empty-icon" aria-hidden="true">🐷</span>
+                            <p>No spending recorded yet.</p>
+                            <span>Import a statement to see where your money goes.</span>
+                        </div>
+                    </div>
+                    <div id="chart-legend" class="chart-legend" aria-label="Spending legend"></div>
+                </div>
+            </section>
+
+            <section class="card recent-card" id="transactions-card" aria-labelledby="recent-title">
+                <div class="card-head">
+                    <div>
+                        <h2 id="recent-title">Recent transactions</h2>
+                        <p class="card-sub">Saved lines from <code>transactions.csv</code>, newest first.</p>
+                    </div>
+                    <span class="pill" id="recent-count">0</span>
+                </div>
+                <div id="recent-empty" class="recent-empty" hidden>
+                    <div class="empty-pig" aria-hidden="true">
+                        <svg viewBox="0 0 64 64"><ellipse cx="31" cy="35" rx="21" ry="14.5" fill="currentColor"/><path d="M17 23c-1-5 2-8 6-8 2 0 3 1 4 3z" fill="currentColor"/><ellipse cx="49" cy="33" rx="7.5" ry="6.5" fill="currentColor"/><circle cx="50.5" cy="31" r="1.4" fill="#17433C"/><circle cx="47" cy="31" r="1.4" fill="#17433C"/><circle cx="21" cy="29.5" r="2.1" fill="#17433C"/><rect x="25" y="23.5" width="12" height="3.2" rx="1.6" fill="#17433C"/><path d="M18 46v4M30 46v4M43 46v4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+                    </div>
+                    <h3>Your ledger is empty</h3>
+                    <p>Import your first OFX file and review the transactions before adding them here.</p>
+                    <button type="button" class="btn btn-primary btn-sm" id="empty-import-btn">Import an OFX file</button>
+                </div>
+                <div class="table-scroll" id="recent-table-wrap">
+                    <table class="recent-table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Bank date</th>
+                            <th scope="col">Transaction</th>
+                            <th scope="col">Category</th>
+                            <th scope="col" class="col-type">Type</th>
+                            <th scope="col" class="align-right">Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody id="recent-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <footer class="page-footer">
+            <span>CochonBank2</span>
+            <span class="footer-dot">·</span>
+            <span>Your ledger stays a plain text file.</span>
+        </footer>
+    </section>
+
+    <!-- ============================= IMPORT ============================= -->
+    <section id="import-view" class="view" hidden>
+        <div class="view-head">
+            <div class="view-heading">
+                <button type="button" class="link-btn" id="back-home">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Back to home
+                </button>
+                <h1>Review your import</h1>
+                <p id="import-subtitle">Choose an OFX file to begin.</p>
+            </div>
+            <div class="view-actions">
+                <button type="button" class="btn btn-primary" id="save-all-top" disabled>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5V4Zm3 0v6h8V4M8 15h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="btn-label">Save all transactions</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="import-warnings" class="alert alert-warning" role="status" hidden></div>
+        <div id="import-error" class="alert alert-error" role="alert" hidden>
+            <div>
+                <strong>Import failed</strong>
+                <p id="import-error-detail"></p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="retry-import">Choose another file</button>
+        </div>
+
+        <div id="import-loading" class="loading-card" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <div>
+                <strong>Reading your OFX file…</strong>
+                <p id="import-loading-file">The statements are being converted into transactions.</p>
+            </div>
+        </div>
+
+        <div id="import-empty" class="empty-card" hidden>
+            <div class="empty-pig" aria-hidden="true">
+                <svg viewBox="0 0 64 64"><ellipse cx="31" cy="35" rx="21" ry="14.5" fill="currentColor"/><path d="M17 23c-1-5 2-8 6-8 2 0 3 1 4 3z" fill="currentColor"/><ellipse cx="49" cy="33" rx="7.5" ry="6.5" fill="currentColor"/><circle cx="50.5" cy="31" r="1.4" fill="#17433C"/><circle cx="47" cy="31" r="1.4" fill="#17433C"/><circle cx="21" cy="29.5" r="2.1" fill="#17433C"/><rect x="25" y="23.5" width="12" height="3.2" rx="1.6" fill="#17433C"/><path d="M18 46v4M30 46v4M43 46v4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+            </div>
+            <h2 id="import-empty-title">No transactions found</h2>
+            <p id="import-empty-text">This OFX file contained no usable bank statements. Try another file.</p>
+            <button type="button" class="btn btn-primary btn-sm" id="empty-retry-import">Choose another file</button>
+        </div>
+
+        <div id="import-editor" class="card import-card" hidden>
+            <div class="import-toolbar">
+                <div class="file-badge">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                    <span id="import-filename">—</span>
+                </div>
+                <span class="toolbar-hint">Click any cell to edit it before saving.</span>
+            </div>
+
+            <div class="import-table-wrap">
+                <table class="import-table">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="col-category">Category</th>
+                        <th scope="col" class="col-type">Type</th>
+                        <th scope="col" class="col-amount">Amount</th>
+                        <th scope="col" class="col-date">Bank date</th>
+                        <th scope="col" class="col-date">Real date</th>
+                        <th scope="col" class="col-title">Title</th>
+                        <th scope="col" class="col-description">Description</th>
+                        <th scope="col" class="col-bill">Bill</th>
+                        <th scope="col"><span class="visually-hidden">Remove</span></th>
+                    </tr>
+                    </thead>
+                    <tbody id="import-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="save-bar">
+                <div class="save-summary">
+                    <span class="save-count"><strong id="import-count">0</strong> <span id="import-count-label">transactions</span> ready</span>
+                    <span class="save-net" id="import-total"></span>
+                </div>
+                <div class="save-bar-actions">
+                    <button type="button" class="btn btn-ghost" id="discard-import">Discard</button>
+                    <button type="button" class="btn btn-primary" id="save-all">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5V4Zm3 0v6h8V4M8 15h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="btn-label">Save all transactions</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="page-footer">
+            <span>Nothing is written to <code>transactions.csv</code> until you save.</span>
+        </footer>
+    </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<input type="file" id="ofx-file" accept=".ofx,application/x-ofx" hidden>
+
+<datalist id="payment-types">
+    <option value="DEBIT"></option>
+    <option value="CREDIT"></option>
+    <option value="POS"></option>
+    <option value="ATM"></option>
+    <option value="XFER"></option>
+    <option value="CHECK"></option>
+    <option value="PAYMENT"></option>
+    <option value="FEE"></option>
+    <option value="SRVCHG"></option>
+    <option value="DIRECTDEP"></option>
+    <option value="DIRECTDEBIT"></option>
+    <option value="OTHER"></option>
+</datalist>
+
+<script src="/vendor/jquery-3.7.1.min.js"></script>
+<script src="/vendor/d3-7.9.0.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
