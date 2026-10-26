@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * Creates the data directory on first launch, copies the bundled seed files
- * (categories and default category rules), and stores a backup of the current
- * data files. Existing user data is never overwritten.
+ * (categories and default category rules), stores a backup of the current data
+ * files and migrates ledgers written by the first app version. Existing user
+ * data is never overwritten.
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -27,10 +28,15 @@ public class DataInitializer implements ApplicationRunner {
 
     private final CochonbankProperties properties;
     private final DataBackupService backupService;
+    private final LegacyTransactionsMigrator legacyMigrator;
 
-    public DataInitializer(CochonbankProperties properties, DataBackupService backupService) {
+    public DataInitializer(
+            CochonbankProperties properties,
+            DataBackupService backupService,
+            LegacyTransactionsMigrator legacyMigrator) {
         this.properties = properties;
         this.backupService = backupService;
+        this.legacyMigrator = legacyMigrator;
     }
 
     @Override
@@ -38,6 +44,7 @@ public class DataInitializer implements ApplicationRunner {
         Path directory = properties.dataPath();
         Files.createDirectories(directory);
         backupService.backupOnStartup();
+        legacyMigrator.migrate(directory);
 
         for (String fileName : FILES) {
             Path target = directory.resolve(fileName);

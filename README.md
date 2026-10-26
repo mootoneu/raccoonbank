@@ -15,13 +15,14 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
   (`INV-2026-01`, `42`, …). Rows can be removed.
 - **Duplicate highlighting** — statements that already exist in `transactions.csv` are tinted
   amber and marked **Saved** in the review table. A row counts as a duplicate when its amount,
-  bank date and trimmed title all match a saved transaction. Duplicates remain editable and can
-  still be saved if you really want them.
+  bank date and title all match a saved transaction; titles are compared trimmed, with repeated
+  spaces collapsed. Duplicates remain editable and can still be saved if you really want them.
 - **Automatic categorization** — the title is matched against `defaultcategories.csv`
   (case-insensitive, longest pattern wins) and the matching category is preselected.
 - **Category colors** — the category dropdown shows a colored line per option, and the review
   table shows each category name with its color as the background and an automatically chosen
-  readable text color.
+  readable text color. A handful of mid-tone colors are nudged just enough to keep the text at
+  a 4.5:1 contrast ratio.
 - **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
   Click any colored segment to list the transactions behind it.
 - **Rolling backups** — every application start copies the three CSV files into
@@ -102,10 +103,20 @@ Import [`samples/sample.ofx`](samples/sample.ofx) from the dashboard. It contain
 bank lines, including a salary, groceries and a transfer. Review the preview, edit a cell or two,
 then save.
 
+## Legacy ledger migration
+
+A ledger written by the first CochonBank version uses eight columns
+(`Id,…,Title,Bill_Id`) and dates such as `12/31/2016 00:00:00`. On startup, if that
+legacy header is detected, the app backs the file up first and then rewrites it in the current
+nine-column format: an empty `Description` column is added and both dates are converted to
+ISO `yyyy-MM-dd`. When a legacy row has no real date, the bank date is used, so every row
+follows the same real-date rule as new imports. Quoted titles, accents and bill ids are
+preserved. If a date cannot be parsed, startup stops and the original file is left untouched.
+
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 28 tests: CSV, OFX parser, import mapping, backups, services, REST flow
+mvnw.cmd test          # 33 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```

@@ -12,6 +12,11 @@
         color: '#C7C0B2'
     });
     const FALLBACK_COLOR = '#A8A29E';
+    const INK = '#152621';
+    const WHITE_RGB = Object.freeze({ r: 255, g: 255, b: 255 });
+    const INK_RGB = Object.freeze({ r: 21, g: 38, b: 33 });
+    const MIN_CONTRAST = 4.5;
+    const categoryPaletteCache = new Map();
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     const money = new Intl.NumberFormat('en-GB', {
@@ -327,10 +332,9 @@
     }
 
     function categoryChip(category) {
-        const background = safeColor(category.color);
-        const foreground = readableTextColor(background);
-        return '<span class="chip" style="background-color:' + background
-            + ';color:' + foreground + ';" title="' + esc(category.name) + '">'
+        const palette = categoryPalette(category.color);
+        return '<span class="chip" style="background-color:' + palette.background
+            + ';color:' + palette.foreground + ';" title="' + esc(category.name) + '">'
             + esc(category.name) + '</span>';
     }
 
@@ -1282,8 +1286,9 @@
             state.importFileName = result.fileName || file.name;
             state.importWarnings = Array.isArray(result.warnings) ? result.warnings : [];
             showImportResult(Array.isArray(result.transactions) ? result.transactions : []);
-        } catch (xhr) {
-            showImportError(errorDetail(xhr));
+        } catch (error) {
+            console.error('OFX import failed', error);
+            showImportError(errorDetail(error));
         }
     }
 
@@ -1361,9 +1366,6 @@
 
     function renderImportRows(transactions) {
         const html = transactions.map((transaction, index) => {
-            const category = getCategory(transaction.categoryId);
-            const background = safeColor(category.color);
-            const foreground = readableTextColor(background);
             const amount = transaction.amount === null || transaction.amount === undefined
                 ? ''
                 : Number(transaction.amount).toFixed(2);
@@ -1372,8 +1374,7 @@
                 : String(transaction.billId).trim();
 
             return '<tr>'
-                + '<td><select class="category-select" aria-label="Category, row ' + (index + 1) + '"'
-                    + ' style="background-color:' + background + ';color:' + foreground + ';">'
+                + '<td><select class="category-select" aria-label="Category, row ' + (index + 1) + '">'
                     + categoryOptions(transaction.categoryId) + '</select></td>'
                 + '<td><input class="cell-input type-input" type="text" list="payment-types"'
                     + ' aria-label="Payment type, row ' + (index + 1) + '"'
@@ -1413,25 +1414,29 @@
 
     function categoryOptions(selectedId) {
         const selected = Number(selectedId) || 0;
-        const categories = [CATEGORY_NONE].concat(state.categories);
+        const categories = [CATEGORY_NONE];
+        state.categories.forEach(category => {
+            if (!categories.some(known => Number(known.id) === Number(category.id))) {
+                categories.push(category);
+            }
+        });
         if (!categories.some(category => Number(category.id) === selected)) {
             categories.push(getCategory(selected));
         }
         return categories.map(category => {
             const id = Number(category.id);
-            const background = safeColor(category.color);
-            const foreground = readableTextColor(background);
+            const palette = categoryPalette(category.color);
             return '<option value="' + id + '"' + (id === selected ? ' selected' : '')
-                + ' style="background-color:' + background + ';color:' + foreground + ';">'
+                + ' style="background-color:' + palette.background + ';color:' + palette.foreground + ';">'
                 + esc(category.name) + '</option>';
         }).join('');
     }
 
     function paintCategorySelect(select) {
         const category = getCategory(select.value);
-        const background = safeColor(category.color);
-        select.style.backgroundColor = background;
-        select.style.color = readableTextColor(background);
+        const palette = categoryPalette(category.color);
+        select.style.backgroundColor = palette.background;
+        select.style.color = palette.foreground;
     }
 
     function renumberRows() {
@@ -1450,8 +1455,10 @@
 
     /**
      * A saved row is a duplicate when the amount (in cents), the bank date and
-     * the trimmed title all match. Amounts are compared as integers so that
-     * floating point noise cannot hide a duplicate.
+     * the title all match. Amounts are compared as integers so that floating
+     * point noise cannot hide a duplicate. Titles are trimmed and internal
+     * whitespace is collapsed because the OFX parser normalizes names that way,
+     * while older ledger files may still contain repeated spaces.
      */
     function importRowKey(amount, bankDate, title) {
         if (amount === null || amount === undefined || amount === '') {
@@ -1459,7 +1466,7 @@
         }
         const cents = Math.round(Number(amount) * 100);
         const day = String(bankDate || '').trim();
-        const label = String(title || '').trim();
+        const label = String(title || '').trim().replace(/\s+/g, ' ');
         if (!Number.isFinite(cents) || !day || !label) {
             return null;
         }
@@ -1804,17 +1811,84 @@
         return /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value) ? value : FALLBACK_COLOR;
     }
 
-    function readableTextColor(background) {
-        const rgb = hexToRgb(background);
-        if (!rgb) {
-            return '#152621';
+    /**
+     * Category chips and dropdown lines use the category colour as their
+     * background. The colour is used exactly when white or the app ink is
+     * readable on it. For the few mid-tone colours where neither reaches
+     * 4.5:1, the background is nudged towards black or white until the text
+     * passes, keeping the hue recognisable.
+     */
+    function categoryPalette(color) {
+        const base = hexToRgb(safeColor(color));
+        if (!base) {
+            return { background: FALLBACK_COLOR, foreground: INK };
         }
-        const luminance = 0.2126 * linearChannel(rgb.r)
+        const key = toHex(base);
+        const cached = categoryPaletteCache.get(key);
+        if (cached) {
+            return cached;
+        }
+
+        const whiteRatio = contrastRatio(base, WHITE_RGB);
+        const inkRatio = contrastRatio(base, INK_RGB);
+        let palette;
+        if (whiteRatio >= MIN_CONTRAST || inkRatio >= MIN_CONTRAST) {
+            palette = {
+                background: key,
+                foreground: whiteRatio >= inkRatio ? '#FFFFFF' : INK
+            };
+        } else {
+            const darker = nudgeToward(base, { r: 0, g: 0, b: 0 }, WHITE_RGB);
+            const lighter = nudgeToward(base, WHITE_RGB, INK_RGB);
+            if (darker && (!lighter || darker.steps <= lighter.steps)) {
+                palette = { background: toHex(darker.color), foreground: '#FFFFFF' };
+            } else if (lighter) {
+                palette = { background: toHex(lighter.color), foreground: INK };
+            } else {
+                palette = {
+                    background: key,
+                    foreground: whiteRatio >= inkRatio ? '#FFFFFF' : INK
+                };
+            }
+        }
+        categoryPaletteCache.set(key, palette);
+        return palette;
+    }
+
+    function nudgeToward(base, target, text) {
+        for (let step = 1; step <= 50; step++) {
+            const amount = step / 50;
+            const color = {
+                r: Math.round(base.r + (target.r - base.r) * amount),
+                g: Math.round(base.g + (target.g - base.g) * amount),
+                b: Math.round(base.b + (target.b - base.b) * amount)
+            };
+            if (contrastRatio(color, text) >= MIN_CONTRAST) {
+                return { color: color, steps: step };
+            }
+        }
+        return null;
+    }
+
+    function contrastRatio(first, second) {
+        const a = relativeLuminance(first);
+        const b = relativeLuminance(second);
+        const lighter = Math.max(a, b);
+        const darker = Math.min(a, b);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function relativeLuminance(rgb) {
+        return 0.2126 * linearChannel(rgb.r)
             + 0.7152 * linearChannel(rgb.g)
             + 0.0722 * linearChannel(rgb.b);
-        const contrastWithWhite = 1.05 / (luminance + 0.05);
-        const contrastWithBlack = (luminance + 0.05) / 0.05;
-        return contrastWithWhite >= contrastWithBlack ? '#FFFFFF' : '#152621';
+    }
+
+    function toHex(rgb) {
+        const part = value => Math.max(0, Math.min(255, Math.round(value)))
+            .toString(16)
+            .padStart(2, '0');
+        return '#' + part(rgb.r) + part(rgb.g) + part(rgb.b);
     }
 
     function hexToRgb(color) {
