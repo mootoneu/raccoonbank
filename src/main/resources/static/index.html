@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="CochonBank2 â€” personal finance, kept in plain CSV files.">
-    <title>CochonBank2 â€” Personal finance</title>
+    <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
+    <title>CochonBank2 — Personal finance</title>
     <link rel="stylesheet" href="/css/app.css?v=12">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
 </head>
@@ -53,12 +53,6 @@
 
         <div class="hero">
             <div class="hero-copy">
-                <p class="eyebrow"><span id="today-label">Today</span><span class="eyebrow-dot">Â·</span>Personal finance</p>
-                <h1>Your money,<br><span>in plain sight.</span></h1>
-                <p class="hero-text">
-                    Bring in your bank's OFX statements, check every line, and keep the whole
-                    ledger in simple CSV files that never leave your machine.
-                </p>
                 <div class="hero-actions">
                     <button type="button" class="btn btn-primary" id="import-btn">
                         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4L8 7M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -68,23 +62,8 @@
                 </div>
                 <p class="trust-note">
                     <span class="trust-dot" aria-hidden="true"></span>
-                    No cloud, no database â€” just three CSV files you can open anytime.
+                    No cloud, no database — just three CSV files you can open anytime.
                 </p>
-            </div>
-            <div class="hero-panel" aria-hidden="true">
-                <div class="hero-panel-top">
-                    <span class="panel-label">Ledger format</span>
-                    <span class="panel-badge">CSV</span>
-                </div>
-                <div class="hero-lines">
-                    <div class="hero-line"><span class="mock-chip" style="background:#2E7D32"></span><span>Groceries</span><span class="mock-amount">âˆ’42.15 â‚¬</span></div>
-                    <div class="hero-line"><span class="mock-chip" style="background:#1B5E20"></span><span>Income</span><span class="mock-amount positive">+2 450.00 â‚¬</span></div>
-                    <div class="hero-line"><span class="mock-chip" style="background:#F9A825"></span><span>Leisure</span><span class="mock-amount">âˆ’13.49 â‚¬</span></div>
-                </div>
-                <div class="hero-panel-foot">
-                    <span class="pulse-dot"></span>
-                    <span>transactions.csv</span>
-                </div>
             </div>
         </div>
 
@@ -95,7 +74,7 @@
                 </div>
                 <div class="stat-body">
                     <p class="stat-label">Total balance</p>
-                    <p class="stat-value" id="stat-balance">â€”</p>
+                    <p class="stat-value" id="stat-balance">—</p>
                     <p class="stat-sub" id="stat-tx-count">No transactions yet</p>
                 </div>
             </article>
@@ -105,7 +84,7 @@
                 </div>
                 <div class="stat-body">
                     <p class="stat-label">Spent this month</p>
-                    <p class="stat-value" id="stat-spent">â€”</p>
+                    <p class="stat-value" id="stat-spent">—</p>
                     <p class="stat-sub" id="stat-month-label">This month</p>
                 </div>
             </article>
@@ -115,7 +94,7 @@
                 </div>
                 <div class="stat-body">
                     <p class="stat-label">Earned this month</p>
-                    <p class="stat-value" id="stat-income">â€”</p>
+                    <p class="stat-value" id="stat-income">—</p>
                     <p class="stat-sub" id="stat-category-count">Across all categories</p>
                 </div>
             </article>
@@ -137,15 +116,15 @@
             <div class="cashflow-summary" aria-label="Earnings and spending totals for the selected period">
                 <div class="cashflow-stat">
                     <span class="cashflow-label">Earned</span>
-                    <strong class="cashflow-value positive" id="cashflow-earned">â€”</strong>
+                    <strong class="cashflow-value positive" id="cashflow-earned">—</strong>
                 </div>
                 <div class="cashflow-stat">
                     <span class="cashflow-label">Spent</span>
-                    <strong class="cashflow-value negative" id="cashflow-spent">â€”</strong>
+                    <strong class="cashflow-value negative" id="cashflow-spent">—</strong>
                 </div>
                 <div class="cashflow-stat">
                     <span class="cashflow-label">Net</span>
-                    <strong class="cashflow-value" id="cashflow-net">â€”</strong>
+                    <strong class="cashflow-value" id="cashflow-net">—</strong>
                 </div>
                 <div class="cashflow-legend">
                     <span class="cashflow-key"><span class="key-dot income"></span>Earnings</span>
@@ -260,7 +239,7 @@
                 <button type="button" class="period-btn" id="period-prev" aria-label="Previous period">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
-                <span class="period-label" id="period-label">â€”</span>
+                <span class="period-label" id="period-label">—</span>
                 <button type="button" class="period-btn" id="period-next" aria-label="Next period">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
@@ -270,18 +249,18 @@
         <div class="period-stats" aria-label="Spending summary for the selected period">
             <article class="period-stat">
                 <p class="period-stat-label">Total spent</p>
-                <p class="period-stat-value" id="spending-total">â€”</p>
-                <p class="period-stat-sub" id="spending-total-sub">â€”</p>
+                <p class="period-stat-value" id="spending-total">—</p>
+                <p class="period-stat-sub" id="spending-total-sub">—</p>
             </article>
             <article class="period-stat">
                 <p class="period-stat-label">Transactions</p>
-                <p class="period-stat-value" id="spending-count">â€”</p>
-                <p class="period-stat-sub" id="spending-count-sub">â€”</p>
+                <p class="period-stat-value" id="spending-count">—</p>
+                <p class="period-stat-sub" id="spending-count-sub">—</p>
             </article>
             <article class="period-stat">
                 <p class="period-stat-label">Top category</p>
-                <p class="period-stat-value period-stat-name" id="spending-top">â€”</p>
-                <p class="period-stat-sub" id="spending-top-sub">â€”</p>
+                <p class="period-stat-value period-stat-name" id="spending-top">—</p>
+                <p class="period-stat-sub" id="spending-top-sub">—</p>
             </article>
         </div>
 
@@ -291,7 +270,7 @@
                     <h2 id="histogram-title">Spending histogram</h2>
                     <p class="card-sub" id="histogram-sub">Daily spending, stacked by category.</p>
                 </div>
-                <span class="card-tag" id="histogram-range-tag">â€”</span>
+                <span class="card-tag" id="histogram-range-tag">—</span>
             </div>
 
             <div class="histogram-scroll" id="histogram-scroll">
@@ -317,12 +296,12 @@
                     <p class="detail-eyebrow">Category detail <span id="detail-bucket"></span></p>
                     <div class="detail-title-row">
                         <span class="detail-dot" id="detail-category-dot" aria-hidden="true"></span>
-                        <h2 id="detail-title">â€”</h2>
+                        <h2 id="detail-title">—</h2>
                     </div>
                     <p class="detail-summary" id="detail-summary"></p>
                 </div>
                 <div class="detail-side">
-                    <span class="detail-total" id="detail-total">â€”</span>
+                    <span class="detail-total" id="detail-total">—</span>
                     <button type="button" class="icon-btn" id="detail-close" aria-label="Close transaction details">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
                     </button>
@@ -400,7 +379,7 @@
             <div class="import-toolbar">
                 <div class="file-badge">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
-                    <span id="import-filename">â€”</span>
+                    <span id="import-filename">—</span>
                 </div>
                 <span class="toolbar-hint">Click any cell to edit it before saving.</span>
             </div>
