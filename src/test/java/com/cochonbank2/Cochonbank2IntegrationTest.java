@@ -77,6 +77,9 @@ class Cochonbank2IntegrationTest {
         assertTrue(home.body().contains("/js/app.js"));
         assertTrue(home.body().contains("/vendor/jquery-3.7.1.min.js"));
         assertTrue(home.body().contains("/vendor/d3-7.9.0.min.js"));
+        assertTrue(home.body().contains("id=\"spending-view\""));
+        assertTrue(home.body().contains("data-range=\"month\""));
+        assertTrue(home.body().contains("id=\"spending-histogram\""));
 
         assertEquals(200, get("/css/app.css").statusCode());
         assertEquals(200, get("/js/app.js").statusCode());

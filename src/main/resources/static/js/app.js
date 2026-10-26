@@ -21,6 +21,12 @@
         maximumFractionDigits: 2
     });
 
+    const longDate = new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
     const state = {
         categories: [],
         categoryById: new Map(),
@@ -28,7 +34,13 @@
         importFileName: '',
         importOriginalCount: 0,
         importWarnings: [],
-        saving: false
+        saving: false,
+        spendingRange: 'month',
+        spendingMonth: null,
+        spendingYear: null,
+        spendingSelection: null,
+        spendingData: null,
+        spendingResizeTimer: null
     };
 
     $(function () {
@@ -42,17 +54,55 @@
        ---------------------------------------------------------------------- */
 
     function bindEvents() {
-        $('#brand-home').on('click', function (event) {
+        $('#brand-home, #nav-home').on('click', function (event) {
             event.preventDefault();
-            if (!$('#import-view').prop('hidden')) {
-                leaveImport(false);
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            navigateHome();
+        });
+
+        $('#nav-spending, #chart-view-all').on('click', openSpending);
+        $('#spending-back-home').on('click', navigateHome);
+
+        $('#import-btn, #import-btn-header, #empty-import-btn, #retry-import, #empty-retry-import, '
+            + '#spending-import-btn, #histogram-import-btn').on('click', triggerFilePicker);
+
+        $('#spending-range').on('click', '.segment-btn', function () {
+            const range = this.getAttribute('data-range');
+            if (!range || range === state.spendingRange) {
+                return;
+            }
+            state.spendingRange = range;
+            closeSpendingDetail();
+            ensureSpendingAnchors();
+            renderSpending();
+        });
+
+        $('#period-prev').on('click', function () {
+            moveSpendingPeriod(-1);
+        });
+
+        $('#period-next').on('click', function () {
+            moveSpendingPeriod(1);
+        });
+
+        $('#detail-close').on('click', closeSpendingDetail);
+
+        $(document).on('keydown', function (event) {
+            if (event.key === 'Escape' && !$('#spending-detail').prop('hidden')) {
+                closeSpendingDetail();
             }
         });
 
-        $('#import-btn, #import-btn-header, #empty-import-btn, #retry-import, #empty-retry-import')
-            .on('click', triggerFilePicker);
+        $(window).on('resize', function () {
+            if ($('#spending-view').prop('hidden') || !state.spendingData) {
+                return;
+            }
+            window.clearTimeout(state.spendingResizeTimer);
+            state.spendingResizeTimer = window.setTimeout(function () {
+                if (!$('#spending-view').prop('hidden') && state.spendingData) {
+                    renderHistogram(state.spendingData);
+                }
+            }, 140);
+        });
 
         $('#ofx-file').on('change', function () {
             const file = this.files && this.files[0];
@@ -124,6 +174,25 @@
         showView('home');
     }
 
+    function navigateHome() {
+        if (!$('#import-view').prop('hidden')) {
+            leaveImport(false);
+            return;
+        }
+        showView('home');
+    }
+
+    function openSpending() {
+        if (hasPendingImport()
+            && !window.confirm('Discard the current import and open spending? Nothing has been saved yet.')) {
+            return;
+        }
+        resetImportState();
+        ensureSpendingAnchors();
+        showView('spending');
+        renderSpending();
+    }
+
     /* ----------------------------------------------------------------------
        Initial data
        ---------------------------------------------------------------------- */
@@ -143,6 +212,10 @@
             showHomeError(errorDetail(xhr));
         }
         renderHome();
+        if (!$('#spending-view').prop('hidden')) {
+            resetSpendingState();
+            renderSpending();
+        }
     }
 
     async function refreshTransactions() {
@@ -356,6 +429,541 @@
                 $('<span>', { class: 'legend-value', text: money.format(entry.value) })
             ).appendTo($legend);
         });
+    }
+
+    /* ----------------------------------------------------------------------
+       Spending histogram by category
+       ---------------------------------------------------------------------- */
+
+    function ensureSpendingAnchors() {
+        const source = spendingSource();
+        const latest = d3.max(source, entry => entry.date);
+        const base = latest || new Date();
+        if (!state.spendingMonth) {
+            state.spendingMonth = monthKey(base);
+        }
+        if (state.spendingYear === null || state.spendingYear === undefined) {
+            state.spendingYear = base.getFullYear();
+        }
+    }
+
+    function spendingSource() {
+        return state.transactions
+            .map(transaction => {
+                const amount = toNumber(transaction.amount);
+                const date = parseIsoDate(transaction.bankDate);
+                if (amount >= 0 || !date) {
+                    return null;
+                }
+                return { transaction: transaction, date: date, amount: Math.abs(amount) };
+            })
+            .filter(Boolean);
+    }
+
+    function spendingBounds(source) {
+        const months = source.map(entry => monthKey(entry.date)).sort();
+        const years = source.map(entry => entry.date.getFullYear()).sort((a, b) => a - b);
+        return {
+            minMonth: months.length ? months[0] : null,
+            maxMonth: months.length ? months[months.length - 1] : null,
+            minYear: years.length ? years[0] : null,
+            maxYear: years.length ? years[years.length - 1] : null
+        };
+    }
+
+    function moveSpendingPeriod(direction) {
+        if (state.spendingRange === 'month') {
+            const parts = state.spendingMonth.split('-').map(Number);
+            state.spendingMonth = monthKey(new Date(parts[0], parts[1] - 1 + direction, 1));
+            state.spendingYear = Number(state.spendingMonth.slice(0, 4));
+        } else if (state.spendingRange === 'year') {
+            state.spendingYear += direction;
+            const monthPart = state.spendingMonth ? state.spendingMonth.slice(5) : '01';
+            state.spendingMonth = state.spendingYear + '-' + monthPart;
+        } else {
+            return;
+        }
+        closeSpendingDetail();
+        renderSpending();
+    }
+
+    function buildSpendingModel() {
+        ensureSpendingAnchors();
+
+        const range = state.spendingRange;
+        const source = spendingSource();
+        const bounds = spendingBounds(source);
+        let start;
+        let end;
+        let buckets = [];
+        let periodLabel;
+        let rangeTag;
+        let unit;
+
+        if (range === 'month') {
+            const parts = state.spendingMonth.split('-').map(Number);
+            const year = parts[0];
+            const month = parts[1];
+            const first = new Date(year, month - 1, 1);
+            const days = new Date(year, month, 0).getDate();
+            start = first;
+            end = new Date(year, month, 1);
+            periodLabel = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+            rangeTag = periodLabel;
+            unit = 'day';
+            buckets = Array.from({ length: days }, (_, index) => {
+                const date = new Date(year, month - 1, index + 1);
+                return spendingBucket(isoDay(date), String(index + 1), formatLongDate(date));
+            });
+        } else if (range === 'year') {
+            const year = Number(state.spendingYear);
+            start = new Date(year, 0, 1);
+            end = new Date(year + 1, 0, 1);
+            periodLabel = String(year);
+            rangeTag = String(year);
+            unit = 'month';
+            buckets = Array.from({ length: 12 }, (_, index) => {
+                const date = new Date(year, index, 1);
+                return spendingBucket(
+                    monthKey(date),
+                    date.toLocaleDateString('en-GB', { month: 'short' }),
+                    date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
+            });
+        } else {
+            const years = source.map(entry => entry.date.getFullYear());
+            const firstYear = years.length ? Math.min(...years) : new Date().getFullYear();
+            const lastYear = years.length ? Math.max(...years) : firstYear;
+            start = new Date(firstYear, 0, 1);
+            end = new Date(lastYear + 1, 0, 1);
+            periodLabel = 'All time';
+            rangeTag = firstYear === lastYear ? String(firstYear) : firstYear + '–' + lastYear;
+            unit = 'year';
+            for (let year = firstYear; year <= lastYear; year += 1) {
+                buckets.push(spendingBucket(String(year), String(year), String(year)));
+            }
+        }
+
+        const bucketByKey = new Map(buckets.map(bucket => [bucket.key, bucket]));
+        const rangeSource = source.filter(entry => entry.date >= start && entry.date < end);
+        const categoryTotals = new Map();
+
+        rangeSource.forEach(entry => {
+            const key = range === 'month'
+                ? isoDay(entry.date)
+                : (range === 'year' ? monthKey(entry.date) : String(entry.date.getFullYear()));
+            const bucket = bucketByKey.get(key);
+            if (!bucket) {
+                return;
+            }
+            const categoryId = Number(entry.transaction.categoryId) || 0;
+            bucket.transactions.push(entry);
+            bucket.total += entry.amount;
+            bucket.values.set(categoryId, (bucket.values.get(categoryId) || 0) + entry.amount);
+            bucket.counts.set(categoryId, (bucket.counts.get(categoryId) || 0) + 1);
+            categoryTotals.set(categoryId, (categoryTotals.get(categoryId) || 0) + entry.amount);
+        });
+
+        const categories = Array.from(categoryTotals, entry => ({
+            id: entry[0],
+            category: getCategory(entry[0]),
+            total: entry[1]
+        }))
+            .filter(entry => entry.total > 0)
+            .sort((a, b) => b.total - a.total
+                || a.category.name.localeCompare(b.category.name));
+
+        return {
+            range: range,
+            buckets: buckets,
+            bucketByKey: bucketByKey,
+            categories: categories,
+            rangeSource: rangeSource,
+            total: d3.sum(rangeSource, entry => entry.amount),
+            count: rangeSource.length,
+            start: start,
+            end: end,
+            periodLabel: periodLabel,
+            rangeTag: rangeTag,
+            unit: unit,
+            bounds: bounds
+        };
+    }
+
+    function spendingBucket(key, label, fullLabel) {
+        return {
+            key: key,
+            label: label,
+            fullLabel: fullLabel,
+            transactions: [],
+            values: new Map(),
+            counts: new Map(),
+            total: 0
+        };
+    }
+
+    function renderSpending() {
+        const model = buildSpendingModel();
+        state.spendingData = model;
+        renderSpendingStats(model);
+        renderPeriodControls(model);
+        renderSpendingLegend(model);
+        renderHistogram(model);
+        if (state.spendingSelection) {
+            renderSpendingDetail();
+        }
+    }
+
+    function renderSpendingStats(model) {
+        const average = model.buckets.length ? model.total / model.buckets.length : 0;
+        const top = model.categories[0];
+
+        $('#spending-total').text(money.format(model.total));
+        $('#spending-total-sub').text(model.rangeTag);
+        $('#spending-count').text(model.count);
+        $('#spending-count-sub').text(
+            model.count
+                ? money.format(average) + ' avg / ' + model.unit
+                : 'No spending in this period');
+
+        if (top) {
+            $('#spending-top')
+                .text(top.category.name)
+                .attr('title', top.category.name);
+            $('#spending-top-sub').text(
+                money.format(top.total) + ' · ' + Math.round(top.total / model.total * 100) + '% of spending');
+        } else {
+            $('#spending-top').text('—').removeAttr('title');
+            $('#spending-top-sub').text('No category to rank');
+        }
+    }
+
+    function renderPeriodControls(model) {
+        $('#spending-range .segment-btn').each(function () {
+            const active = this.getAttribute('data-range') === model.range;
+            $(this).toggleClass('is-active', active).attr('aria-pressed', String(active));
+        });
+
+        const hasData = model.bounds.minMonth !== null;
+        const prevDisabled = !hasData || (model.range === 'month'
+            ? state.spendingMonth <= model.bounds.minMonth
+            : state.spendingYear <= model.bounds.minYear);
+        const nextDisabled = !hasData || (model.range === 'month'
+            ? state.spendingMonth >= model.bounds.maxMonth
+            : state.spendingYear >= model.bounds.maxYear);
+
+        $('#period-nav').prop('hidden', model.range === 'all');
+        $('#period-label').text(model.periodLabel);
+        $('#period-prev').prop('disabled', prevDisabled);
+        $('#period-next').prop('disabled', nextDisabled);
+
+        const barText = {
+            month: 'Each bar is a day',
+            year: 'Each bar is a month',
+            all: 'Each bar is a year'
+        };
+        const description = barText[model.range] + ', stacked by category';
+        $('#histogram-sub').text(description + '.');
+        $('#spending-subtitle').text(
+            barText[model.range] + '. Click a colored segment to see the transactions behind it.');
+        $('#histogram-range-tag').text(model.rangeTag);
+    }
+
+    function renderSpendingLegend(model) {
+        const $legend = $('#histogram-legend').empty();
+        if (!model.rangeSource.length || !model.categories.length) {
+            $legend.prop('hidden', true);
+            return;
+        }
+
+        $legend.prop('hidden', false);
+        model.categories.forEach(entry => {
+            $('<div>', {
+                class: 'hist-legend-item',
+                title: entry.category.name + ' · ' + money.format(entry.total)
+            }).append(
+                $('<span>', { class: 'legend-dot' }).css('background-color', safeColor(entry.category.color)),
+                $('<span>', { class: 'hist-legend-name', text: entry.category.name }),
+                $('<span>', { class: 'hist-legend-value', text: money.format(entry.total) })
+            ).appendTo($legend);
+        });
+    }
+
+    function renderHistogram(model) {
+        const svg = d3.select('#spending-histogram');
+        svg.selectAll('*').remove();
+        d3.select('#histogram-tooltip').style('opacity', 0).html('');
+
+        const empty = !model.rangeSource.length;
+        $('#histogram-empty').prop('hidden', !empty);
+        $('#histogram-scroll').prop('hidden', empty);
+
+        if (empty) {
+            const hasSpending = spendingSource().length > 0;
+            $('#histogram-empty-title').text(hasSpending ? 'Nothing spent in this period' : 'No spending yet');
+            $('#histogram-empty-text').text(hasSpending
+                ? 'Try another period or switch how the bars are grouped.'
+                : 'Import an OFX statement to see where your money goes.');
+            $('#histogram-import-btn').prop('hidden', hasSpending);
+            svg.attr('aria-label', 'No spending in this period');
+            return;
+        }
+
+        const scroll = document.getElementById('histogram-scroll');
+        const available = Math.max(scroll.clientWidth - 2, 300);
+        const margin = { top: 14, right: 16, bottom: 38, left: 58 };
+        const minBand = model.range === 'month' ? 20 : (model.range === 'year' ? 32 : 56);
+        const plotWidth = Math.max(
+            available - margin.left - margin.right,
+            model.buckets.length * minBand);
+        const width = Math.round(plotWidth + margin.left + margin.right);
+        const height = 384;
+        const innerHeight = height - margin.top - margin.bottom;
+
+        svg
+            .attr('viewBox', '0 0 ' + width + ' ' + height)
+            .attr('width', width)
+            .attr('height', height)
+            .attr('aria-label', 'Spending histogram for ' + model.periodLabel
+                + ', total ' + money.format(model.total));
+
+        const root = svg.append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        const x = d3.scaleBand()
+            .domain(model.buckets.map(bucket => bucket.key))
+            .range([0, plotWidth])
+            .paddingInner(model.buckets.length === 1 ? 0.55 : 0.26)
+            .paddingOuter(0.08);
+
+        const maxTotal = d3.max(model.buckets, bucket => bucket.total) || 1;
+        const y = d3.scaleLinear()
+            .domain([0, maxTotal])
+            .nice()
+            .range([innerHeight, 0]);
+
+        const yAxis = root.append('g')
+            .attr('class', 'histogram-y-axis')
+            .call(d3.axisLeft(y)
+                .ticks(5)
+                .tickSize(-plotWidth)
+                .tickFormat(value => compactMoney(value)));
+        yAxis.select('.domain').remove();
+        yAxis.selectAll('.tick line')
+            .attr('stroke', '#EFEAE0')
+            .attr('stroke-dasharray', '2 3');
+        yAxis.selectAll('.tick text')
+            .attr('x', -10)
+            .attr('fill', '#5F6D68')
+            .style('font-size', '10.5px');
+
+        const tickKeys = spendingTickKeys(model);
+        const xAxis = root.append('g')
+            .attr('class', 'histogram-x-axis')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(d3.axisBottom(x)
+                .tickValues(tickKeys)
+                .tickFormat(key => model.bucketByKey.get(key).label)
+                .tickSize(0)
+                .tickPadding(10));
+        xAxis.select('.domain').attr('stroke', '#E6E0D3');
+        xAxis.selectAll('.tick text')
+            .attr('fill', '#5F6D68')
+            .style('font-size', '10.5px')
+            .style('font-weight', '600');
+
+        const keys = model.categories.map(entry => 'c' + entry.id);
+        const rows = model.buckets.map(bucket => {
+            const row = { bucket: bucket };
+            model.categories.forEach(entry => {
+                row['c' + entry.id] = bucket.values.get(entry.id) || 0;
+            });
+            return row;
+        });
+
+        const stack = d3.stack().keys(keys)(rows);
+        const layers = root.append('g')
+            .attr('class', 'histogram-bars')
+            .selectAll('g')
+            .data(stack)
+            .join('g')
+            .attr('fill', series => {
+                const entry = model.categories.find(category => 'c' + category.id === series.key);
+                return safeColor(entry.category.color);
+            });
+
+        const segments = layers.selectAll('rect')
+            .data(series => {
+                const entry = model.categories.find(category => 'c' + category.id === series.key);
+                return series.map(segment => ({
+                    bucket: segment.data.bucket,
+                    category: entry.category,
+                    amount: segment[1] - segment[0],
+                    y0: segment[0],
+                    y1: segment[1]
+                })).filter(segment => segment.amount > 0.004);
+            })
+            .join('rect')
+            .attr('class', 'hist-segment')
+            .attr('x', segment => x(segment.bucket.key))
+            .attr('width', Math.max(1, x.bandwidth()))
+            .attr('y', segment => y(segment.y1))
+            .attr('height', segment => Math.max(0.8, y(segment.y0) - y(segment.y1)))
+            .attr('rx', Math.min(2.5, x.bandwidth() / 4))
+            .attr('stroke', '#FFFFFF')
+            .attr('stroke-width', 0.8)
+            .attr('tabindex', 0)
+            .attr('role', 'button')
+            .attr('aria-label', segment => segment.category.name + ', ' + segment.bucket.fullLabel
+                + ', ' + money.format(segment.amount) + '. Show transactions.')
+            .classed('is-selected', segment => isSpendingSelected(segment));
+
+        const tooltip = d3.select('#histogram-tooltip');
+
+        segments
+            .on('mouseenter', function (event, segment) {
+                segments.attr('opacity', other => (other === segment ? 1 : 0.3));
+                d3.select(this).attr('stroke', '#152621').attr('stroke-width', 1.4);
+                const count = segment.bucket.counts.get(segment.category.id) || 0;
+                tooltip
+                    .html('<span class="tt-category">' + esc(segment.category.name) + '</span>'
+                        + '<span class="tt-meta">' + esc(segment.bucket.fullLabel) + '</span>'
+                        + '<span class="tt-value">' + esc(money.format(segment.amount))
+                        + ' · ' + count + (count === 1 ? ' transaction' : ' transactions') + '</span>')
+                    .style('opacity', 1);
+            })
+            .on('mousemove', function (event) {
+                tooltip
+                    .style('left', Math.min(Math.max(event.clientX, 90), window.innerWidth - 90) + 'px')
+                    .style('top', Math.max(event.clientY, 70) + 'px');
+            })
+            .on('mouseleave', function () {
+                segments.attr('opacity', 1);
+                d3.select(this).attr('stroke', '#FFFFFF').attr('stroke-width', 0.8);
+                tooltip.style('opacity', 0);
+            })
+            .on('click', function (event, segment) {
+                selectSpendingSegment(segment.category.id, segment.bucket.key);
+            })
+            .on('keydown', function (event, segment) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    selectSpendingSegment(segment.category.id, segment.bucket.key);
+                }
+            });
+    }
+
+    function spendingTickKeys(model) {
+        const keys = model.buckets.map(bucket => bucket.key);
+        if (model.range === 'month') {
+            const last = model.buckets.length;
+            const days = new Set([1, 5, 10, 15, 20, 25, last]);
+            return keys.filter((key, index) => days.has(index + 1));
+        }
+        if (model.range === 'all' && keys.length > 10) {
+            const step = Math.ceil(keys.length / 8);
+            return keys.filter((key, index) => index % step === 0 || index === keys.length - 1);
+        }
+        return keys;
+    }
+
+    function isSpendingSelected(segment) {
+        const selection = state.spendingSelection;
+        return Boolean(selection
+            && selection.categoryId === segment.category.id
+            && selection.bucketKey === segment.bucket.key);
+    }
+
+    function applySpendingSelection() {
+        d3.selectAll('#spending-histogram .hist-segment')
+            .classed('is-selected', segment => isSpendingSelected(segment));
+    }
+
+    function selectSpendingSegment(categoryId, bucketKey) {
+        state.spendingSelection = {
+            categoryId: Number(categoryId) || 0,
+            bucketKey: String(bucketKey)
+        };
+        applySpendingSelection();
+        renderSpendingDetail();
+    }
+
+    function renderSpendingDetail() {
+        const model = state.spendingData;
+        const selection = state.spendingSelection;
+        if (!model || !selection) {
+            $('#spending-detail').prop('hidden', true);
+            return;
+        }
+
+        const bucket = model.buckets.find(candidate => candidate.key === selection.bucketKey);
+        const items = bucket
+            ? bucket.transactions
+                .filter(entry => (Number(entry.transaction.categoryId) || 0) === selection.categoryId)
+                .sort((a, b) => b.date - a.date
+                    || (Number(b.transaction.id) || 0) - (Number(a.transaction.id) || 0))
+            : [];
+
+        if (!items.length) {
+            closeSpendingDetail();
+            return;
+        }
+
+        const category = getCategory(selection.categoryId);
+        const total = d3.sum(items, entry => entry.amount);
+        const preposition = model.range === 'month' ? 'on' : 'in';
+        const summary = items.length + (items.length === 1 ? ' transaction ' : ' transactions ')
+            + preposition + ' ' + bucket.fullLabel;
+
+        $('#detail-bucket').text('· ' + bucket.fullLabel);
+        $('#detail-title').text(category.name);
+        $('#detail-category-dot').css('background-color', safeColor(category.color));
+        $('#detail-summary').text(summary + '.');
+        $('#detail-total').text(money.format(total));
+
+        $('#detail-body').html(items.map(entry => {
+            const transaction = entry.transaction;
+            const notes = [];
+            if (transaction.description) {
+                notes.push(transaction.description);
+            }
+            if (Number(transaction.billId)) {
+                notes.push('Bill #' + transaction.billId);
+            }
+            const note = notes.length
+                ? '<div class="tx-sub" title="' + esc(notes.join(' · ')) + '">'
+                    + esc(notes.join(' · ')) + '</div>'
+                : '';
+            return '<tr>'
+                + '<td class="date-cell">' + esc(formatDate(transaction.bankDate)) + '</td>'
+                + '<td><div class="tx-title" title="' + esc(transaction.title) + '">'
+                    + esc(transaction.title) + '</div>' + note + '</td>'
+                + '<td class="date-cell detail-real-date">' + esc(formatDate(transaction.realDate)) + '</td>'
+                + '<td class="col-type"><span class="type-tag">'
+                    + esc(transaction.paymentType || '—') + '</span></td>'
+                + '<td class="align-right"><span class="amount negative">'
+                    + esc(money.format(-entry.amount)) + '</span></td>'
+                + '</tr>';
+        }).join(''));
+
+        const wasHidden = $('#spending-detail').prop('hidden');
+        $('#spending-detail').prop('hidden', false);
+        if (wasHidden) {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            $('#spending-detail')[0].scrollIntoView({
+                behavior: reduceMotion ? 'auto' : 'smooth',
+                block: 'start'
+            });
+        }
+        $('#spending-announcer').text(
+            'Showing ' + summary + ' in ' + category.name + ', total ' + money.format(total) + '.');
+    }
+
+    function closeSpendingDetail() {
+        state.spendingSelection = null;
+        $('#spending-detail').prop('hidden', true);
+        $('#detail-body').empty();
+        $('#spending-announcer').text('');
+        applySpendingSelection();
     }
 
     /* ----------------------------------------------------------------------
@@ -621,6 +1229,7 @@
         toast(saved + (saved === 1 ? ' transaction added' : ' transactions added')
             + ' to transactions.csv.', 'success');
         resetImportState();
+        resetSpendingState();
         setSaving(false);
         showView('home');
 
@@ -715,8 +1324,19 @@
        ---------------------------------------------------------------------- */
 
     function showView(name) {
+        const isSpending = name === 'spending';
         $('#home-view').prop('hidden', name !== 'home');
+        $('#spending-view').prop('hidden', !isSpending);
         $('#import-view').prop('hidden', name !== 'import');
+        $('#nav-home').toggleClass('is-active', !isSpending);
+        $('#nav-spending').toggleClass('is-active', isSpending);
+        if (isSpending) {
+            $('#nav-spending').attr('aria-current', 'page');
+            $('#nav-home').removeAttr('aria-current');
+        } else {
+            $('#nav-home').attr('aria-current', 'page');
+            $('#nav-spending').removeAttr('aria-current');
+        }
         window.scrollTo(0, 0);
     }
 
@@ -734,6 +1354,13 @@
         $('#save-all-top').prop('disabled', true);
         $('#save-all').prop('disabled', true);
         $('#import-filename').text('—');
+    }
+
+    function resetSpendingState() {
+        state.spendingMonth = null;
+        state.spendingYear = null;
+        state.spendingData = null;
+        closeSpendingDetail();
     }
 
     function setTodayLabel() {
@@ -796,6 +1423,38 @@
 
     function monthKey(date) {
         return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
+    }
+
+    function parseIsoDate(value) {
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+        if (!match) {
+            return null;
+        }
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        const date = new Date(year, month - 1, day);
+        if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+            return null;
+        }
+        return date;
+    }
+
+    function isoDay(date) {
+        return date.getFullYear() + '-'
+            + String(date.getMonth() + 1).padStart(2, '0') + '-'
+            + String(date.getDate()).padStart(2, '0');
+    }
+
+    function formatLongDate(date) {
+        return longDate.format(date);
+    }
+
+    function compactMoney(value) {
+        if (!Number.isFinite(value) || value === 0) {
+            return '€0';
+        }
+        return '€' + d3.format('.2~s')(value);
     }
 
     function formatDate(isoDate) {

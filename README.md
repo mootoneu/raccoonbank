@@ -15,6 +15,8 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
   (case-insensitive, longest pattern wins) and the matching category is preselected.
 - **Category colors** — the review table shows each category name with its color as the
   background and an automatically chosen readable text color.
+- **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
+  Click any colored segment to list the transactions behind it.
 - **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
 
 ## Requirements
@@ -34,6 +36,21 @@ mvnw.cmd spring-boot:run
 ```
 
 Then open <http://localhost:8080>.
+
+## Spending view
+
+Open **Spending** in the header, or **View all spending** on the dashboard chart. The histogram
+stacks the selected period's expenses by category:
+
+| Filter | Each bar is | Period navigation |
+| --- | --- | --- |
+| **By month** | one day of the selected month | previous / next month |
+| **By year** | one month of the selected year | previous / next year |
+| **All time** | one year | none |
+
+Hover a segment for its amount and transaction count. Click a segment (or focus it and press
+Enter/Space) to open a detail panel listing those transactions with their bank date, real date,
+type, description, bill id and amount.
 
 On first launch the `data/` directory is created next to the working directory and populated
 from `src/main/resources/seed/`:

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
     <title>CochonBank2 — Personal finance</title>
-    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/app.css?v=3">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -29,6 +29,10 @@
             <span class="brand-name">CochonBank<sup>2</sup></span>
         </a>
         <div class="header-actions">
+            <nav class="header-nav" aria-label="Main">
+                <button type="button" class="nav-link is-active nav-home" id="nav-home" aria-current="page">Overview</button>
+                <button type="button" class="nav-link" id="nav-spending">Spending</button>
+            </nav>
             <span class="header-note">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5.2 3.4 9.4 8 11 4.6-1.6 8-5.8 8-11V5l-8-3Zm-1 14-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6Z" fill="currentColor"/></svg>
                 Stored on this computer
@@ -124,7 +128,10 @@
                         <h2 id="chart-title">Spending by category</h2>
                         <p class="card-sub">All saved expenses, grouped by category.</p>
                     </div>
-                    <span class="card-tag">All time</span>
+                    <button type="button" class="card-link" id="chart-view-all">
+                        View all spending
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
                 </div>
                 <div class="chart-body">
                     <div class="chart-visual">
@@ -177,6 +184,126 @@
             <span>CochonBank2</span>
             <span class="footer-dot">·</span>
             <span>Your ledger stays a plain text file.</span>
+        </footer>
+    </section>
+
+    <!-- ============================ SPENDING =========================== -->
+    <section id="spending-view" class="view" hidden>
+        <div class="view-head spending-head">
+            <div class="view-heading">
+                <button type="button" class="link-btn" id="spending-back-home">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Back to home
+                </button>
+                <h1>Spending, by category.</h1>
+                <p id="spending-subtitle">Each bar is a day. Click a colored segment to see the transactions behind it.</p>
+            </div>
+            <div class="view-actions">
+                <button type="button" class="btn btn-ghost" id="spending-import-btn">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4L8 7M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Import OFX
+                </button>
+            </div>
+        </div>
+
+        <div class="spending-controls">
+            <div class="segmented" id="spending-range" role="group" aria-label="Group spending bars by">
+                <button type="button" class="segment-btn is-active" data-range="month" aria-pressed="true">By month</button>
+                <button type="button" class="segment-btn" data-range="year" aria-pressed="false">By year</button>
+                <button type="button" class="segment-btn" data-range="all" aria-pressed="false">All time</button>
+            </div>
+            <div class="period-nav" id="period-nav">
+                <button type="button" class="period-btn" id="period-prev" aria-label="Previous period">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <span class="period-label" id="period-label">—</span>
+                <button type="button" class="period-btn" id="period-next" aria-label="Next period">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="period-stats" aria-label="Spending summary for the selected period">
+            <article class="period-stat">
+                <p class="period-stat-label">Total spent</p>
+                <p class="period-stat-value" id="spending-total">—</p>
+                <p class="period-stat-sub" id="spending-total-sub">—</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">Transactions</p>
+                <p class="period-stat-value" id="spending-count">—</p>
+                <p class="period-stat-sub" id="spending-count-sub">—</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">Top category</p>
+                <p class="period-stat-value period-stat-name" id="spending-top">—</p>
+                <p class="period-stat-sub" id="spending-top-sub">—</p>
+            </article>
+        </div>
+
+        <section class="card histogram-card" aria-labelledby="histogram-title">
+            <div class="card-head">
+                <div>
+                    <h2 id="histogram-title">Spending histogram</h2>
+                    <p class="card-sub" id="histogram-sub">Daily spending, stacked by category.</p>
+                </div>
+                <span class="card-tag" id="histogram-range-tag">—</span>
+            </div>
+
+            <div class="histogram-scroll" id="histogram-scroll">
+                <div class="histogram-visual" id="histogram-visual">
+                    <svg id="spending-histogram" role="group" aria-label="Spending histogram, stacked by category"></svg>
+                    <div class="chart-tooltip histogram-tooltip" id="histogram-tooltip" role="presentation"></div>
+                </div>
+            </div>
+
+            <div class="histogram-empty" id="histogram-empty" hidden>
+                <span class="histogram-empty-icon" aria-hidden="true">🐷</span>
+                <h3 id="histogram-empty-title">No spending yet</h3>
+                <p id="histogram-empty-text">Import an OFX statement to see where your money goes.</p>
+                <button type="button" class="btn btn-primary btn-sm" id="histogram-import-btn">Import an OFX file</button>
+            </div>
+
+            <div class="histogram-legend" id="histogram-legend" aria-label="Category totals for this period"></div>
+        </section>
+
+        <section id="spending-detail" class="card spending-detail" hidden aria-labelledby="detail-title" role="region">
+            <div class="detail-head">
+                <div class="detail-heading">
+                    <p class="detail-eyebrow">Category detail <span id="detail-bucket"></span></p>
+                    <div class="detail-title-row">
+                        <span class="detail-dot" id="detail-category-dot" aria-hidden="true"></span>
+                        <h2 id="detail-title">—</h2>
+                    </div>
+                    <p class="detail-summary" id="detail-summary"></p>
+                </div>
+                <div class="detail-side">
+                    <span class="detail-total" id="detail-total">—</span>
+                    <button type="button" class="icon-btn" id="detail-close" aria-label="Close transaction details">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="table-scroll detail-table-wrap">
+                <table class="recent-table detail-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Bank date</th>
+                        <th scope="col">Transaction</th>
+                        <th scope="col" class="detail-real-date">Real date</th>
+                        <th scope="col" class="col-type">Type</th>
+                        <th scope="col" class="align-right">Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody id="detail-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="visually-hidden" id="spending-announcer" aria-live="polite"></p>
+
+        <footer class="page-footer">
+            <span>Spending is calculated from the negative amounts in <code>transactions.csv</code>.</span>
         </footer>
     </section>
 
@@ -295,6 +422,6 @@
 
 <script src="/vendor/jquery-3.7.1.min.js"></script>
 <script src="/vendor/d3-7.9.0.min.js"></script>
-<script src="/js/app.js"></script>
+<script src="/js/app.js?v=3"></script>
 </body>
 </html>

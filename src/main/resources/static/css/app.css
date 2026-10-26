@@ -209,6 +209,39 @@ code {
     color: var(--green);
 }
 
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid rgba(230, 224, 211, 0.85);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.nav-link {
+    padding: 8px 11px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 650;
+    line-height: 1;
+    transition: color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.nav-link:hover {
+    color: var(--brand);
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.nav-link.is-active {
+    background: var(--surface);
+    color: var(--brand);
+    box-shadow: var(--shadow-sm);
+}
+
 /* ==========================================================================
    Buttons
    ========================================================================== */
@@ -622,6 +655,33 @@ code {
     white-space: nowrap;
 }
 
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--brand);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.card-link svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.16s ease;
+}
+
+.card-link:hover {
+    color: var(--brand-dark);
+}
+
+.card-link:hover svg {
+    transform: translateX(2px);
+}
+
 .pill {
     min-width: 31px;
     padding: 4px 10px;
@@ -972,6 +1032,393 @@ code {
 
 .footer-dot {
     color: var(--line);
+}
+
+/* ==========================================================================
+   Spending view
+   ========================================================================== */
+
+#spending-view {
+    padding-top: 34px;
+}
+
+.spending-head {
+    padding-bottom: 20px;
+}
+
+.spending-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border: 1px solid rgba(230, 224, 211, 0.9);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: var(--shadow-sm);
+}
+
+.segmented {
+    display: inline-flex;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 11px;
+    background: #EEE9DE;
+}
+
+.segment-btn {
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #55635E;
+    font-size: 12.5px;
+    font-weight: 650;
+    line-height: 1;
+    white-space: nowrap;
+    transition: color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.segment-btn:hover {
+    color: var(--brand);
+}
+
+.segment-btn.is-active {
+    background: var(--surface);
+    color: var(--brand);
+    box-shadow: 0 2px 8px rgba(21, 38, 33, 0.08);
+}
+
+.period-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.period-btn {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.16s ease, background 0.16s ease, opacity 0.16s ease;
+}
+
+.period-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.period-btn:hover:not(:disabled) {
+    border-color: #D6CEBD;
+    background: var(--surface-soft);
+}
+
+.period-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.period-label {
+    min-width: 154px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.period-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.period-stat {
+    min-width: 0;
+    padding: 16px 18px 15px;
+    border: 1px solid rgba(230, 224, 211, 0.9);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: var(--shadow-sm);
+}
+
+.period-stat-label {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.period-stat-value {
+    margin-top: 5px;
+    overflow: hidden;
+    color: var(--ink);
+    font-size: clamp(1.3rem, 2vw, 1.65rem);
+    font-weight: 740;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.period-stat-name {
+    font-size: clamp(1.08rem, 1.7vw, 1.38rem);
+}
+
+.period-stat-sub {
+    margin-top: 4px;
+    overflow: hidden;
+    color: var(--muted-light);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.histogram-card {
+    padding: 24px 24px 18px;
+}
+
+.histogram-scroll {
+    padding-bottom: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.histogram-visual {
+    position: relative;
+    width: max-content;
+    min-width: 100%;
+}
+
+#spending-histogram {
+    display: block;
+    max-width: none;
+    overflow: visible;
+}
+
+.hist-segment {
+    cursor: pointer;
+    transition: opacity 0.12s ease, stroke 0.12s ease, filter 0.12s ease;
+}
+
+.hist-segment:hover {
+    filter: brightness(1.03);
+}
+
+.hist-segment.is-selected {
+    stroke: var(--ink);
+    stroke-width: 2.2;
+}
+
+.hist-segment:focus-visible {
+    outline: none;
+    stroke: var(--accent);
+    stroke-width: 2.5;
+}
+
+.histogram-tooltip {
+    position: fixed;
+    z-index: 60;
+    min-width: 148px;
+    padding: 9px 11px;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    transform: translate(-50%, calc(-100% - 14px));
+}
+
+.histogram-tooltip .tt-category {
+    display: block;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.histogram-tooltip .tt-meta {
+    display: block;
+    color: #C8D2CE;
+    font-size: 10.5px;
+    font-weight: 500;
+}
+
+.histogram-tooltip .tt-value {
+    display: block;
+    margin-top: 2px;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+}
+
+.histogram-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-soft);
+}
+
+.hist-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    font-size: 11.5px;
+}
+
+.hist-legend-name {
+    max-width: 150px;
+    overflow: hidden;
+    color: var(--ink);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hist-legend-value {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.histogram-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 46px 24px 52px;
+    border: 1.5px dashed var(--line);
+    border-radius: 18px;
+    text-align: center;
+}
+
+.histogram-empty-icon {
+    margin-bottom: 6px;
+    font-size: 34px;
+    line-height: 1;
+    filter: grayscale(0.2);
+}
+
+.histogram-empty h3 {
+    font-size: 17px;
+    letter-spacing: -0.02em;
+}
+
+.histogram-empty p {
+    max-width: 360px;
+    margin: 6px 0 16px;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+.spending-detail {
+    margin-top: 18px;
+    padding: 22px 24px 18px;
+    scroll-margin-top: 100px;
+    animation: view-in 0.28s ease both;
+}
+
+.detail-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 14px;
+}
+
+.detail-eyebrow {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.detail-title-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 5px;
+}
+
+.detail-title-row h2 {
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+}
+
+.detail-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.detail-summary {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.detail-side {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.detail-total {
+    color: var(--accent-ink);
+    font-size: 20px;
+    font-weight: 740;
+    letter-spacing: -0.03em;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.icon-btn {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--muted);
+    transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.icon-btn:hover {
+    border-color: #D6CEBD;
+    background: var(--surface-soft);
+    color: var(--ink);
+}
+
+.icon-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.detail-table-wrap {
+    max-height: 320px;
+}
+
+.detail-table td {
+    font-size: 12.5px;
+}
+
+.detail-table .tx-title,
+.detail-table .tx-sub {
+    max-width: 340px;
 }
 
 /* ==========================================================================
@@ -1470,6 +1917,10 @@ code {
         display: none;
     }
 
+    .header-actions {
+        gap: 10px;
+    }
+
     .brand-mark {
         width: 38px;
         height: 38px;
@@ -1509,6 +1960,52 @@ code {
     .chart-card,
     .recent-card {
         padding: 19px 17px 16px;
+    }
+
+    .spending-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .period-nav {
+        gap: 6px;
+    }
+
+    .period-label {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .period-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .period-stat {
+        padding: 14px 16px;
+    }
+
+    .histogram-card {
+        padding: 19px 17px 16px;
+    }
+
+    .spending-detail {
+        padding: 18px 17px 14px;
+    }
+
+    .detail-head {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .detail-side {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .detail-real-date {
+        display: none;
     }
 
     .view-head {
@@ -1564,6 +2061,28 @@ code {
 @media (max-width: 560px) {
     .header-actions .btn span {
         display: none;
+    }
+
+    .header-nav .nav-home {
+        display: none;
+    }
+
+    .nav-link {
+        padding: 7px 9px;
+        font-size: 12px;
+    }
+
+    .spending-controls {
+        padding: 8px;
+    }
+
+    .segmented {
+        width: 100%;
+    }
+
+    .segment-btn {
+        flex: 1;
+        padding: 8px 6px;
     }
 
     .hero h1 {
