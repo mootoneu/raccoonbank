@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -102,6 +103,39 @@ public class TransactionService {
 
         transactionRepository.appendAll(transactions);
         return transactions.size();
+    }
+
+    /**
+     * Changes the category and description of a saved transaction. Every other
+     * field is kept as stored.
+     */
+    public synchronized Transaction updateTransaction(long id, long categoryId, String description) {
+        if (categoryId < 0) {
+            throw new IllegalArgumentException("Category is invalid.");
+        }
+        if (categoryId != 0 && categoryRepository.findAll().stream()
+                .noneMatch(category -> category.id() == categoryId)) {
+            throw new IllegalArgumentException("Unknown category (id " + categoryId + ").");
+        }
+        Transaction existing = transactionRepository.findAll().stream()
+                .filter(transaction -> transaction.id() == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown transaction (id " + id + ")."));
+
+        String text = trimToEmpty(description);
+        transactionRepository.updateRow("Id", id, Map.of(
+                "Category_Id", Long.toString(categoryId),
+                "Description", text));
+        return new Transaction(
+                existing.id(),
+                categoryId,
+                existing.paymentType(),
+                existing.amount(),
+                existing.bankDate(),
+                existing.realDate(),
+                existing.title(),
+                text,
+                existing.billId());
     }
 
     private static String trimToEmpty(String value) {

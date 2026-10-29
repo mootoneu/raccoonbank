@@ -15,7 +15,9 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -133,6 +135,52 @@ public abstract class AbstractCsvRepository<T> {
             }
             writeRows(updated);
             return changed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Sets the named columns of the first row whose numeric key column holds
+     * {@code key}. Other rows are written back exactly as stored.
+     *
+     * @return {@code true} when a matching row was found
+     */
+    public boolean updateRow(String keyColumn, long key, Map<String, String> values) {
+        int keyIndex = columnIndex(keyColumn);
+        Map<Integer, String> changes = new LinkedHashMap<>();
+        values.forEach((column, value) -> changes.put(columnIndex(column), value));
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return false;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> updated = new ArrayList<>(rows.size());
+            updated.add(rows.get(0));
+            boolean found = false;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (!found && !isBlank(row) && holdsLong(row, keyIndex, key)) {
+                    List<String> copy = new ArrayList<>(pad(row));
+                    for (Map.Entry<Integer, String> change : changes.entrySet()) {
+                        copy.set(change.getKey(), change.getValue());
+                    }
+                    updated.add(copy);
+                    found = true;
+                } else {
+                    updated.add(row);
+                }
+            }
+            if (!found) {
+                return false;
+            }
+            writeRows(updated);
+            return true;
         } catch (IOException ex) {
             throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
         } finally {

@@ -50,6 +50,8 @@
         spendingSelection: null,
         spendingCategories: new Set(),
         spendingGrouped: false,
+        chartGrouped: false,
+        editingTransactionId: null,
         spendingData: null,
         spendingResizeTimer: null
     };
@@ -134,6 +136,11 @@
 
         $('#spending-filter-clear, #histogram-clear-filter').on('click', resetSpendingFilter);
 
+        $('#chart-group-mode').on('change', function () {
+            state.chartGrouped = this.checked;
+            renderChart();
+        });
+
         $('#spending-group-mode').on('change', function () {
             state.spendingGrouped = this.checked;
             state.spendingCategories.clear();
@@ -147,6 +154,20 @@
         });
 
         $('#detail-close').on('click', closeSpendingDetail);
+
+        $('#detail-body')
+            .on('click', '.detail-edit-btn', function () {
+                state.editingTransactionId = Number(this.getAttribute('data-id'));
+                renderSpendingDetail();
+            })
+            .on('click', '.detail-edit-cancel', function () {
+                state.editingTransactionId = null;
+                renderSpendingDetail();
+            })
+            .on('submit', '.detail-edit-form', function (event) {
+                event.preventDefault();
+                saveTransactionEdit(this);
+            });
 
         $(document).on('keydown', function (event) {
             if (event.key !== 'Escape') {
@@ -423,18 +444,23 @@
        ---------------------------------------------------------------------- */
 
     function renderChart() {
+        const grouped = state.chartGrouped;
         const expenses = state.transactions.filter(transaction => toNumber(transaction.amount) < 0);
         const totals = d3.rollup(
             expenses,
             values => d3.sum(values, transaction => Math.abs(toNumber(transaction.amount))),
-            transaction => Number(transaction.categoryId) || 0);
+            transaction => grouped ? spendingGroupId(transaction) : (Number(transaction.categoryId) || 0));
 
         const data = Array.from(totals, entry => ({
-            category: getCategory(entry[0]),
+            category: grouped ? spendingGroupCategory(entry[0]) : getCategory(entry[0]),
             value: entry[1]
         }))
             .filter(entry => entry.value > 0)
             .sort((a, b) => b.value - a.value);
+
+        $('#chart-sub').text(grouped
+            ? 'All saved expenses, grouped by category group.'
+            : 'All saved expenses, grouped by category.');
 
         const svg = d3.select('#spending-chart');
         svg.selectAll('*').remove();
@@ -1582,6 +1608,7 @@
     }
 
     function selectSpendingSegment(key, bucketKey) {
+        state.editingTransactionId = null;
         state.spendingSelection = {
             key: Number(key) || 0,
             bucketKey: String(bucketKey)
@@ -1625,6 +1652,9 @@
 
         $('#detail-body').html(items.map(entry => {
             const transaction = entry.transaction;
+            if (Number(transaction.id) === state.editingTransactionId) {
+                return renderDetailEditRow(transaction);
+            }
             const notes = [];
             if (transaction.description) {
                 notes.push(transaction.description);
@@ -1646,6 +1676,12 @@
                     + esc(transaction.paymentType || '—') + '</span></td>'
                 + '<td class="align-right"><span class="amount negative">'
                     + esc(money.format(-entry.amount)) + '</span></td>'
+                + '<td class="col-action"><button type="button" class="icon-btn detail-edit-btn"'
+                    + ' data-id="' + Number(transaction.id) + '"'
+                    + ' aria-label="Edit transaction ' + esc(transaction.title) + '" title="Edit transaction">'
+                    + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"'
+                    + ' fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"'
+                    + ' stroke-linecap="round"/></svg></button></td>'
                 + '</tr>';
         }).join(''));
 
@@ -1662,8 +1698,56 @@
             'Showing ' + summary + ' in ' + category.name + ', total ' + money.format(total) + '.');
     }
 
+    function renderDetailEditRow(transaction) {
+        const id = Number(transaction.id);
+        return '<tr class="detail-edit-row"><td colspan="6">'
+            + '<form class="detail-edit-form" data-id="' + id + '">'
+            + '<div class="detail-edit-title">' + esc(transaction.title)
+                + ' <span class="tx-sub">' + esc(formatDate(transaction.bankDate)) + '</span></div>'
+            + '<div class="detail-edit-fields">'
+            + '<label class="field"><span class="field-label">Category</span>'
+                + '<select name="categoryId" class="text-input">' + categoryOptions(transaction.categoryId)
+                + '</select></label>'
+            + '<label class="field"><span class="field-label">Description</span>'
+                + '<input type="text" name="description" class="text-input" maxlength="200" value="'
+                + esc(transaction.description || '') + '"></label>'
+            + '</div>'
+            + '<div class="detail-edit-actions">'
+                + '<button type="button" class="btn btn-ghost btn-sm detail-edit-cancel">Cancel</button>'
+                + '<button type="submit" class="btn btn-primary btn-sm">Save</button>'
+            + '</div>'
+            + '</form></td></tr>';
+    }
+
+    async function saveTransactionEdit(form) {
+        const $form = $(form);
+        const id = Number($form.attr('data-id'));
+        const categoryId = Number($form.find('select[name="categoryId"]').val()) || 0;
+        const description = String($form.find('input[name="description"]').val() || '').trim();
+
+        $form.find('button').prop('disabled', true);
+        try {
+            await $.ajax({
+                url: '/api/transactions/' + encodeURIComponent(id),
+                method: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ categoryId: categoryId, description: description })
+            });
+            state.editingTransactionId = null;
+            toast('Transaction updated.', 'success');
+            await refreshTransactions();
+            renderHome();
+            renderSpending();
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+            $form.find('button').prop('disabled', false);
+        }
+    }
+
     function closeSpendingDetail() {
         state.spendingSelection = null;
+        state.editingTransactionId = null;
         $('#spending-detail').prop('hidden', true);
         $('#detail-body').empty();
         $('#spending-announcer').text('');

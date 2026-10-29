@@ -1822,6 +1822,35 @@ code {
     max-width: 340px;
 }
 
+.detail-table .col-action {
+    width: 44px;
+    text-align: center;
+}
+
+.detail-edit-row > td {
+    padding: 16px 14px;
+    background: var(--surface-soft);
+}
+
+.detail-edit-title {
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.detail-edit-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.detail-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 /* ==========================================================================
    Import view
    ========================================================================== */
@@ -2358,6 +2387,14 @@ code {
 
 .admin-card-wide {
     grid-column: 1 / -1;
+}
+
+.chart-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
 .btn-danger {
