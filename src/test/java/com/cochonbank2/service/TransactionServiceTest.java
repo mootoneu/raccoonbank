@@ -35,8 +35,8 @@ class TransactionServiceTest {
         CochonbankProperties properties = new CochonbankProperties(tempDir.toString());
         CategoryRepository categoryRepository = new CategoryRepository(properties);
         categoryRepository.appendAll(List.of(
-                new Category(1, "Groceries", "#2E7D32"),
-                new Category(2, "Income", "#1B5E20")));
+                new Category(10, 0, 10, "Groceries", "Groceries", "#2E7D32"),
+                new Category(20, 0, 20, "Income", "Income", "#1B5E20")));
         transactionRepository = new TransactionRepository(properties);
         service = new TransactionService(transactionRepository, categoryRepository);
     }
@@ -44,7 +44,7 @@ class TransactionServiceTest {
     @Test
     void appendsDraftsWithSequentialIdsAndKeepsCsvFormat() throws Exception {
         int saved = service.saveAll(List.of(
-                draft(1L, "DEBIT", "-12.30", LocalDate.of(2026, 10, 1),
+                draft(10L, "DEBIT", "-12.30", LocalDate.of(2026, 10, 1),
                         LocalDate.of(2026, 9, 30), "LIDL", "weekly shop", "42"),
                 draft(null, "CREDIT", "1000.00", LocalDate.of(2026, 9, 30),
                         null, "SALARY", null, null)));
@@ -66,11 +66,11 @@ class TransactionServiceTest {
         assertEquals(3, lines.size());
         assertEquals("Id,Category_Id,PaymentType,Amount,BankDate,RealDate,Title,Description,Bill_Id",
                 lines.get(0));
-        assertEquals("1,1,DEBIT,-12.30,2026-10-01,2026-09-30,LIDL,weekly shop,42", lines.get(1));
+        assertEquals("1,10,DEBIT,-12.30,2026-10-01,2026-09-30,LIDL,weekly shop,42", lines.get(1));
         assertEquals("2,0,CREDIT,1000.00,2026-09-30,2026-09-30,SALARY,,", lines.get(2));
 
         service.saveAll(List.of(
-                draft(1L, "DEBIT", "-1.00", LocalDate.of(2026, 10, 2),
+                draft(10L, "DEBIT", "-1.00", LocalDate.of(2026, 10, 2),
                         null, "ALDI", "", "INV-2026-01")));
 
         List<Transaction> afterSecondSave = service.findAll();
@@ -79,7 +79,7 @@ class TransactionServiceTest {
         assertEquals("INV-2026-01", afterSecondSave.get(0).billId());
         assertEquals(LocalDate.of(2026, 10, 2), afterSecondSave.get(0).realDate());
         assertTrue(Files.readAllLines(csv).get(3)
-                .startsWith("3,1,DEBIT,-1.00,2026-10-02,2026-10-02,ALDI,,INV-2026-01"));
+                .startsWith("3,10,DEBIT,-1.00,2026-10-02,2026-10-02,ALDI,,INV-2026-01"));
     }
 
     @Test
@@ -114,11 +114,11 @@ class TransactionServiceTest {
     @Test
     void trimsTextAndKeepsBillIdAsAString() {
         service.saveAll(List.of(
-                new TransactionDraft(1L, "  DEBIT ", new BigDecimal("1.5"), LocalDate.of(2026, 10, 1),
+                new TransactionDraft(10L, "  DEBIT ", new BigDecimal("1.5"), LocalDate.of(2026, 10, 1),
                         null, "  MY TITLE  ", "  a note  ", "  INV-9  "),
-                new TransactionDraft(1L, "DEBIT", new BigDecimal("-2"), LocalDate.of(2026, 10, 2),
+                new TransactionDraft(10L, "DEBIT", new BigDecimal("-2"), LocalDate.of(2026, 10, 2),
                         LocalDate.of(2026, 10, 1), "OTHER", "", "   "),
-                new TransactionDraft(1L, "DEBIT", new BigDecimal("-3"), LocalDate.of(2026, 10, 3),
+                new TransactionDraft(10L, "DEBIT", new BigDecimal("-3"), LocalDate.of(2026, 10, 3),
                         null, "NO BILL", null, null)));
 
         List<Transaction> transactions = service.findAll();

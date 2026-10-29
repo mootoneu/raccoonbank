@@ -236,6 +236,11 @@
                 <button type="button" class="segment-btn" data-range="all" aria-pressed="false">All time</button>
             </div>
             <div class="spending-tools">
+                <label class="group-toggle" for="spending-group-mode"
+                    title="Aggregate spending by category group instead of individual category">
+                    <input type="checkbox" id="spending-group-mode">
+                    <span>By category group</span>
+                </label>
                 <div class="filter-menu" id="spending-filter">
                     <button type="button" class="filter-trigger" id="spending-filter-btn"
                         aria-expanded="false" aria-controls="spending-filter-panel" aria-haspopup="true">
@@ -245,7 +250,7 @@
                     </button>
                     <div class="filter-panel" id="spending-filter-panel" hidden>
                         <div class="filter-panel-head">
-                            <span>Filter by category</span>
+                            <span id="spending-filter-title">Filter by category</span>
                             <button type="button" class="filter-reset" id="spending-filter-clear">Reset</button>
                         </div>
                         <div class="filter-options" id="spending-filter-options" role="group"
@@ -276,7 +281,7 @@
                 <p class="period-stat-sub" id="spending-count-sub">—</p>
             </article>
             <article class="period-stat">
-                <p class="period-stat-label">Top category</p>
+                <p class="period-stat-label" id="spending-top-label">Top category</p>
                 <p class="period-stat-value period-stat-name" id="spending-top">—</p>
                 <p class="period-stat-sub" id="spending-top-sub">—</p>
             </article>

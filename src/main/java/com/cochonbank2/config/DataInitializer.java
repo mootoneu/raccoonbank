@@ -30,16 +30,19 @@ public class DataInitializer implements ApplicationRunner {
     private final DataBackupService backupService;
     private final LegacyTransactionsMigrator legacyMigrator;
     private final LegacyDefaultCategoriesMigrator legacyDefaultCategoriesMigrator;
+    private final LegacyCategoryGroupsMigrator legacyCategoryGroupsMigrator;
 
     public DataInitializer(
             CochonbankProperties properties,
             DataBackupService backupService,
             LegacyTransactionsMigrator legacyMigrator,
-            LegacyDefaultCategoriesMigrator legacyDefaultCategoriesMigrator) {
+            LegacyDefaultCategoriesMigrator legacyDefaultCategoriesMigrator,
+            LegacyCategoryGroupsMigrator legacyCategoryGroupsMigrator) {
         this.properties = properties;
         this.backupService = backupService;
         this.legacyMigrator = legacyMigrator;
         this.legacyDefaultCategoriesMigrator = legacyDefaultCategoriesMigrator;
+        this.legacyCategoryGroupsMigrator = legacyCategoryGroupsMigrator;
     }
 
     @Override
@@ -49,6 +52,7 @@ public class DataInitializer implements ApplicationRunner {
         backupService.backupOnStartup();
         legacyMigrator.migrate(directory);
         legacyDefaultCategoriesMigrator.migrate(directory);
+        legacyCategoryGroupsMigrator.migrate(directory);
 
         for (String fileName : FILES) {
             Path target = directory.resolve(fileName);

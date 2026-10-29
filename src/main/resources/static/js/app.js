@@ -47,6 +47,7 @@
         spendingYear: null,
         spendingSelection: null,
         spendingCategories: new Set(),
+        spendingGrouped: false,
         spendingData: null,
         spendingResizeTimer: null
     };
@@ -115,6 +116,14 @@
         });
 
         $('#spending-filter-clear, #histogram-clear-filter').on('click', resetSpendingFilter);
+
+        $('#spending-group-mode').on('change', function () {
+            state.spendingGrouped = this.checked;
+            state.spendingCategories.clear();
+            closeSpendingFilter();
+            closeSpendingDetail();
+            renderSpending();
+        });
 
         $(document).on('click', function () {
             closeSpendingFilter();
@@ -776,55 +785,110 @@
     }
 
     /* ----------------------------------------------------------------------
+       Spending grouping (category or category group)
+       ---------------------------------------------------------------------- */
+
+    function spendingGroupId(transaction) {
+        const categoryId = Number(transaction.categoryId) || 0;
+        if (categoryId === 0) {
+            return 0;
+        }
+        const category = state.categoryById.get(categoryId);
+        return category ? (Number(category.groupId) || 0) : 0;
+    }
+
+    function spendingEntryKey(transaction) {
+        return state.spendingGrouped
+            ? spendingGroupId(transaction)
+            : (Number(transaction.categoryId) || 0);
+    }
+
+    function spendingGroupCategory(groupId) {
+        const id = Number(groupId) || 0;
+        if (id === 0) {
+            return CATEGORY_NONE;
+        }
+        const members = state.categories.filter(category => Number(category.groupId) === id);
+        if (!members.length) {
+            return { id: id, name: 'Group #' + id, color: FALLBACK_COLOR };
+        }
+        const root = members.find(category => Number(category.subId) === 0);
+        if (root) {
+            return root;
+        }
+        return {
+            id: id,
+            name: members[0].groupName || members[0].name,
+            color: members[0].color
+        };
+    }
+
+    function spendingDisplayCategory(key) {
+        return state.spendingGrouped ? spendingGroupCategory(key) : getCategory(key);
+    }
+
+    function spendingBucketLabel() {
+        return state.spendingGrouped ? 'group' : 'category';
+    }
+
+    /* ----------------------------------------------------------------------
        Spending category filter
        ---------------------------------------------------------------------- */
 
-    function categoryInSpendingFilter(categoryId) {
+    function categoryInSpendingFilter(transaction) {
         return state.spendingCategories.size === 0
-            || state.spendingCategories.has(Number(categoryId) || 0);
+            || state.spendingCategories.has(spendingEntryKey(transaction));
     }
 
     function spendingFilterOptions() {
-        const ids = new Set();
+        const keys = new Set();
         spendingSource().forEach(entry => {
-            ids.add(Number(entry.transaction.categoryId) || 0);
+            keys.add(spendingEntryKey(entry.transaction));
         });
-        return Array.from(ids)
-            .map(id => getCategory(id))
-            .sort((a, b) => Number(a.id) - Number(b.id));
+        return Array.from(keys)
+            .map(key => ({ key: key, category: spendingDisplayCategory(key) }))
+            .sort((a, b) => a.key - b.key);
     }
 
     function spendingFilterLabel(options) {
         const selected = state.spendingCategories.size;
+        const noun = state.spendingGrouped ? 'group' : 'category';
         if (selected === 0) {
-            return 'All categories';
+            return state.spendingGrouped ? 'All groups' : 'All categories';
         }
         if (selected === 1) {
-            const only = options.find(category =>
-                state.spendingCategories.has(Number(category.id)));
-            return only ? only.name : '1 category';
+            const only = options.find(option =>
+                state.spendingCategories.has(Number(option.key)));
+            return only ? only.category.name : '1 ' + noun;
         }
-        return selected + ' categories';
+        return selected + ' ' + noun + 's';
     }
 
     function renderSpendingFilter() {
         const options = spendingFilterOptions();
-        const available = new Set(options.map(category => Number(category.id)));
+        const available = new Set(options.map(option => Number(option.key)));
         Array.from(state.spendingCategories).forEach(id => {
             if (!available.has(id)) {
                 state.spendingCategories.delete(id);
             }
         });
 
+        const noun = state.spendingGrouped ? 'group' : 'category';
+        $('#spending-filter-title').text('Filter by ' + noun);
+        $('#spending-filter-options').attr('aria-label', 'Filter spending by ' + noun);
+        $('#histogram-legend').attr('aria-label',
+            (state.spendingGrouped ? 'Group' : 'Category') + ' totals for this period');
+
         const $options = $('#spending-filter-options').empty();
         if (!options.length) {
             $('<p>', {
                 class: 'filter-empty',
-                text: 'No categories with spending yet.'
+                text: 'No ' + noun + 's with spending yet.'
             }).appendTo($options);
         } else {
-            options.forEach(category => {
-                const id = Number(category.id);
+            options.forEach(option => {
+                const id = Number(option.key);
+                const category = option.category;
                 const active = state.spendingCategories.has(id);
                 const palette = categoryPalette(category.color);
                 $('<button>', {
@@ -847,9 +911,11 @@
             .toggleClass('is-filtering', filtering)
             .attr('title', filtering
                 ? 'Showing ' + spendingFilterLabel(options).toLowerCase()
-                : 'All categories');
+                : (state.spendingGrouped ? 'All groups' : 'All categories'));
         $('#spending-filter-clear').prop('disabled', !filtering);
-        $('#histogram-clear-filter').prop('hidden', !filtering);
+        $('#histogram-clear-filter')
+            .prop('hidden', !filtering)
+            .text('Reset ' + noun + ' filter');
     }
 
     function isSpendingFilterOpen() {
@@ -984,7 +1050,7 @@
         const rangeSource = source.filter(entry =>
             entry.date >= start
             && entry.date < end
-            && categoryInSpendingFilter(entry.transaction.categoryId));
+            && categoryInSpendingFilter(entry.transaction));
         const categoryTotals = new Map();
 
         rangeSource.forEach(entry => {
@@ -995,17 +1061,17 @@
             if (!bucket) {
                 return;
             }
-            const categoryId = Number(entry.transaction.categoryId) || 0;
+            const categoryKey = spendingEntryKey(entry.transaction);
             bucket.transactions.push(entry);
             bucket.total += entry.amount;
-            bucket.values.set(categoryId, (bucket.values.get(categoryId) || 0) + entry.amount);
-            bucket.counts.set(categoryId, (bucket.counts.get(categoryId) || 0) + 1);
-            categoryTotals.set(categoryId, (categoryTotals.get(categoryId) || 0) + entry.amount);
+            bucket.values.set(categoryKey, (bucket.values.get(categoryKey) || 0) + entry.amount);
+            bucket.counts.set(categoryKey, (bucket.counts.get(categoryKey) || 0) + 1);
+            categoryTotals.set(categoryKey, (categoryTotals.get(categoryKey) || 0) + entry.amount);
         });
 
         const categories = Array.from(categoryTotals, entry => ({
             id: entry[0],
-            category: getCategory(entry[0]),
+            category: spendingDisplayCategory(entry[0]),
             total: entry[1]
         }))
             .filter(entry => entry.total > 0)
@@ -1075,8 +1141,10 @@
                 money.format(top.total) + ' · ' + Math.round(top.total / model.total * 100) + '% of spending');
         } else {
             $('#spending-top').text('—').removeAttr('title');
-            $('#spending-top-sub').text('No category to rank');
+            $('#spending-top-sub').text(
+                state.spendingGrouped ? 'No group to rank' : 'No category to rank');
         }
+        $('#spending-top-label').text(state.spendingGrouped ? 'Top group' : 'Top category');
     }
 
     function renderPeriodControls(model) {
@@ -1103,7 +1171,7 @@
             year: 'Each bar is a month',
             all: 'Each bar is a year'
         };
-        const description = barText[model.range] + ', stacked by category';
+        const description = barText[model.range] + ', stacked by ' + spendingBucketLabel();
         $('#histogram-sub').text(description + '.');
         $('#spending-subtitle').text(
             barText[model.range] + '. Click a colored segment to see the transactions behind it.');
@@ -1143,9 +1211,10 @@
             const hasSpending = spendingSource().length > 0;
             const filtering = state.spendingCategories.size > 0;
             if (filtering) {
-                $('#histogram-empty-title').text('Nothing in the selected categories');
+                const noun = spendingBucketLabel();
+                $('#histogram-empty-title').text('Nothing in the selected ' + noun + 's');
                 $('#histogram-empty-text').text(
-                    'No transaction in these categories for this period. Reset the filter or try another period.');
+                    'No transaction in these ' + noun + 's for this period. Reset the filter or try another period.');
             } else {
                 $('#histogram-empty-title').text(hasSpending ? 'Nothing spent in this period' : 'No spending yet');
                 $('#histogram-empty-text').text(hasSpending
@@ -1248,6 +1317,7 @@
                 const entry = model.categories.find(category => 'c' + category.id === series.key);
                 return series.map(segment => ({
                     bucket: segment.data.bucket,
+                    key: entry.id,
                     category: entry.category,
                     amount: segment[1] - segment[0],
                     y0: segment[0],
@@ -1275,7 +1345,7 @@
             .on('mouseenter', function (event, segment) {
                 segments.attr('opacity', other => (other === segment ? 1 : 0.3));
                 d3.select(this).attr('stroke', '#152621').attr('stroke-width', 1.4);
-                const count = segment.bucket.counts.get(segment.category.id) || 0;
+                const count = segment.bucket.counts.get(segment.key) || 0;
                 tooltip
                     .html('<span class="tt-category">' + esc(segment.category.name) + '</span>'
                         + '<span class="tt-meta">' + esc(segment.bucket.fullLabel) + '</span>'
@@ -1294,12 +1364,12 @@
                 tooltip.style('opacity', 0);
             })
             .on('click', function (event, segment) {
-                selectSpendingSegment(segment.category.id, segment.bucket.key);
+                selectSpendingSegment(segment.key, segment.bucket.key);
             })
             .on('keydown', function (event, segment) {
                 if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
-                    selectSpendingSegment(segment.category.id, segment.bucket.key);
+                    selectSpendingSegment(segment.key, segment.bucket.key);
                 }
             });
     }
@@ -1321,7 +1391,7 @@
     function isSpendingSelected(segment) {
         const selection = state.spendingSelection;
         return Boolean(selection
-            && selection.categoryId === segment.category.id
+            && selection.key === segment.key
             && selection.bucketKey === segment.bucket.key);
     }
 
@@ -1330,9 +1400,9 @@
             .classed('is-selected', segment => isSpendingSelected(segment));
     }
 
-    function selectSpendingSegment(categoryId, bucketKey) {
+    function selectSpendingSegment(key, bucketKey) {
         state.spendingSelection = {
-            categoryId: Number(categoryId) || 0,
+            key: Number(key) || 0,
             bucketKey: String(bucketKey)
         };
         applySpendingSelection();
@@ -1350,7 +1420,7 @@
         const bucket = model.buckets.find(candidate => candidate.key === selection.bucketKey);
         const items = bucket
             ? bucket.transactions
-                .filter(entry => (Number(entry.transaction.categoryId) || 0) === selection.categoryId)
+                .filter(entry => spendingEntryKey(entry.transaction) === selection.key)
                 .sort((a, b) => b.date - a.date
                     || (Number(b.transaction.id) || 0) - (Number(a.transaction.id) || 0))
             : [];
@@ -1360,7 +1430,7 @@
             return;
         }
 
-        const category = getCategory(selection.categoryId);
+        const category = spendingDisplayCategory(selection.key);
         const total = d3.sum(items, entry => entry.amount);
         const preposition = model.range === 'month' ? 'on' : 'in';
         const summary = items.length + (items.length === 1 ? ' transaction ' : ' transactions ')

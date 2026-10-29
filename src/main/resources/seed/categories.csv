@@ -1,12 +1,12 @@
-Id,Name,Color
-1,Groceries,#2E7D32
-2,Restaurants,#EF6C00
-3,Transport,#1565C0
-4,Housing,#6A1B9A
-5,Utilities,#00838F
-6,Shopping,#C2185B
-7,Health,#AD1457
-8,Leisure,#F9A825
-9,Income,#1B5E20
-10,Bank fees,#455A64
-11,Other,#78909C
+Id,GroupId,SubId,GroupName,Name,Color
+10,0,10,Groceries,Groceries,#2E7D32
+20,0,20,Restaurants,Restaurants,#EF6C00
+30,0,30,Transport,Transport,#1565C0
+40,0,40,Housing,Housing,#6A1B9A
+50,0,50,Utilities,Utilities,#00838F
+60,0,60,Shopping,Shopping,#C2185B
+70,0,70,Health,Health,#AD1457
+80,0,80,Leisure,Leisure,#F9A825
+90,0,90,Income,Income,#1B5E20
+100,1,0,Bank fees,Bank fees,#455A64
+110,1,10,Bank fees,Other,#78909C

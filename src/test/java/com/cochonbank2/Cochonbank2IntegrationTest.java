@@ -97,6 +97,15 @@ class Cochonbank2IntegrationTest {
         assertTrue(categories.size() >= 11);
         assertEquals("Groceries", byName(categories, "Groceries").get("name").asText());
         assertEquals("#2E7D32", byName(categories, "Groceries").get("color").asText());
+        assertEquals(10, byName(categories, "Groceries").get("id").asLong());
+        assertEquals(0, byName(categories, "Groceries").get("groupId").asLong());
+        assertEquals(10, byName(categories, "Groceries").get("subId").asLong());
+
+        JsonNode other = byName(categories, "Other");
+        assertEquals(110, other.get("id").asLong());
+        assertEquals(1, other.get("groupId").asLong());
+        assertEquals(10, other.get("subId").asLong());
+        assertEquals("Bank fees", other.get("groupName").asText());
 
         JsonNode defaults = json(get("/api/default-categories"));
         assertTrue(defaults.size() >= 1);
@@ -117,7 +126,7 @@ class Cochonbank2IntegrationTest {
         assertEquals(5, transactions.size());
 
         JsonNode carrefour = byTitle(transactions, "CARREFOUR MARKET");
-        assertEquals(1, carrefour.get("categoryId").asLong());
+        assertEquals(10, carrefour.get("categoryId").asLong());
         assertEquals("DEBIT", carrefour.get("paymentType").asText());
         assertEquals("-42.15", carrefour.get("amount").decimalValue().toPlainString());
         assertEquals("2026-10-13", carrefour.get("bankDate").asText());
@@ -128,7 +137,7 @@ class Cochonbank2IntegrationTest {
                 .put("billId", "INV-42");
 
         JsonNode salary = byTitle(transactions, "SALAIRE OCTOBRE");
-        assertEquals(9, salary.get("categoryId").asLong());
+        assertEquals(90, salary.get("categoryId").asLong());
 
         JsonNode transfer = byTitle(transactions, "VIREMENT PONT");
         assertEquals(0, transfer.get("categoryId").asLong());
@@ -154,13 +163,13 @@ class Cochonbank2IntegrationTest {
         assertEquals("Id,Category_Id,PaymentType,Amount,BankDate,RealDate,Title,Description,Bill_Id",
                 lines.get(0));
         assertTrue(lines.get(1).startsWith(
-                "1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-42"));
+                "1,10,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-42"));
     }
 
     @Test
     void createsDefaultCategoryRulesFromAReviewedLine() throws Exception {
         String body = """
-                {"categoryId":2,"pattern":"  TEST   RULE MERCHANT ","description":"  Lunch   out  "}
+                {"categoryId":20,"pattern":"  TEST   RULE MERCHANT ","description":"  Lunch   out  "}
                 """;
 
         HttpResponse<String> response = postJson("/api/default-categories", body);
@@ -168,7 +177,7 @@ class Cochonbank2IntegrationTest {
 
         JsonNode created = json(response);
         assertTrue(created.get("id").asLong() > 0);
-        assertEquals(2, created.get("categoryId").asLong());
+        assertEquals(20, created.get("categoryId").asLong());
         assertEquals("TEST RULE MERCHANT", created.get("pattern").asText());
         assertEquals("Lunch out", created.get("description").asText());
 
@@ -176,7 +185,7 @@ class Cochonbank2IntegrationTest {
         for (JsonNode rule : json(get("/api/default-categories"))) {
             if ("TEST RULE MERCHANT".equals(rule.get("pattern").asText())) {
                 listed = true;
-                assertEquals(2, rule.get("categoryId").asLong());
+                assertEquals(20, rule.get("categoryId").asLong());
                 assertEquals("Lunch out", rule.get("description").asText());
             }
         }
@@ -194,7 +203,7 @@ class Cochonbank2IntegrationTest {
     @Test
     void rejectsInvalidTransactionsWithAProblemDetail() throws Exception {
         String body = """
-                [{"categoryId":1,"paymentType":"DEBIT","amount":-5.00,"title":"NO DATE"}]
+                [{"categoryId":10,"paymentType":"DEBIT","amount":-5.00,"title":"NO DATE"}]
                 """;
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/api/transactions"))
                 .header("Content-Type", "application/json")

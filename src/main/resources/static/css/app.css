@@ -1358,6 +1358,42 @@ code {
     position: relative;
 }
 
+.group-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 650;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.group-toggle:hover {
+    border-color: #D6CEBD;
+    background: var(--surface-soft);
+}
+
+.group-toggle:has(input:checked) {
+    border-color: rgba(31, 111, 92, 0.45);
+    background: #EAF4F0;
+    color: var(--brand);
+}
+
+.group-toggle input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: var(--brand);
+}
+
 .filter-trigger {
     display: inline-flex;
     align-items: center;

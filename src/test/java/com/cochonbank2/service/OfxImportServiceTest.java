@@ -37,18 +37,18 @@ class OfxImportServiceTest {
         DefaultCategoryRepository defaultCategoryRepository = new DefaultCategoryRepository(properties);
 
         categoryRepository.appendAll(List.of(
-                new Category(1, "Groceries", "#2E7D32"),
-                new Category(2, "Restaurants", "#EF6C00"),
-                new Category(3, "Income", "#1B5E20"),
-                new Category(4, "Fine dining", "#AD1457")));
+                new Category(10, 0, 10, "Groceries", "Groceries", "#2E7D32"),
+                new Category(20, 0, 20, "Restaurants", "Restaurants", "#EF6C00"),
+                new Category(30, 0, 30, "Income", "Income", "#1B5E20"),
+                new Category(40, 0, 40, "Fine dining", "Fine dining", "#AD1457")));
 
         defaultCategoryRepository.appendAll(List.of(
-                new DefaultCategory(1, 1, "CARREFOUR", ""),
-                new DefaultCategory(2, 1, "LIDL", ""),
-                new DefaultCategory(3, 2, "RESTAURANT", "Dinner out"),
-                new DefaultCategory(4, 4, "RESTAURANT LE PONT", ""),
-                new DefaultCategory(5, 3, "SALAIRE", ""),
-                new DefaultCategory(6, 2, "boulangerie", "Bread")));
+                new DefaultCategory(1, 10, "CARREFOUR", ""),
+                new DefaultCategory(2, 10, "LIDL", ""),
+                new DefaultCategory(3, 20, "RESTAURANT", "Dinner out"),
+                new DefaultCategory(4, 40, "RESTAURANT LE PONT", ""),
+                new DefaultCategory(5, 30, "SALAIRE", ""),
+                new DefaultCategory(6, 20, "boulangerie", "Bread")));
 
         service = new OfxImportService(
                 new OfxParser(), categoryRepository, defaultCategoryRepository);
@@ -116,7 +116,7 @@ class OfxImportServiceTest {
         assertTrue(result.warnings().isEmpty());
 
         TransactionDraft groceries = result.transactions().get(0);
-        assertEquals(1L, groceries.categoryId());
+        assertEquals(10L, groceries.categoryId());
         assertEquals("CARREFOUR MARKET", groceries.title());
         assertEquals(LocalDate.of(2026, 10, 12), groceries.realDate());
         assertEquals(LocalDate.of(2026, 10, 13), groceries.bankDate());
@@ -125,15 +125,15 @@ class OfxImportServiceTest {
         assertEquals("", groceries.description());
         assertEquals("", groceries.billId());
 
-        assertEquals(1L, result.transactions().get(1).categoryId());
+        assertEquals(10L, result.transactions().get(1).categoryId());
         assertEquals("carrefour city", result.transactions().get(1).title());
 
-        assertEquals(4L, result.transactions().get(2).categoryId(),
+        assertEquals(40L, result.transactions().get(2).categoryId(),
                 "the longest matching rule must win");
         assertEquals("RESTAURANT LE PONT", result.transactions().get(2).title());
         assertEquals("", result.transactions().get(2).description());
 
-        assertEquals(3L, result.transactions().get(3).categoryId());
+        assertEquals(30L, result.transactions().get(3).categoryId());
         assertEquals("SALAIRE OCTOBRE", result.transactions().get(3).title());
 
         assertEquals(0L, result.transactions().get(4).categoryId());
@@ -148,7 +148,7 @@ class OfxImportServiceTest {
         assertEquals(LocalDate.of(2026, 10, 23), result.transactions().get(6).realDate(),
                 "an invalid real date falls back to the bank date");
 
-        assertEquals(2L, result.transactions().get(7).categoryId(),
+        assertEquals(20L, result.transactions().get(7).categoryId(),
                 "a rule matches whatever the capitalization");
         assertEquals("BOULANGERIE PAUL", result.transactions().get(7).title());
         assertEquals("Bread", result.transactions().get(7).description(),
@@ -157,7 +157,7 @@ class OfxImportServiceTest {
 
     @Test
     void matchesRulesIgnoringCaseAndWhitespace() {
-        DefaultCategory rule = new DefaultCategory(7, 2, "  RESTAURANT   CHEZ  PAUL ", "Dinner out");
+        DefaultCategory rule = new DefaultCategory(7, 20, "  RESTAURANT   CHEZ  PAUL ", "Dinner out");
         String ofx = """
                 <OFX><BANKTRANLIST>
                 <STMTTRN>
@@ -173,7 +173,7 @@ class OfxImportServiceTest {
 
         assertEquals(rule, matched);
         TransactionDraft draft = service.importFile(multipart(ofx)).transactions().get(0);
-        assertEquals(2L, draft.categoryId());
+        assertEquals(20L, draft.categoryId());
         assertEquals("restaurant chez paul", draft.title());
         assertEquals("Dinner out", draft.description());
     }
@@ -201,7 +201,7 @@ class OfxImportServiceTest {
 
         assertEquals(1, result.transactions().size());
         assertEquals(1, result.warnings().size());
-        assertEquals(1L, result.transactions().get(0).categoryId());
+        assertEquals(10L, result.transactions().get(0).categoryId());
     }
 
     @Test

@@ -31,7 +31,9 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
 - **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
   Categories are ordered by id in the legend and the stack. Click any colored segment to list
   the transactions behind it. The **category filter** shows only the selected categories, which
-  can be combined freely; its options are colored chips in category id order.
+  can be combined freely; its options are colored chips in category id order. The **By category
+  group** checkbox aggregates the histogram, legend, totals and filter by `GroupId`, using each
+  group root's name and color, so the whole `Loisir` group appears as one segment.
 - **Rolling backups** — every application start copies the three CSV files into
   `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
 - **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
@@ -76,11 +78,16 @@ Hover a segment for its amount and transaction count. Click a segment (or focus 
 Enter/Space) to open a detail panel listing those transactions with their bank date, real date,
 type, description, bill id and amount.
 
+Tick **By category group** to aggregate everything by the category's `GroupId` instead of its
+`Id`: each bar has one segment per group, named and colored after the group root category, and
+the totals, top category and detail panel cover every category in the group. Unticking it
+returns to one segment per category.
+
 The **All categories** control under the view title opens a multi-select menu. Each option is a
 chip using the category color as its background, listed in category id order. Selecting one or
 more chips restricts the totals, legend and histogram to those categories while the period
-navigation keeps covering the whole ledger. **Reset** (or the button in an empty histogram)
-clears the filter.
+navigation keeps covering the whole ledger. In group mode the control lists groups instead and
+is labelled **All groups**. **Reset** (or the button in an empty histogram) clears the filter.
 
 On first launch the `data/` directory is created next to the working directory and populated
 from `src/main/resources/seed/`:
@@ -130,10 +137,22 @@ Rules written before the rule description existed use three columns (`Id,Categor
 They are backed up and rewritten with an empty `Description` column at startup; current files
 are left untouched.
 
+Categories written before explicit groups use three columns (`Id,Name,Color`) and were grouped
+implicitly by the tens of their id (40 and 43 shared group 4). They are backed up and rewritten
+with `GroupId`, `SubId` and `GroupName`, and every category id is multiplied by 10:
+
+```text
+43,Ordinateur,#32bdbc   ->   430,4,30,Loisir,Ordinateur,#32bdbc
+```
+
+The same migration multiplies the `Category_Id` values in `transactions.csv` and
+`defaultcategories.csv`, so existing transactions and rules keep pointing at the same category.
+Blank ids stay blank and files already in the current format are left untouched.
+
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 43 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
+mvnw.cmd test          # 47 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```
@@ -147,7 +166,7 @@ data files; amounts use `.` as the decimal separator.
 
 ```csv
 Id,Category_Id,PaymentType,Amount,BankDate,RealDate,Title,Description,Bill_Id
-1,1,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-2026-01
+1,10,DEBIT,-42.15,2026-10-13,2026-10-12,CARREFOUR MARKET,,INV-2026-01
 ```
 
 Ids are assigned by the backend on save and are never reused. `Category_Id` refers to
@@ -159,11 +178,15 @@ mean "no bill", which is still read as empty.
 ### `categories.csv`
 
 ```csv
-Id,Name,Color
-1,Groceries,#2E7D32
+Id,GroupId,SubId,GroupName,Name,Color
+430,4,30,Loisir,Ordinateur,#32bdbc
 ```
 
-`Color` is a `#rrggbb` value. Category ids must be unique.
+Each category belongs to an explicit group. `GroupId` identifies the group, `SubId` its position
+inside the group and `Id` equals `GroupId * 100 + SubId`. The category with `SubId` `0` is the
+group root, and `GroupName` repeats that root's name on every row: `400,Loisir` and
+`430,Ordinateur` both carry the group name `Loisir`. `Color` is a `#rrggbb` value. Category ids
+must be unique.
 
 ### `defaultcategories.csv`
 
@@ -216,7 +239,7 @@ Example preview response:
   "fileName": "sample.ofx",
   "transactions": [
     {
-      "categoryId": 1,
+      "categoryId": 10,
       "paymentType": "DEBIT",
       "amount": -42.15,
       "bankDate": "2026-10-13",
@@ -235,7 +258,7 @@ Example batch save:
 ```bash
 curl -X POST http://localhost:8080/api/transactions \
   -H "Content-Type: application/json" \
-  -d '[{"categoryId":1,"paymentType":"DEBIT","amount":-42.15,
+  -d '[{"categoryId":10,"paymentType":"DEBIT","amount":-42.15,
         "bankDate":"2026-10-13","realDate":"2026-10-12",
         "title":"CARREFOUR MARKET","description":"","billId":"INV-42"}]'
 ```

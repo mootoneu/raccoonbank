@@ -11,7 +11,8 @@ import com.cochonbank2.domain.Category;
 @Repository
 public class CategoryRepository extends AbstractCsvRepository<Category> {
 
-    private static final List<String> HEADER = List.of("Id", "Name", "Color");
+    private static final List<String> HEADER = List.of(
+            "Id", "GroupId", "SubId", "GroupName", "Name", "Color");
 
     public CategoryRepository(CochonbankProperties properties) {
         super(properties.dataPath(), "categories.csv", HEADER);
@@ -21,14 +22,20 @@ public class CategoryRepository extends AbstractCsvRepository<Category> {
     protected Category fromRow(List<String> row) {
         return new Category(
                 requiredLong(row, 0, "Id"),
-                requiredText(row, 1, "Name"),
-                text(row, 2).isBlank() ? "#78909C" : text(row, 2));
+                requiredLong(row, 1, "GroupId"),
+                requiredLong(row, 2, "SubId"),
+                requiredText(row, 3, "GroupName"),
+                requiredText(row, 4, "Name"),
+                text(row, 5).isBlank() ? "#78909C" : text(row, 5));
     }
 
     @Override
     protected List<String> toRow(Category value) {
         return List.of(
                 Long.toString(value.id()),
+                Long.toString(value.groupId()),
+                Long.toString(value.subId()),
+                value.groupName(),
                 value.name(),
                 value.color());
     }
