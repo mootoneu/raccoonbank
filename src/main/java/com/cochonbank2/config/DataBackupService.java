@@ -49,6 +49,13 @@ public class DataBackupService {
         return backup(properties.dataPath());
     }
 
+    /**
+     * Takes a snapshot of the data directory before a bulk rewrite of the files.
+     */
+    public Optional<Path> backupBeforeChange() throws IOException {
+        return backup(properties.dataPath());
+    }
+
     Optional<Path> backup(Path dataDirectory) throws IOException {
         List<String> existing = DATA_FILES.stream()
                 .filter(fileName -> Files.isRegularFile(dataDirectory.resolve(fileName)))

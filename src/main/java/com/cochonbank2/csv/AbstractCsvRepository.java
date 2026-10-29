@@ -10,6 +10,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -91,6 +92,87 @@ public abstract class AbstractCsvRepository<T> {
             }
         } catch (IOException ex) {
             throw new CsvException("Cannot write " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Replaces {@code from} with {@code to} in the named numeric column of every
+     * matching row. Other rows and columns are written back exactly as stored,
+     * so values this application does not model are never rewritten.
+     *
+     * @return the number of rows changed
+     */
+    public int replaceLongValue(String column, long from, long to) {
+        int index = columnIndex(column);
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return 0;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> updated = new ArrayList<>(rows.size());
+            updated.add(rows.get(0));
+            int changed = 0;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (!isBlank(row) && holdsLong(row, index, from)) {
+                    List<String> copy = new ArrayList<>(pad(row));
+                    copy.set(index, Long.toString(to));
+                    updated.add(copy);
+                    changed++;
+                } else {
+                    updated.add(row);
+                }
+            }
+            if (changed == 0) {
+                return 0;
+            }
+            writeRows(updated);
+            return changed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Removes every row whose numeric column holds {@code value}.
+     *
+     * @return the number of rows removed
+     */
+    public int deleteLongValue(String column, long value) {
+        int index = columnIndex(column);
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return 0;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> kept = new ArrayList<>(rows.size());
+            kept.add(rows.get(0));
+            int removed = 0;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (!isBlank(row) && holdsLong(row, index, value)) {
+                    removed++;
+                } else {
+                    kept.add(row);
+                }
+            }
+            if (removed == 0) {
+                return 0;
+            }
+            writeRows(kept);
+            return removed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
         } finally {
             lock.unlock();
         }
@@ -215,6 +297,37 @@ public abstract class AbstractCsvRepository<T> {
             channel.read(buffer);
             byte last = buffer.array()[0];
             return last == '\n' || last == '\r';
+        }
+    }
+
+    private void writeRows(List<List<String>> rows) throws IOException {
+        Path temp = file.resolveSibling(file.getFileName() + ".tmp");
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                temp, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            for (List<String> row : rows) {
+                CsvUtils.writeRow(writer, row);
+            }
+        }
+        Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private int columnIndex(String column) {
+        for (int i = 0; i < header.size(); i++) {
+            if (header.get(i).equalsIgnoreCase(column)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException(displayName + " has no column " + column);
+    }
+
+    private static boolean holdsLong(List<String> row, int index, long expected) {
+        if (index >= row.size()) {
+            return false;
+        }
+        try {
+            return Long.parseLong(text(row, index)) == expected;
+        } catch (NumberFormatException ex) {
+            return false;
         }
     }
 

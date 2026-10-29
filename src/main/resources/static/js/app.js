@@ -12,6 +12,8 @@
         color: '#C7C0B2'
     });
     const FALLBACK_COLOR = '#A8A29E';
+    const EARNED_COLOR = '#1F6B45';
+    const OVERSPEND_COLOR = '#E4664F';
     const INK = '#152621';
     const WHITE_RGB = Object.freeze({ r: 255, g: 255, b: 255 });
     const INK_RGB = Object.freeze({ r: 21, g: 38, b: 33 });
@@ -70,6 +72,21 @@
 
         $('#nav-spending, #chart-view-all').on('click', openSpending);
         $('#spending-back-home').on('click', navigateHome);
+
+        $('#nav-admin').on('click', openAdmin);
+        $('#admin-back-home').on('click', navigateHome);
+        $('#admin-add-form').on('submit', submitNewCategory);
+        $('#admin-id-form').on('submit', submitCategoryId);
+        $('input[name="admin-add-placement"]').on('change', renderAdminPlacement);
+        $('#admin-add-color').on('input change', renderAdminColor);
+        $('#admin-add-name').on('input', function () {
+            this.classList.remove('is-invalid');
+        });
+        $('#admin-id-category').on('change', renderAdminIdHint);
+        $('#admin-id-new').on('input', renderAdminIdHint);
+        $('#admin-delete-form').on('submit', submitDeleteCategory);
+        $('#admin-delete-category').on('change', renderDeleteOptions);
+        $('#admin-delete-replacement').on('change', renderDeleteHint);
 
         $('#import-btn, #import-btn-header, #empty-import-btn, #retry-import, #empty-retry-import, '
             + '#spending-import-btn, #histogram-import-btn').on('click', triggerFilePicker);
@@ -254,6 +271,16 @@
         renderSpending();
     }
 
+    function openAdmin() {
+        if (hasPendingImport()
+            && !window.confirm('Discard the current import and open administration? Nothing has been saved yet.')) {
+            return;
+        }
+        resetImportState();
+        showView('admin');
+        renderAdmin();
+    }
+
     /* ----------------------------------------------------------------------
        Initial data
        ---------------------------------------------------------------------- */
@@ -264,10 +291,8 @@
                 $.getJSON('/api/categories'),
                 $.getJSON('/api/transactions')
             ]);
-            state.categories = Array.isArray(results[0]) ? results[0] : [];
+            setCategories(results[0]);
             state.transactions = Array.isArray(results[1]) ? results[1] : [];
-            state.categoryById = new Map(state.categories.map(category => [Number(category.id), category]));
-            state.categoryById.set(CATEGORY_NONE.id, CATEGORY_NONE);
             $('#home-error').prop('hidden', true);
         } catch (xhr) {
             showHomeError(errorDetail(xhr));
@@ -281,6 +306,24 @@
 
     async function refreshTransactions() {
         state.transactions = await $.getJSON('/api/transactions');
+    }
+
+    function setCategories(list) {
+        state.categories = Array.isArray(list) ? list : [];
+        state.categoryById = new Map(state.categories.map(category => [Number(category.id), category]));
+        state.categoryById.set(CATEGORY_NONE.id, CATEGORY_NONE);
+    }
+
+    async function refreshLedger() {
+        const results = await Promise.all([
+            $.getJSON('/api/categories'),
+            $.getJSON('/api/transactions')
+        ]);
+        setCategories(results[0]);
+        state.transactions = Array.isArray(results[1]) ? results[1] : [];
+        resetSpendingState();
+        renderHome();
+        renderAdmin();
     }
 
     function showHomeError(message) {
@@ -773,6 +816,19 @@
             .filter(Boolean);
     }
 
+    function earningSource() {
+        return state.transactions
+            .map(transaction => {
+                const amount = toNumber(transaction.amount);
+                const date = parseIsoDate(transaction.bankDate);
+                if (amount <= 0 || !date) {
+                    return null;
+                }
+                return { transaction: transaction, date: date, amount: amount };
+            })
+            .filter(Boolean);
+    }
+
     function spendingBounds(source) {
         const months = source.map(entry => monthKey(entry.date)).sort();
         const years = source.map(entry => entry.date.getFullYear()).sort((a, b) => a - b);
@@ -996,7 +1052,8 @@
 
         const range = state.spendingRange;
         const source = spendingSource();
-        const bounds = spendingBounds(source);
+        const earnings = earningSource();
+        const bounds = spendingBounds(source.concat(earnings));
         let start;
         let end;
         let buckets = [];
@@ -1054,9 +1111,7 @@
         const categoryTotals = new Map();
 
         rangeSource.forEach(entry => {
-            const key = range === 'month'
-                ? isoDay(entry.date)
-                : (range === 'year' ? monthKey(entry.date) : String(entry.date.getFullYear()));
+            const key = spendingBucketKey(range, entry.date);
             const bucket = bucketByKey.get(key);
             if (!bucket) {
                 return;
@@ -1067,6 +1122,18 @@
             bucket.values.set(categoryKey, (bucket.values.get(categoryKey) || 0) + entry.amount);
             bucket.counts.set(categoryKey, (bucket.counts.get(categoryKey) || 0) + 1);
             categoryTotals.set(categoryKey, (categoryTotals.get(categoryKey) || 0) + entry.amount);
+        });
+
+        let earned = 0;
+        earnings.forEach(entry => {
+            if (entry.date < start || entry.date >= end) {
+                return;
+            }
+            const bucket = bucketByKey.get(spendingBucketKey(range, entry.date));
+            if (bucket) {
+                bucket.earned += entry.amount;
+                earned += entry.amount;
+            }
         });
 
         const categories = Array.from(categoryTotals, entry => ({
@@ -1084,6 +1151,7 @@
             categories: categories,
             rangeSource: rangeSource,
             total: d3.sum(rangeSource, entry => entry.amount),
+            earned: earned,
             count: rangeSource.length,
             start: start,
             end: end,
@@ -1094,6 +1162,13 @@
         };
     }
 
+    function spendingBucketKey(range, date) {
+        if (range === 'month') {
+            return isoDay(date);
+        }
+        return range === 'year' ? monthKey(date) : String(date.getFullYear());
+    }
+
     function spendingBucket(key, label, fullLabel) {
         return {
             key: key,
@@ -1102,7 +1177,8 @@
             transactions: [],
             values: new Map(),
             counts: new Map(),
-            total: 0
+            total: 0,
+            earned: 0
         };
     }
 
@@ -1127,6 +1203,8 @@
 
         $('#spending-total').text(money.format(model.total));
         $('#spending-total-sub').text(model.rangeTag);
+        $('#spending-earned').text(money.format(model.earned));
+        $('#spending-earned-sub').text('Net ' + signedMoney(model.earned - model.total));
         $('#spending-count').text(model.count);
         $('#spending-count-sub').text(
             model.count
@@ -1172,7 +1250,7 @@
             all: 'Each bar is a year'
         };
         const description = barText[model.range] + ', stacked by ' + spendingBucketLabel();
-        $('#histogram-sub').text(description + '.');
+        $('#histogram-sub').text(description + '. The line traces earnings for the same period.');
         $('#spending-subtitle').text(
             barText[model.range] + '. Click a colored segment to see the transactions behind it.');
         $('#histogram-range-tag').text(model.rangeTag);
@@ -1180,12 +1258,33 @@
 
     function renderSpendingLegend(model) {
         const $legend = $('#histogram-legend').empty();
-        if (!model.rangeSource.length || !model.categories.length) {
+        if (!model.rangeSource.length && !model.earned) {
             $legend.prop('hidden', true);
             return;
         }
 
         $legend.prop('hidden', false);
+        const over = overspentBuckets(model).length;
+        $('<div>', {
+            class: 'hist-legend-item',
+            title: 'Earnings · ' + money.format(model.earned)
+        }).append(
+            $('<span>', { class: 'legend-dot' }).css('background-color', EARNED_COLOR),
+            $('<span>', { class: 'hist-legend-name', text: 'Earned (line)' }),
+            $('<span>', { class: 'hist-legend-value', text: money.format(model.earned) })
+        ).appendTo($legend);
+        $('<div>', {
+            class: 'hist-legend-item',
+            title: 'Periods where spending is higher than earnings'
+        }).append(
+            $('<span>', { class: 'legend-dot' }).css('background-color', OVERSPEND_COLOR),
+            $('<span>', { class: 'hist-legend-name', text: 'Spent more than earned' }),
+            $('<span>', {
+                class: 'hist-legend-value',
+                text: over + ' of ' + model.buckets.length + ' ' + model.unit + (model.buckets.length === 1 ? '' : 's')
+            })
+        ).appendTo($legend);
+
         model.categories.forEach(entry => {
             $('<div>', {
                 class: 'hist-legend-item',
@@ -1203,7 +1302,7 @@
         svg.selectAll('*').remove();
         d3.select('#histogram-tooltip').style('opacity', 0).html('');
 
-        const empty = !model.rangeSource.length;
+        const empty = !model.rangeSource.length && !model.earned;
         $('#histogram-empty').prop('hidden', !empty);
         $('#histogram-scroll').prop('hidden', empty);
 
@@ -1256,7 +1355,7 @@
             .paddingInner(model.buckets.length === 1 ? 0.55 : 0.26)
             .paddingOuter(0.08);
 
-        const maxTotal = d3.max(model.buckets, bucket => bucket.total) || 1;
+        const maxTotal = d3.max(model.buckets, bucket => Math.max(bucket.total, bucket.earned)) || 1;
         const y = d3.scaleLinear()
             .domain([0, maxTotal])
             .nice()
@@ -1339,6 +1438,9 @@
                 + ', ' + money.format(segment.amount) + '. Show transactions.')
             .classed('is-selected', segment => isSpendingSelected(segment));
 
+        drawOverspendMarkers(root, model, x, y);
+        drawEarningsLine(root, model, x, y);
+
         const tooltip = d3.select('#histogram-tooltip');
 
         segments
@@ -1371,6 +1473,85 @@
                     event.preventDefault();
                     selectSpendingSegment(segment.key, segment.bucket.key);
                 }
+            });
+    }
+
+    function overspentBuckets(model) {
+        return model.buckets.filter(bucket => bucket.total > bucket.earned + 0.005);
+    }
+
+    function drawOverspendMarkers(root, model, x, y) {
+        root.append('g')
+            .attr('class', 'histogram-overspend')
+            .selectAll('circle')
+            .data(overspentBuckets(model))
+            .join('circle')
+            .attr('cx', bucket => x(bucket.key) + x.bandwidth() / 2)
+            .attr('cy', bucket => y(bucket.total) - 7)
+            .attr('r', Math.min(3.5, Math.max(2, x.bandwidth() / 5)))
+            .attr('fill', OVERSPEND_COLOR)
+            .attr('stroke', '#FFFFFF')
+            .attr('stroke-width', 1)
+            .attr('pointer-events', 'none');
+    }
+
+    function drawEarningsLine(root, model, x, y) {
+        const half = x.bandwidth() / 2;
+        const points = model.buckets.map(bucket => ({
+            bucket: bucket,
+            cx: x(bucket.key) + half,
+            cy: y(bucket.earned)
+        }));
+        const path = d3.line().x(point => point.cx).y(point => point.cy)(points);
+        const group = root.append('g').attr('class', 'histogram-earned');
+
+        group.append('path')
+            .attr('class', 'earned-halo')
+            .attr('d', path)
+            .attr('fill', 'none')
+            .attr('stroke', '#FFFFFF')
+            .attr('stroke-width', 5)
+            .attr('stroke-linejoin', 'round')
+            .attr('stroke-linecap', 'round')
+            .attr('pointer-events', 'none');
+        group.append('path')
+            .attr('class', 'earned-line')
+            .attr('d', path)
+            .attr('fill', 'none')
+            .attr('stroke', EARNED_COLOR)
+            .attr('stroke-width', 2.4)
+            .attr('stroke-linejoin', 'round')
+            .attr('stroke-linecap', 'round')
+            .attr('pointer-events', 'none');
+
+        const tooltip = d3.select('#histogram-tooltip');
+        group.selectAll('circle')
+            .data(points)
+            .join('circle')
+            .attr('class', 'earned-dot')
+            .attr('cx', point => point.cx)
+            .attr('cy', point => point.cy)
+            .attr('r', model.buckets.length > 40 ? 2.6 : 3.6)
+            .attr('fill', '#FFFFFF')
+            .attr('stroke', EARNED_COLOR)
+            .attr('stroke-width', 1.8)
+            .on('mouseenter', function (event, point) {
+                const bucket = point.bucket;
+                const net = bucket.earned - bucket.total;
+                tooltip
+                    .html('<span class="tt-category">Earned ' + esc(money.format(bucket.earned)) + '</span>'
+                        + '<span class="tt-meta">' + esc(bucket.fullLabel) + '</span>'
+                        + '<span class="tt-value">Spent ' + esc(money.format(bucket.total))
+                        + ' · Net ' + esc(signedMoney(net)) + '</span>')
+                    .style('opacity', 1);
+            })
+            .on('mousemove', function (event) {
+                tooltip
+                    .style('left', Math.min(Math.max(event.clientX, 90), window.innerWidth - 90) + 'px')
+                    .style('top', Math.max(event.clientY, 70) + 'px');
+            })
+            .on('mouseleave', function () {
+                tooltip.style('opacity', 0);
             });
     }
 
@@ -1487,6 +1668,309 @@
         $('#detail-body').empty();
         $('#spending-announcer').text('');
         applySpendingSelection();
+    }
+
+    /* ----------------------------------------------------------------------
+       Administration: categories and category ids
+       ---------------------------------------------------------------------- */
+
+    function renderAdmin() {
+        renderGroupOptions();
+        renderIdCategoryOptions();
+        renderAdminPlacement();
+        renderAdminColor();
+        renderAdminIdHint();
+        renderDeleteOptions();
+    }
+
+    function adminGroups() {
+        const groups = new Map();
+        state.categories.forEach(category => {
+            const groupId = Number(category.groupId) || 0;
+            if (groupId === 0) {
+                return;
+            }
+            const group = groups.get(groupId)
+                || { id: groupId, name: category.groupName || category.name, root: '' };
+            if (Number(category.subId) === 0) {
+                group.root = category.name;
+            }
+            groups.set(groupId, group);
+        });
+        const list = Array.from(groups.values());
+        list.forEach(group => {
+            const shared = list.filter(other => other.name === group.name).length > 1;
+            group.label = shared && group.root && group.root !== group.name
+                ? group.name + ' · ' + group.root
+                : group.name;
+        });
+        return list.sort((a, b) => a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }));
+    }
+
+    function renderGroupOptions() {
+        const $select = $('#admin-add-group');
+        const selected = $select.val();
+        $select.empty();
+        adminGroups().forEach(group => {
+            $('<option>', { value: group.id, text: group.label }).appendTo($select);
+        });
+        keepSelection($select, selected);
+    }
+
+    function renderIdCategoryOptions() {
+        const $select = $('#admin-id-category');
+        const selected = $select.val();
+        $select.empty();
+        state.categories
+            .filter(category => Number(category.id) !== CATEGORY_NONE.id)
+            .slice()
+            .sort((a, b) => Number(a.id) - Number(b.id))
+            .forEach(category => {
+                $('<option>', {
+                    value: category.id,
+                    text: category.name + ' (id ' + category.id + ')'
+                }).appendTo($select);
+            });
+        keepSelection($select, selected);
+    }
+
+    function renderDeleteOptions() {
+        const $category = $('#admin-delete-category');
+        const $replacement = $('#admin-delete-replacement');
+        const categorySelected = $category.val();
+        const replacementSelected = $replacement.val();
+        const sorted = state.categories.slice().sort((a, b) => Number(a.id) - Number(b.id));
+
+        $category.empty();
+        sorted
+            .filter(category => Number(category.id) !== CATEGORY_NONE.id)
+            .forEach(category => $category.append(categoryOption(category)));
+        keepSelection($category, categorySelected);
+
+        const deleting = String($category.val());
+        $replacement.empty().append($('<option>', { value: '0', text: 'Uncategorized (id 0)' }));
+        sorted
+            .filter(category => Number(category.id) !== CATEGORY_NONE.id && String(category.id) !== deleting)
+            .forEach(category => $replacement.append(categoryOption(category)));
+        keepSelection($replacement, replacementSelected);
+        renderDeleteHint();
+    }
+
+    function categoryOption(category) {
+        return $('<option>', {
+            value: category.id,
+            text: category.name + ' (id ' + category.id + ')'
+        });
+    }
+
+    function renderDeleteHint() {
+        const $hint = $('#admin-delete-hint');
+        const id = Number($('#admin-delete-category').val()) || 0;
+        const replacement = Number($('#admin-delete-replacement').val()) || 0;
+        const target = state.categoryById.get(replacement);
+        if (!id || !target) {
+            $hint.text('');
+            return;
+        }
+        const count = transactionCount(id);
+        $hint.text(count + (count === 1 ? ' transaction' : ' transactions')
+            + ' will move to ' + target.name + ' (id ' + replacement + ').');
+    }
+
+    function keepSelection($select, value) {
+        if (value === undefined || value === null) {
+            return;
+        }
+        const found = $select.find('option').filter(function () {
+            return this.value === String(value);
+        });
+        if (found.length) {
+            $select.val(String(value));
+        }
+    }
+
+    function renderAdminPlacement() {
+        const existing = $('input[name="admin-add-placement"]:checked').val() === 'existing';
+        $('#admin-add-group-field').prop('hidden', !existing);
+    }
+
+    function renderAdminColor() {
+        $('#admin-add-color-hex').text(String($('#admin-add-color').val()).toUpperCase());
+    }
+
+    function renderAdminIdHint() {
+        const $hint = $('#admin-id-hint').removeClass('is-warning');
+        $('#admin-id-new').removeClass('is-invalid');
+        const oldId = Number($('#admin-id-category').val()) || 0;
+        const raw = String($('#admin-id-new').val() || '').trim();
+        if (!oldId) {
+            $hint.text('');
+            return;
+        }
+        if (raw === '') {
+            $hint.text('Current id: ' + oldId + '.');
+            return;
+        }
+        const newId = Number(raw);
+        const problem = adminIdProblem(oldId, newId);
+        if (problem) {
+            $hint.text(problem).addClass('is-warning');
+            return;
+        }
+        const count = transactionCount(oldId);
+        $hint.text(count + (count === 1 ? ' transaction' : ' transactions')
+            + ' will move from id ' + oldId + ' to ' + newId + '.');
+    }
+
+    function adminIdProblem(oldId, newId) {
+        if (!Number.isInteger(newId) || newId <= 0) {
+            return 'Enter a whole number greater than 0.';
+        }
+        if (newId === oldId) {
+            return 'This category already has id ' + oldId + '.';
+        }
+        const owner = state.categoryById.get(newId);
+        if (owner) {
+            return 'Id ' + newId + ' is already used by “' + owner.name + '”.';
+        }
+        if (state.transactions.some(transaction => Number(transaction.categoryId) === newId)) {
+            return 'Id ' + newId + ' is already used by existing transactions.';
+        }
+        return '';
+    }
+
+    function transactionCount(categoryId) {
+        return state.transactions.filter(transaction => Number(transaction.categoryId) === categoryId).length;
+    }
+
+    async function submitDeleteCategory(event) {
+        event.preventDefault();
+        const id = Number($('#admin-delete-category').val()) || 0;
+        const replacement = Number($('#admin-delete-replacement').val()) || 0;
+        const $submit = $('#admin-delete-submit');
+        const category = state.categoryById.get(id);
+        const target = state.categoryById.get(replacement);
+
+        if (!category || !target) {
+            toast('Choose a category to delete.', 'error');
+            return;
+        }
+        const count = transactionCount(id);
+        const message = 'Delete “' + category.name + '” (id ' + id + ')?\n\n'
+            + count + (count === 1 ? ' transaction' : ' transactions')
+            + ' and any default rules using it will move to “' + target.name + '” (id ' + replacement
+            + '). A backup is saved first.';
+        if (!window.confirm(message)) {
+            return;
+        }
+
+        $submit.prop('disabled', true).attr('aria-busy', 'true');
+        try {
+            const result = await $.ajax({
+                url: '/api/categories/' + encodeURIComponent(id) + '?replacementId=' + encodeURIComponent(replacement),
+                method: 'DELETE',
+                dataType: 'json'
+            });
+            toast('“' + category.name + '” deleted: ' + result.transactionsUpdated
+                + (result.transactionsUpdated === 1 ? ' transaction' : ' transactions')
+                + ' and ' + result.defaultCategoriesUpdated
+                + (result.defaultCategoriesUpdated === 1 ? ' default rule' : ' default rules')
+                + ' moved to ' + target.name + '.', 'success');
+            await refreshLedger();
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+        } finally {
+            $submit.prop('disabled', false).removeAttr('aria-busy');
+        }
+    }
+
+    async function submitNewCategory(event) {
+        event.preventDefault();
+        const $name = $('#admin-add-name');
+        const $submit = $('#admin-add-submit');
+        const name = String($name.val() || '').trim().replace(/\s+/g, ' ');
+        const existing = $('input[name="admin-add-placement"]:checked').val() === 'existing';
+
+        if (!name) {
+            $name.addClass('is-invalid').trigger('focus');
+            toast('Give the category a name.', 'error');
+            return;
+        }
+        const groupId = existing ? Number($('#admin-add-group').val()) || 0 : null;
+        if (existing && !groupId) {
+            toast('Choose the group to add the category to.', 'error');
+            return;
+        }
+
+        $submit.prop('disabled', true).attr('aria-busy', 'true');
+        try {
+            const created = await $.ajax({
+                url: '/api/categories',
+                method: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({
+                    name: name,
+                    color: String($('#admin-add-color').val()),
+                    groupId: groupId
+                })
+            });
+            $name.val('').removeClass('is-invalid');
+            toast(existing
+                ? '“' + created.name + '” added to the group “' + created.groupName + '”.'
+                : 'New group “' + created.groupName + '” created.', 'success');
+            await refreshLedger();
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+        } finally {
+            $submit.prop('disabled', false).removeAttr('aria-busy');
+        }
+    }
+
+    async function submitCategoryId(event) {
+        event.preventDefault();
+        const $category = $('#admin-id-category');
+        const $newId = $('#admin-id-new');
+        const $submit = $('#admin-id-submit');
+        const oldId = Number($category.val()) || 0;
+        const newId = Number(String($newId.val() || '').trim());
+        const problem = oldId ? adminIdProblem(oldId, newId) : 'Choose a category first.';
+
+        if (problem) {
+            $newId.addClass('is-invalid').trigger('focus');
+            toast(problem, 'error');
+            return;
+        }
+
+        const name = state.categoryById.get(oldId).name;
+        const count = transactionCount(oldId);
+        const message = 'Change the id of “' + name + '” from ' + oldId + ' to ' + newId + '?\n\n'
+            + count + (count === 1 ? ' transaction' : ' transactions')
+            + ' and any default rules using it will move to the new id. A backup is saved first.';
+        if (!window.confirm(message)) {
+            return;
+        }
+
+        $submit.prop('disabled', true).attr('aria-busy', 'true');
+        try {
+            const change = await $.ajax({
+                url: '/api/categories/' + encodeURIComponent(oldId) + '/id',
+                method: 'PATCH',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ newId: newId })
+            });
+            $newId.val('');
+            toast('Id changed from ' + change.oldId + ' to ' + change.newId + ': '
+                + change.transactionsUpdated + (change.transactionsUpdated === 1 ? ' transaction' : ' transactions')
+                + ' and ' + change.defaultCategoriesUpdated
+                + (change.defaultCategoriesUpdated === 1 ? ' default rule' : ' default rules') + ' updated.', 'success');
+            await refreshLedger();
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+        } finally {
+            $submit.prop('disabled', false).removeAttr('aria-busy');
+        }
     }
 
     /* ----------------------------------------------------------------------
@@ -2012,19 +2496,22 @@
        ---------------------------------------------------------------------- */
 
     function showView(name) {
-        const isSpending = name === 'spending';
+        const navView = name === 'import' ? 'home' : name;
+        const navButtons = { home: '#nav-home', spending: '#nav-spending', admin: '#nav-admin' };
         $('#home-view').prop('hidden', name !== 'home');
-        $('#spending-view').prop('hidden', !isSpending);
+        $('#spending-view').prop('hidden', name !== 'spending');
+        $('#admin-view').prop('hidden', name !== 'admin');
         $('#import-view').prop('hidden', name !== 'import');
-        $('#nav-home').toggleClass('is-active', !isSpending);
-        $('#nav-spending').toggleClass('is-active', isSpending);
-        if (isSpending) {
-            $('#nav-spending').attr('aria-current', 'page');
-            $('#nav-home').removeAttr('aria-current');
-        } else {
-            $('#nav-home').attr('aria-current', 'page');
-            $('#nav-spending').removeAttr('aria-current');
-        }
+        Object.keys(navButtons).forEach(view => {
+            const $nav = $(navButtons[view]);
+            const active = view === navView;
+            $nav.toggleClass('is-active', active);
+            if (active) {
+                $nav.attr('aria-current', 'page');
+            } else {
+                $nav.removeAttr('aria-current');
+            }
+        });
         if (name === 'home') {
             renderCashflow();
         }
