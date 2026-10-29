@@ -52,12 +52,27 @@ public class TransactionController {
     public Transaction update(
             @PathVariable("id") long id,
             @RequestBody UpdateTransactionRequest request) {
-        return transactionService.updateTransaction(id, request.categoryId(), request.description());
+        return transactionService.updateTransaction(
+                id, request.categoryId(), request.description(), request.billId());
+    }
+
+    @PutMapping("/category")
+    public BulkUpdateResponse updateCategory(@RequestBody UpdateCategoryRequest request) {
+        return new BulkUpdateResponse(transactionService.updateCategory(request.ids(), request.categoryId()));
     }
 
     public record SaveTransactionsResponse(int saved) {
     }
 
-    public record UpdateTransactionRequest(long categoryId, String description) {
+    public record UpdateCategoryRequest(List<Long> ids, long categoryId) {
+    }
+
+    public record BulkUpdateResponse(int updated) {
+    }
+
+    /**
+     * A {@code null} billId leaves the reference unchanged.
+     */
+    public record UpdateTransactionRequest(long categoryId, String description, String billId) {
     }
 }

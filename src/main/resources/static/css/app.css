@@ -1840,7 +1840,7 @@ code {
 
 .detail-edit-fields {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) minmax(0, 0.8fr);
     gap: 12px;
     margin-bottom: 14px;
 }
@@ -2523,6 +2523,135 @@ code {
 .admin-actions {
     display: flex;
     justify-content: flex-end;
+}
+
+/* ==========================================================================
+   Transactions
+   ========================================================================== */
+
+.tx-filters {
+    margin-bottom: 18px;
+    padding: 20px 22px 16px;
+}
+
+.tx-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+}
+
+.tx-filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.tx-count {
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.tx-list-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.tx-selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-soft);
+}
+
+.tx-selection-summary {
+    min-width: 170px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.tx-selection-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tx-bulk {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.tx-bulk .text-input {
+    width: 220px;
+}
+
+.tx-table-wrap {
+    max-height: calc(100vh - 440px);
+    min-height: 260px;
+}
+
+.tx-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+.tx-sort:hover {
+    color: var(--ink);
+}
+
+.tx-sort-mark {
+    min-width: 8px;
+    color: var(--brand);
+    font-size: 9px;
+}
+
+.tx-table .col-select {
+    width: 40px;
+    text-align: center;
+}
+
+.tx-table .col-select input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--brand);
+    cursor: pointer;
+}
+
+.tx-table .col-action {
+    width: 44px;
+    text-align: center;
+}
+
+.tx-ref {
+    color: var(--muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.tx-row.is-selected > td {
+    background: rgba(23, 67, 60, 0.06);
+}
+
+.tx-empty {
+    padding: 28px;
+    color: var(--muted);
+    text-align: center;
 }
 
 /* ==========================================================================

@@ -58,11 +58,37 @@ class TransactionUpdateTest {
     }
 
     @Test
+    void updatesTheReferenceAndKeepsItWhenNotGiven() {
+        Transaction updated = service.updateTransaction(1, 10, "old note", " REF-42 ");
+
+        assertEquals("REF-42", updated.billId());
+        assertEquals("REF-42", transactionRepository.findAll().get(0).billId());
+        assertEquals("REF-42", service.updateTransaction(1, 10, "old note", null).billId());
+    }
+
+    @Test
     void allowsUncategorizedAndAnEmptyDescription() {
         Transaction updated = service.updateTransaction(1, 0, null);
 
         assertEquals(0L, updated.categoryId());
         assertEquals("", updated.description());
+    }
+
+    @Test
+    void setsTheCategoryOfSeveralTransactionsAtOnce() {
+        int updated = service.updateCategory(List.of(1L, 2L), 20);
+
+        assertEquals(2, updated);
+        assertEquals(20L, transactionRepository.findAll().get(0).categoryId());
+        assertEquals(20L, transactionRepository.findAll().get(1).categoryId());
+        assertEquals("old note", transactionRepository.findAll().get(0).description());
+    }
+
+    @Test
+    void writesNothingWhenAnyIdIsUnknown() {
+        assertThrows(IllegalArgumentException.class, () -> service.updateCategory(List.of(1L, 42L), 20));
+
+        assertEquals(10L, transactionRepository.findAll().get(0).categoryId());
     }
 
     @Test

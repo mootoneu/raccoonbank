@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -149,6 +150,16 @@ public abstract class AbstractCsvRepository<T> {
      * @return {@code true} when a matching row was found
      */
     public boolean updateRow(String keyColumn, long key, Map<String, String> values) {
+        return updateRows(keyColumn, Set.of(key), values) > 0;
+    }
+
+    /**
+     * Sets the named columns of every row whose numeric key column holds one of
+     * {@code keys}. Other rows are written back exactly as stored.
+     *
+     * @return the number of rows changed
+     */
+    public int updateRows(String keyColumn, Set<Long> keys, Map<String, String> values) {
         int keyIndex = columnIndex(keyColumn);
         Map<Integer, String> changes = new LinkedHashMap<>();
         values.forEach((column, value) -> changes.put(columnIndex(column), value));
@@ -157,30 +168,30 @@ public abstract class AbstractCsvRepository<T> {
             ensureExists();
             List<List<String>> rows = readRows();
             if (rows.isEmpty()) {
-                return false;
+                return 0;
             }
             checkHeader(rows.get(0));
             List<List<String>> updated = new ArrayList<>(rows.size());
             updated.add(rows.get(0));
-            boolean found = false;
+            int changed = 0;
             for (int i = 1; i < rows.size(); i++) {
                 List<String> row = rows.get(i);
-                if (!found && !isBlank(row) && holdsLong(row, keyIndex, key)) {
+                if (!isBlank(row) && matchesAny(row, keyIndex, keys)) {
                     List<String> copy = new ArrayList<>(pad(row));
                     for (Map.Entry<Integer, String> change : changes.entrySet()) {
                         copy.set(change.getKey(), change.getValue());
                     }
                     updated.add(copy);
-                    found = true;
+                    changed++;
                 } else {
                     updated.add(row);
                 }
             }
-            if (!found) {
-                return false;
+            if (changed == 0) {
+                return 0;
             }
             writeRows(updated);
-            return true;
+            return changed;
         } catch (IOException ex) {
             throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
         } finally {
@@ -366,6 +377,17 @@ public abstract class AbstractCsvRepository<T> {
             }
         }
         throw new IllegalArgumentException(displayName + " has no column " + column);
+    }
+
+    private static boolean matchesAny(List<String> row, int index, Set<Long> keys) {
+        if (index >= row.size()) {
+            return false;
+        }
+        try {
+            return keys.contains(Long.parseLong(text(row, index)));
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 
     private static boolean holdsLong(List<String> row, int index, long expected) {

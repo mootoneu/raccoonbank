@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -109,7 +110,17 @@ public class TransactionService {
      * Changes the category and description of a saved transaction. Every other
      * field is kept as stored.
      */
-    public synchronized Transaction updateTransaction(long id, long categoryId, String description) {
+    public Transaction updateTransaction(long id, long categoryId, String description) {
+        return updateTransaction(id, categoryId, description, null);
+    }
+
+    /**
+     * Changes the category, description and reference (bill identifier) of a
+     * saved transaction. A {@code null} reference leaves it unchanged. Every other
+     * field is kept as stored.
+     */
+    public synchronized Transaction updateTransaction(
+            long id, long categoryId, String description, String billId) {
         if (categoryId < 0) {
             throw new IllegalArgumentException("Category is invalid.");
         }
@@ -123,9 +134,11 @@ public class TransactionService {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown transaction (id " + id + ")."));
 
         String text = trimToEmpty(description);
+        String reference = billId == null ? existing.billId() : trimToEmpty(billId);
         transactionRepository.updateRow("Id", id, Map.of(
                 "Category_Id", Long.toString(categoryId),
-                "Description", text));
+                "Description", text,
+                "Bill_Id", reference));
         return new Transaction(
                 existing.id(),
                 categoryId,
@@ -135,7 +148,37 @@ public class TransactionService {
                 existing.realDate(),
                 existing.title(),
                 text,
-                existing.billId());
+                reference);
+    }
+
+    /**
+     * Sets the category of several saved transactions at once. Every identifier
+     * must exist; nothing is written otherwise.
+     *
+     * @return the number of transactions updated
+     */
+    public synchronized int updateCategory(List<Long> ids, long categoryId) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Select at least one transaction.");
+        }
+        if (categoryId < 0) {
+            throw new IllegalArgumentException("Category is invalid.");
+        }
+        if (categoryId != 0 && categoryRepository.findAll().stream()
+                .noneMatch(category -> category.id() == categoryId)) {
+            throw new IllegalArgumentException("Unknown category (id " + categoryId + ").");
+        }
+        Set<Long> known = transactionRepository.findAll().stream()
+                .map(Transaction::id)
+                .collect(Collectors.toSet());
+        Set<Long> wanted = new HashSet<>(ids);
+        for (Long id : wanted) {
+            if (!known.contains(id)) {
+                throw new IllegalArgumentException("Unknown transaction (id " + id + ").");
+            }
+        }
+        return transactionRepository.updateRows("Id", wanted, Map.of(
+                "Category_Id", Long.toString(categoryId)));
     }
 
     private static String trimToEmpty(String value) {
