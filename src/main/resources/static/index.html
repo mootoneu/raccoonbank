@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
     <title>CochonBank2 — Personal finance</title>
-    <link rel="stylesheet" href="/css/app.css?v=14">
+    <link rel="stylesheet" href="/css/app.css?v=15">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -235,14 +235,32 @@
                 <button type="button" class="segment-btn" data-range="year" aria-pressed="false">By year</button>
                 <button type="button" class="segment-btn" data-range="all" aria-pressed="false">All time</button>
             </div>
-            <div class="period-nav" id="period-nav">
-                <button type="button" class="period-btn" id="period-prev" aria-label="Previous period">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <span class="period-label" id="period-label">—</span>
-                <button type="button" class="period-btn" id="period-next" aria-label="Next period">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
+            <div class="spending-tools">
+                <div class="filter-menu" id="spending-filter">
+                    <button type="button" class="filter-trigger" id="spending-filter-btn"
+                        aria-expanded="false" aria-controls="spending-filter-panel" aria-haspopup="true">
+                        <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <span id="spending-filter-label">All categories</span>
+                        <svg class="filter-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="filter-panel" id="spending-filter-panel" hidden>
+                        <div class="filter-panel-head">
+                            <span>Filter by category</span>
+                            <button type="button" class="filter-reset" id="spending-filter-clear">Reset</button>
+                        </div>
+                        <div class="filter-options" id="spending-filter-options" role="group"
+                            aria-label="Filter spending by category"></div>
+                    </div>
+                </div>
+                <div class="period-nav" id="period-nav">
+                    <button type="button" class="period-btn" id="period-prev" aria-label="Previous period">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <span class="period-label" id="period-label">—</span>
+                    <button type="button" class="period-btn" id="period-next" aria-label="Next period">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -284,7 +302,10 @@
                 <span class="histogram-empty-icon" aria-hidden="true">🐷</span>
                 <h3 id="histogram-empty-title">No spending yet</h3>
                 <p id="histogram-empty-text">Import an OFX statement to see where your money goes.</p>
-                <button type="button" class="btn btn-primary btn-sm" id="histogram-import-btn">Import an OFX file</button>
+                <div class="histogram-empty-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="histogram-import-btn">Import an OFX file</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="histogram-clear-filter" hidden>Reset category filter</button>
+                </div>
             </div>
 
             <div class="histogram-legend" id="histogram-legend" aria-label="Category totals for this period"></div>
@@ -447,6 +468,6 @@
 
 <script src="/vendor/jquery-3.7.1.min.js"></script>
 <script src="/vendor/d3-7.9.0.min.js"></script>
-<script src="/js/app.js?v=14"></script>
+<script src="/js/app.js?v=15"></script>
 </body>
 </html>

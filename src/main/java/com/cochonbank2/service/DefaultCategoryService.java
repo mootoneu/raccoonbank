@@ -33,12 +33,12 @@ public class DefaultCategoryService {
 
     /**
      * Creates a title-matching rule from a reviewed import line: future imports
-     * whose title starts with {@code pattern} get {@code categoryId}. Repeated
-     * whitespace is collapsed so the stored pattern matches the normalized
-     * titles produced by the OFX parser.
+     * whose title starts with {@code pattern} get {@code categoryId} and, when
+     * given, {@code description}. Repeated whitespace is collapsed so the
+     * stored pattern matches the normalized titles produced by the OFX parser.
      */
-    public synchronized DefaultCategory create(long categoryId, String pattern) {
-        String normalized = normalizePattern(pattern);
+    public synchronized DefaultCategory create(long categoryId, String pattern, String description) {
+        String normalized = normalize(pattern);
         if (normalized.isEmpty()) {
             throw new IllegalArgumentException("A title is required to create a default category.");
         }
@@ -55,7 +55,7 @@ public class DefaultCategoryService {
 
         List<DefaultCategory> existing = repository.findAll();
         boolean duplicate = existing.stream()
-                .map(rule -> normalizePattern(rule.pattern()))
+                .map(rule -> normalize(rule.pattern()))
                 .anyMatch(normalized::equalsIgnoreCase);
         if (duplicate) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -63,12 +63,12 @@ public class DefaultCategoryService {
         }
 
         long nextId = existing.stream().mapToLong(DefaultCategory::id).max().orElse(0L) + 1;
-        DefaultCategory created = new DefaultCategory(nextId, categoryId, normalized);
+        DefaultCategory created = new DefaultCategory(nextId, categoryId, normalized, normalize(description));
         repository.appendAll(List.of(created));
         return created;
     }
 
-    private static String normalizePattern(String pattern) {
-        return pattern == null ? "" : pattern.trim().replaceAll("\\s+", " ");
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim().replaceAll("\\s+", " ");
     }
 }

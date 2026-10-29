@@ -46,6 +46,7 @@
         spendingMonth: null,
         spendingYear: null,
         spendingSelection: null,
+        spendingCategories: new Set(),
         spendingData: null,
         spendingResizeTimer: null
     };
@@ -100,10 +101,34 @@
             moveSpendingPeriod(1);
         });
 
+        $('#spending-filter-btn').on('click', function (event) {
+            event.stopPropagation();
+            toggleSpendingFilter();
+        });
+
+        $('#spending-filter-panel').on('click', function (event) {
+            event.stopPropagation();
+        });
+
+        $('#spending-filter-options').on('click', '.filter-chip', function () {
+            onSpendingFilterChange(Number(this.getAttribute('data-category-id')) || 0);
+        });
+
+        $('#spending-filter-clear, #histogram-clear-filter').on('click', resetSpendingFilter);
+
+        $(document).on('click', function () {
+            closeSpendingFilter();
+        });
+
         $('#detail-close').on('click', closeSpendingDetail);
 
         $(document).on('keydown', function (event) {
-            if (event.key === 'Escape' && !$('#spending-detail').prop('hidden')) {
+            if (event.key !== 'Escape') {
+                return;
+            }
+            if (isSpendingFilterOpen()) {
+                closeSpendingFilter(true);
+            } else if (!$('#spending-detail').prop('hidden')) {
                 closeSpendingDetail();
             }
         });
@@ -750,6 +775,140 @@
         };
     }
 
+    /* ----------------------------------------------------------------------
+       Spending category filter
+       ---------------------------------------------------------------------- */
+
+    function categoryInSpendingFilter(categoryId) {
+        return state.spendingCategories.size === 0
+            || state.spendingCategories.has(Number(categoryId) || 0);
+    }
+
+    function spendingFilterOptions() {
+        const ids = new Set();
+        spendingSource().forEach(entry => {
+            ids.add(Number(entry.transaction.categoryId) || 0);
+        });
+        return Array.from(ids)
+            .map(id => getCategory(id))
+            .sort((a, b) => Number(a.id) - Number(b.id));
+    }
+
+    function spendingFilterLabel(options) {
+        const selected = state.spendingCategories.size;
+        if (selected === 0) {
+            return 'All categories';
+        }
+        if (selected === 1) {
+            const only = options.find(category =>
+                state.spendingCategories.has(Number(category.id)));
+            return only ? only.name : '1 category';
+        }
+        return selected + ' categories';
+    }
+
+    function renderSpendingFilter() {
+        const options = spendingFilterOptions();
+        const available = new Set(options.map(category => Number(category.id)));
+        Array.from(state.spendingCategories).forEach(id => {
+            if (!available.has(id)) {
+                state.spendingCategories.delete(id);
+            }
+        });
+
+        const $options = $('#spending-filter-options').empty();
+        if (!options.length) {
+            $('<p>', {
+                class: 'filter-empty',
+                text: 'No categories with spending yet.'
+            }).appendTo($options);
+        } else {
+            options.forEach(category => {
+                const id = Number(category.id);
+                const active = state.spendingCategories.has(id);
+                const palette = categoryPalette(category.color);
+                $('<button>', {
+                    type: 'button',
+                    class: 'filter-chip' + (active ? ' is-active' : ''),
+                    'data-category-id': id,
+                    'aria-pressed': String(active),
+                    text: category.name,
+                    title: category.name
+                }).css({
+                    backgroundColor: palette.background,
+                    color: palette.foreground
+                }).appendTo($options);
+            });
+        }
+
+        const filtering = state.spendingCategories.size > 0;
+        $('#spending-filter-label').text(spendingFilterLabel(options));
+        $('#spending-filter-btn')
+            .toggleClass('is-filtering', filtering)
+            .attr('title', filtering
+                ? 'Showing ' + spendingFilterLabel(options).toLowerCase()
+                : 'All categories');
+        $('#spending-filter-clear').prop('disabled', !filtering);
+        $('#histogram-clear-filter').prop('hidden', !filtering);
+    }
+
+    function isSpendingFilterOpen() {
+        return !$('#spending-filter-panel').prop('hidden');
+    }
+
+    function openSpendingFilter() {
+        $('#spending-filter-panel').prop('hidden', false);
+        $('#spending-filter-btn').attr('aria-expanded', 'true');
+    }
+
+    function closeSpendingFilter(focusButton) {
+        if (!isSpendingFilterOpen()) {
+            return;
+        }
+        $('#spending-filter-panel').prop('hidden', true);
+        $('#spending-filter-btn').attr('aria-expanded', 'false');
+        if (focusButton) {
+            $('#spending-filter-btn').trigger('focus');
+        }
+    }
+
+    function toggleSpendingFilter() {
+        if (isSpendingFilterOpen()) {
+            closeSpendingFilter();
+        } else {
+            openSpendingFilter();
+        }
+    }
+
+    function onSpendingFilterChange(categoryId) {
+        const active = document.activeElement;
+        const restoreFocus = active && active.classList
+            && active.classList.contains('filter-chip');
+        if (state.spendingCategories.has(categoryId)) {
+            state.spendingCategories.delete(categoryId);
+        } else {
+            state.spendingCategories.add(categoryId);
+        }
+        closeSpendingDetail();
+        renderSpending();
+        if (restoreFocus) {
+            const next = document.querySelector(
+                '#spending-filter-options .filter-chip[data-category-id="' + categoryId + '"]');
+            if (next) {
+                next.focus();
+            }
+        }
+    }
+
+    function resetSpendingFilter() {
+        if (!state.spendingCategories.size) {
+            return;
+        }
+        state.spendingCategories.clear();
+        closeSpendingDetail();
+        renderSpending();
+    }
+
     function moveSpendingPeriod(direction) {
         if (state.spendingRange === 'month') {
             const parts = state.spendingMonth.split('-').map(Number);
@@ -809,9 +968,8 @@
                     date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
             });
         } else {
-            const years = source.map(entry => entry.date.getFullYear());
-            const firstYear = years.length ? Math.min(...years) : new Date().getFullYear();
-            const lastYear = years.length ? Math.max(...years) : firstYear;
+            const firstYear = bounds.minYear === null ? new Date().getFullYear() : bounds.minYear;
+            const lastYear = bounds.maxYear === null ? firstYear : bounds.maxYear;
             start = new Date(firstYear, 0, 1);
             end = new Date(lastYear + 1, 0, 1);
             periodLabel = 'All time';
@@ -823,7 +981,10 @@
         }
 
         const bucketByKey = new Map(buckets.map(bucket => [bucket.key, bucket]));
-        const rangeSource = source.filter(entry => entry.date >= start && entry.date < end);
+        const rangeSource = source.filter(entry =>
+            entry.date >= start
+            && entry.date < end
+            && categoryInSpendingFilter(entry.transaction.categoryId));
         const categoryTotals = new Map();
 
         rangeSource.forEach(entry => {
@@ -880,6 +1041,7 @@
     }
 
     function renderSpending() {
+        renderSpendingFilter();
         const model = buildSpendingModel();
         state.spendingData = model;
         renderSpendingStats(model);
@@ -979,12 +1141,22 @@
 
         if (empty) {
             const hasSpending = spendingSource().length > 0;
-            $('#histogram-empty-title').text(hasSpending ? 'Nothing spent in this period' : 'No spending yet');
-            $('#histogram-empty-text').text(hasSpending
-                ? 'Try another period or switch how the bars are grouped.'
-                : 'Import an OFX statement to see where your money goes.');
+            const filtering = state.spendingCategories.size > 0;
+            if (filtering) {
+                $('#histogram-empty-title').text('Nothing in the selected categories');
+                $('#histogram-empty-text').text(
+                    'No transaction in these categories for this period. Reset the filter or try another period.');
+            } else {
+                $('#histogram-empty-title').text(hasSpending ? 'Nothing spent in this period' : 'No spending yet');
+                $('#histogram-empty-text').text(hasSpending
+                    ? 'Try another period or switch how the bars are grouped.'
+                    : 'Import an OFX statement to see where your money goes.');
+            }
             $('#histogram-import-btn').prop('hidden', hasSpending);
-            svg.attr('aria-label', 'No spending in this period');
+            $('#histogram-clear-filter').prop('hidden', !filtering);
+            svg.attr('aria-label', filtering
+                ? 'No spending in the selected categories'
+                : 'No spending in this period');
             return;
         }
 
@@ -1461,8 +1633,10 @@
         const $row = $button.closest('tr');
         const $category = $row.find('.category-select');
         const $title = $row.find('.title-input');
+        const $description = $row.find('.description-input');
         const categoryId = Number($category.val()) || 0;
         const title = String($title.val() || '').trim();
+        const description = String($description.val() || '').trim();
 
         if (categoryId === 0) {
             toast('Choose a category on this line before creating a default category.', 'error');
@@ -1481,14 +1655,71 @@
                 url: '/api/default-categories',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({ categoryId: categoryId, pattern: title })
+                data: JSON.stringify({
+                    categoryId: categoryId,
+                    pattern: title,
+                    description: description
+                })
             });
-            toast('Default category created for “' + created.pattern + '”.', 'success');
+            const applied = applyDefaultCategoryToDrafts(created);
+            const suffix = applied === 0
+                ? ''
+                : applied === 1
+                    ? ' and applied to 1 line.'
+                    : ' and applied to ' + applied + ' lines.';
+            toast('Default category created for “' + created.pattern + '”' + suffix, 'success');
         } catch (xhr) {
             toast(errorDetail(xhr), 'error');
         } finally {
             $button.prop('disabled', false).removeAttr('aria-busy');
         }
+    }
+
+    /**
+     * Re-applies a freshly created rule to every draft whose title starts with
+     * the rule pattern, ignoring case and repeated whitespace. The line that
+     * created the rule is included. Non-empty descriptions are kept.
+     */
+    function applyDefaultCategoryToDrafts(rule) {
+        const pattern = normalizeRuleText(rule.pattern);
+        if (!pattern) {
+            return 0;
+        }
+        const categoryId = Number(rule.categoryId) || 0;
+        const description = normalizeRuleText(rule.description);
+        const lowerPattern = pattern.toLowerCase();
+        let applied = 0;
+
+        $('#import-tbody tr').each(function () {
+            const $row = $(this);
+            const title = normalizeRuleText($row.find('.title-input').val());
+            if (!title || !title.toLowerCase().startsWith(lowerPattern)) {
+                return;
+            }
+
+            const select = $row.find('.category-select')[0];
+            if (select) {
+                select.value = String(categoryId);
+                select.classList.remove('is-invalid');
+                paintCategorySelect(select);
+            }
+            if (description) {
+                const $lineDescription = $row.find('.description-input');
+                if (!$lineDescription.val() || !String($lineDescription.val()).trim()) {
+                    $lineDescription.val(description);
+                }
+            }
+            applied += 1;
+        });
+
+        if (applied) {
+            updateImportSummary();
+        }
+        return applied;
+    }
+
+    function normalizeRuleText(value) {
+        return String(value || '').trim().replace(/\s+/g, ' ');
     }
 
     function renumberRows() {

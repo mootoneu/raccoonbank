@@ -35,39 +35,46 @@ class DefaultCategoryServiceTest {
                 new Category(1, "Groceries", "#2E7D32"),
                 new Category(5, "Pets", "#795548")));
         defaultCategoryRepository.appendAll(List.of(
-                new DefaultCategory(3, 1, "CARREFOUR")));
+                new DefaultCategory(3, 1, "CARREFOUR", "")));
 
         service = new DefaultCategoryService(defaultCategoryRepository, categoryRepository);
     }
 
     @Test
     void createsARuleFromTheLineWithTheNextId() {
-        DefaultCategory created = service.create(5, "  ANIMAL   SHOP  ");
+        DefaultCategory created = service.create(5, "  ANIMAL   SHOP  ", "  Weekly   pet  food ");
 
         assertEquals(4L, created.id());
         assertEquals(5L, created.categoryId());
         assertEquals("ANIMAL SHOP", created.pattern());
+        assertEquals("Weekly pet food", created.description());
         assertEquals(List.of(
-                new DefaultCategory(3, 1, "CARREFOUR"),
-                new DefaultCategory(4, 5, "ANIMAL SHOP")), service.findAll());
+                new DefaultCategory(3, 1, "CARREFOUR", ""),
+                new DefaultCategory(4, 5, "ANIMAL SHOP", "Weekly pet food")), service.findAll());
+    }
+
+    @Test
+    void defaultsTheDescriptionToEmpty() {
+        assertEquals("", service.create(5, "VET", null).description());
+        assertEquals("", service.create(5, "VET CLINIC", "   ").description());
     }
 
     @Test
     void rejectsABlankTitle() {
-        assertThrows(IllegalArgumentException.class, () -> service.create(1, "   "));
-        assertThrows(IllegalArgumentException.class, () -> service.create(1, null));
+        assertThrows(IllegalArgumentException.class, () -> service.create(1, "   ", ""));
+        assertThrows(IllegalArgumentException.class, () -> service.create(1, null, ""));
     }
 
     @Test
     void rejectsUncategorizedAndUnknownCategories() {
-        assertThrows(IllegalArgumentException.class, () -> service.create(0, "SOMETHING"));
-        assertThrows(IllegalArgumentException.class, () -> service.create(99, "SOMETHING"));
+        assertThrows(IllegalArgumentException.class, () -> service.create(0, "SOMETHING", ""));
+        assertThrows(IllegalArgumentException.class, () -> service.create(99, "SOMETHING", ""));
     }
 
     @Test
     void rejectsADuplicateTitleIgnoringCaseAndSpaces() {
         ResponseStatusException error = assertThrows(ResponseStatusException.class,
-                () -> service.create(5, " carrefour "));
+                () -> service.create(5, " carrefour ", ""));
 
         assertEquals(HttpStatus.CONFLICT, error.getStatusCode());
     }

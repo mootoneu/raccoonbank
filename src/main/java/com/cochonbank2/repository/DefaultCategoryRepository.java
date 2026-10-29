@@ -11,7 +11,7 @@ import com.cochonbank2.domain.DefaultCategory;
 @Repository
 public class DefaultCategoryRepository extends AbstractCsvRepository<DefaultCategory> {
 
-    private static final List<String> HEADER = List.of("Id", "Category_Id", "Pattern");
+    private static final List<String> HEADER = List.of("Id", "Category_Id", "Pattern", "Description");
 
     public DefaultCategoryRepository(CochonbankProperties properties) {
         super(properties.dataPath(), "defaultcategories.csv", HEADER);
@@ -22,7 +22,8 @@ public class DefaultCategoryRepository extends AbstractCsvRepository<DefaultCate
         return new DefaultCategory(
                 requiredLong(row, 0, "Id"),
                 requiredLong(row, 1, "Category_Id"),
-                requiredText(row, 2, "Pattern"));
+                requiredText(row, 2, "Pattern"),
+                text(row, 3));
     }
 
     @Override
@@ -30,6 +31,7 @@ public class DefaultCategoryRepository extends AbstractCsvRepository<DefaultCate
         return List.of(
                 Long.toString(value.id()),
                 Long.toString(value.categoryId()),
-                value.pattern());
+                value.pattern(),
+                value.description() == null ? "" : value.description());
     }
 }

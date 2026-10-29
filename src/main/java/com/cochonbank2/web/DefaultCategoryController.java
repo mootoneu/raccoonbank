@@ -31,10 +31,10 @@ public class DefaultCategoryController {
     @PostMapping
     public ResponseEntity<DefaultCategory> create(@RequestBody CreateDefaultCategoryRequest request) {
         DefaultCategory created = defaultCategoryService.create(
-                request.categoryId(), request.pattern());
+                request.categoryId(), request.pattern(), request.description());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    public record CreateDefaultCategoryRequest(long categoryId, String pattern) {
+    public record CreateDefaultCategoryRequest(long categoryId, String pattern, String description) {
     }
 }

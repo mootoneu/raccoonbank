@@ -160,7 +160,7 @@ class Cochonbank2IntegrationTest {
     @Test
     void createsDefaultCategoryRulesFromAReviewedLine() throws Exception {
         String body = """
-                {"categoryId":2,"pattern":"  TEST   RULE MERCHANT "}
+                {"categoryId":2,"pattern":"  TEST   RULE MERCHANT ","description":"  Lunch   out  "}
                 """;
 
         HttpResponse<String> response = postJson("/api/default-categories", body);
@@ -170,12 +170,14 @@ class Cochonbank2IntegrationTest {
         assertTrue(created.get("id").asLong() > 0);
         assertEquals(2, created.get("categoryId").asLong());
         assertEquals("TEST RULE MERCHANT", created.get("pattern").asText());
+        assertEquals("Lunch out", created.get("description").asText());
 
         boolean listed = false;
         for (JsonNode rule : json(get("/api/default-categories"))) {
             if ("TEST RULE MERCHANT".equals(rule.get("pattern").asText())) {
                 listed = true;
                 assertEquals(2, rule.get("categoryId").asLong());
+                assertEquals("Lunch out", rule.get("description").asText());
             }
         }
         assertTrue(listed, "the new rule must be listed");
@@ -185,7 +187,7 @@ class Cochonbank2IntegrationTest {
         assertTrue(json(duplicate).get("detail").asText().contains("already exists"));
 
         HttpResponse<String> uncategorized = postJson("/api/default-categories",
-                "{\"categoryId\":0,\"pattern\":\"NO CATEGORY\"}");
+                "{\"categoryId\":0,\"pattern\":\"NO CATEGORY\",\"description\":\"\"}");
         assertEquals(400, uncategorized.statusCode());
     }
 

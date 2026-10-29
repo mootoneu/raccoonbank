@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,10 +58,10 @@ public class OfxImportService {
         Map<Long, Category> categories = categoryRepository.findAll().stream()
                 .collect(java.util.stream.Collectors.toMap(Category::id, category -> category, (a, b) -> a));
         List<DefaultCategory> rules = defaultCategoryRepository.findAll().stream()
-                .filter(rule -> !rule.pattern().isBlank())
+                .filter(rule -> !normalize(rule.pattern()).isEmpty())
                 .filter(rule -> categories.containsKey(rule.categoryId()))
                 .sorted(Comparator
-                        .comparingInt((DefaultCategory rule) -> rule.pattern().trim().length()).reversed()
+                        .comparingInt((DefaultCategory rule) -> normalize(rule.pattern()).length()).reversed()
                         .thenComparingLong(DefaultCategory::id))
                 .toList();
 
@@ -70,7 +69,9 @@ public class OfxImportService {
         List<TransactionDraft> drafts = new ArrayList<>();
         for (OfxStatement statement : parsed.statements()) {
             TitleAndDate titleAndDate = splitTitleAndDate(statement.name());
-            long categoryId = findCategoryId(titleAndDate.title(), rules);
+            DefaultCategory rule = findRule(titleAndDate.title(), rules);
+            long categoryId = rule == null ? 0L : rule.categoryId();
+            String description = rule == null ? "" : normalize(rule.description());
             LocalDate realDate = titleAndDate.realDate() == null
                     ? statement.bankDate()
                     : titleAndDate.realDate();
@@ -81,7 +82,7 @@ public class OfxImportService {
                     statement.bankDate(),
                     realDate,
                     titleAndDate.title(),
-                    "",
+                    description,
                     ""));
         }
 
@@ -92,15 +93,26 @@ public class OfxImportService {
         return new OfxImportResult(fileName, drafts, parsed.warnings());
     }
 
-    private static long findCategoryId(String title, List<DefaultCategory> rules) {
-        String normalized = title.toLowerCase(Locale.ROOT);
+    /**
+     * Title matching is case-insensitive and whitespace-normalized so that
+     * rules created in the review table keep working whatever the bank's
+     * capitalization. Rules are pre-sorted by descending pattern length, so the
+     * first match is the most specific one.
+     */
+    static DefaultCategory findRule(String title, List<DefaultCategory> rules) {
+        String normalizedTitle = normalize(title);
         for (DefaultCategory rule : rules) {
-            String pattern = rule.pattern().trim().toLowerCase(Locale.ROOT);
-            if (!pattern.isEmpty() && normalized.startsWith(pattern)) {
-                return rule.categoryId();
+            String pattern = normalize(rule.pattern());
+            if (!pattern.isEmpty()
+                    && normalizedTitle.regionMatches(true, 0, pattern, 0, pattern.length())) {
+                return rule;
             }
         }
-        return 0L;
+        return null;
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim().replaceAll("\\s+", " ");
     }
 
     /**

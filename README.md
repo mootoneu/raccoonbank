@@ -18,17 +18,20 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
   bank date and title all match a saved transaction; titles are compared trimmed, with repeated
   spaces collapsed. Duplicates remain editable and can still be saved if you really want them.
 - **Automatic categorization** — the title is matched against `defaultcategories.csv`
-  (case-insensitive, longest pattern wins) and the matching category is preselected. In the
-  review table, the small **+** button on a line saves that line's title and selected category
-  as a new rule for future imports. A rule needs a real category (not *Uncategorized*) and is
-  refused when an identical title already has one.
+  (case-insensitive, longest pattern wins) and the matching category is preselected. When a
+  rule has a description, it is copied onto the draft if the description is still empty. In the
+  review table, the small **+** button on a line saves that line's title, selected category and
+  description (when filled) as a new rule for future imports; the rule is immediately applied
+  to every draft line whose title starts with it, ignoring case. A rule needs a real category
+  (not *Uncategorized*) and is refused when an identical title already has one.
 - **Category colors** — the category dropdown shows a colored line per option, and the review
   table shows each category name with its color as the background and an automatically chosen
   readable text color. A handful of mid-tone colors are nudged just enough to keep the text at
   a 4.5:1 contrast ratio.
 - **Spending view** — a stacked histogram of spending by category, grouped by day, month or year.
   Categories are ordered by id in the legend and the stack. Click any colored segment to list
-  the transactions behind it.
+  the transactions behind it. The **category filter** shows only the selected categories, which
+  can be combined freely; its options are colored chips in category id order.
 - **Rolling backups** — every application start copies the three CSV files into
   `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
 - **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
@@ -72,6 +75,12 @@ stacks the selected period's expenses by category:
 Hover a segment for its amount and transaction count. Click a segment (or focus it and press
 Enter/Space) to open a detail panel listing those transactions with their bank date, real date,
 type, description, bill id and amount.
+
+The **All categories** control under the view title opens a multi-select menu. Each option is a
+chip using the category color as its background, listed in category id order. Selecting one or
+more chips restricts the totals, legend and histogram to those categories while the period
+navigation keeps covering the whole ledger. **Reset** (or the button in an empty histogram)
+clears the filter.
 
 On first launch the `data/` directory is created next to the working directory and populated
 from `src/main/resources/seed/`:
@@ -117,10 +126,14 @@ ISO `yyyy-MM-dd`. When a legacy row has no real date, the bank date is used, so 
 follows the same real-date rule as new imports. Quoted titles, accents and bill ids are
 preserved. If a date cannot be parsed, startup stops and the original file is left untouched.
 
+Rules written before the rule description existed use three columns (`Id,Category_Id,Pattern`).
+They are backed up and rewritten with an empty `Description` column at startup; current files
+are left untouched.
+
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 38 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
+mvnw.cmd test          # 43 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```
@@ -155,13 +168,14 @@ Id,Name,Color
 ### `defaultcategories.csv`
 
 ```csv
-Id,Category_Id,Pattern
-2,1,CARREFOUR
+Id,Category_Id,Pattern,Description
+2,1,CARREFOUR,Weekly shop
 ```
 
-When importing, the transaction title is lowercased and checked with a *starts-with* match
-against each pattern. If several patterns match, the longest one wins. If none match, the
-category is `0` (Uncategorized).
+When importing, the transaction title is normalized (trimmed, repeated spaces collapsed) and
+checked with a case-insensitive *starts-with* match against each pattern. If several patterns
+match, the longest one wins. If none match, the category is `0` (Uncategorized). A non-empty
+`Description` is copied onto drafts whose description is still empty.
 
 ## OFX mapping
 
@@ -193,7 +207,7 @@ contain any text, not only digits.
 | `POST` | `/api/transactions/import` | Upload an OFX file (`multipart/form-data`, field `file`), returns drafts and warnings |
 | `GET` | `/api/categories` | List categories |
 | `GET` | `/api/default-categories` | List title-matching rules |
-| `POST` | `/api/default-categories` | Create a rule from `{"categoryId": n, "pattern": "TITLE"}` |
+| `POST` | `/api/default-categories` | Create a rule from `{"categoryId": n, "pattern": "TITLE", "description": "optional note"}` |
 
 Example preview response:
 
