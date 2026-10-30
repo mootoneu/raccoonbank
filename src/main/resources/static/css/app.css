@@ -1827,6 +1827,17 @@ code {
     text-align: center;
 }
 
+.detail-period-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-period-nav .icon {
+    width: 15px;
+    height: 15px;
+}
+
 .detail-edit-row > td {
     padding: 16px 14px;
     background: var(--surface-soft);

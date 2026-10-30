@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
     <title>CochonBank2 — Personal finance</title>
-    <link rel="stylesheet" href="/css/app.css?v=20">
+    <link rel="stylesheet" href="/css/app.css?v=21">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -156,8 +156,13 @@
                     <div class="chart-actions">
                         <label class="group-toggle" for="chart-group-mode"
                             title="Group spending by category group instead of individual category">
-                            <input type="checkbox" id="chart-group-mode">
+                            <input type="checkbox" id="chart-group-mode" checked>
                             <span>By category group</span>
+                        </label>
+                        <label class="group-toggle" for="chart-year-mode"
+                            title="Show only the expenses of the current year instead of all time">
+                            <input type="checkbox" id="chart-year-mode" checked>
+                            <span>Current year</span>
                         </label>
                         <button type="button" class="card-link" id="chart-view-all">
                             View all spending
@@ -342,6 +347,16 @@
                 </div>
                 <div class="detail-side">
                     <span class="detail-total" id="detail-total">—</span>
+                    <div class="detail-period-nav" role="group" aria-label="Change period">
+                        <button type="button" class="btn btn-ghost btn-sm" id="detail-prev" aria-label="Previous period with transactions" disabled>
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Previous
+                        </button>
+                        <button type="button" class="btn btn-ghost btn-sm" id="detail-next" aria-label="Next period with transactions" disabled>
+                            Next
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
                     <button type="button" class="icon-btn" id="detail-close" aria-label="Close transaction details">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
                     </button>
@@ -697,6 +712,6 @@
 
 <script src="/vendor/jquery-3.7.1.min.js"></script>
 <script src="/vendor/d3-7.9.0.min.js"></script>
-<script src="/js/app.js?v=25"></script>
+<script src="/js/app.js?v=28"></script>
 </body>
 </html>

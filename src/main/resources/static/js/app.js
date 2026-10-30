@@ -50,7 +50,8 @@
         spendingSelection: null,
         spendingCategories: new Set(),
         spendingGrouped: false,
-        chartGrouped: false,
+        chartGrouped: true,
+        chartCurrentYear: true,
         editingTransactionId: null,
         transactionSort: { key: 'date', direction: 'desc' },
         transactionSelection: new Set(),
@@ -182,6 +183,11 @@
             renderChart();
         });
 
+        $('#chart-year-mode').on('change', function () {
+            state.chartCurrentYear = this.checked;
+            renderChart();
+        });
+
         $('#spending-group-mode').on('change', function () {
             state.spendingGrouped = this.checked;
             state.spendingCategories.clear();
@@ -195,6 +201,8 @@
         });
 
         $('#detail-close').on('click', closeSpendingDetail);
+        $('#detail-prev').on('click', () => moveDetailPeriod(-1));
+        $('#detail-next').on('click', () => moveDetailPeriod(1));
 
         $('#detail-body')
             .on('click', '.detail-edit-btn', function () {
@@ -486,7 +494,17 @@
 
     function renderChart() {
         const grouped = state.chartGrouped;
-        const expenses = state.transactions.filter(transaction => toNumber(transaction.amount) < 0);
+        const currentYear = new Date().getFullYear();
+        const expenses = state.transactions.filter(transaction => {
+            if (toNumber(transaction.amount) >= 0) {
+                return false;
+            }
+            if (!state.chartCurrentYear) {
+                return true;
+            }
+            const date = parseIsoDate(transaction.bankDate);
+            return Boolean(date) && date.getFullYear() === currentYear;
+        });
         const totals = d3.rollup(
             expenses,
             values => d3.sum(values, transaction => Math.abs(toNumber(transaction.amount))),
@@ -499,9 +517,8 @@
             .filter(entry => entry.value > 0)
             .sort((a, b) => b.value - a.value);
 
-        $('#chart-sub').text(grouped
-            ? 'All saved expenses, grouped by category group.'
-            : 'All saved expenses, grouped by category.');
+        const scope = state.chartCurrentYear ? 'Expenses in ' + currentYear : 'All saved expenses';
+        $('#chart-sub').text(scope + ', grouped by ' + (grouped ? 'category group' : 'category') + '.');
 
         const svg = d3.select('#spending-chart');
         svg.selectAll('*').remove();
@@ -1726,6 +1743,7 @@
                 + '</tr>';
         }).join(''));
 
+        renderDetailPeriodButtons();
         const wasHidden = $('#spending-detail').prop('hidden');
         $('#spending-detail').prop('hidden', false);
         if (wasHidden) {
@@ -2070,6 +2088,40 @@
             toast(errorDetail(xhr), 'error');
             $form.find('button').prop('disabled', false);
         }
+    }
+
+    /**
+     * The nearest period in the given direction where the selected category has
+     * transactions, or null when there is none.
+     */
+    function adjacentDetailBucket(step) {
+        const model = state.spendingData;
+        const selection = state.spendingSelection;
+        if (!model || !selection) {
+            return null;
+        }
+        const index = model.buckets.findIndex(bucket => bucket.key === selection.bucketKey);
+        for (let i = index + step; i >= 0 && i < model.buckets.length; i += step) {
+            if ((model.buckets[i].counts.get(selection.key) || 0) > 0) {
+                return model.buckets[i];
+            }
+        }
+        return null;
+    }
+
+    function renderDetailPeriodButtons() {
+        $('#detail-prev').prop('disabled', !adjacentDetailBucket(-1));
+        $('#detail-next').prop('disabled', !adjacentDetailBucket(1));
+    }
+
+    function moveDetailPeriod(step) {
+        const target = adjacentDetailBucket(step);
+        if (!target) {
+            return;
+        }
+        state.spendingSelection = { key: state.spendingSelection.key, bucketKey: target.key };
+        applySpendingSelection();
+        renderSpendingDetail();
     }
 
     function closeSpendingDetail() {
