@@ -40,10 +40,11 @@ no cloud, no account.
   costs in `reccuringcosts.csv`. The **Recurring** view compares them with the matching
   transactions saved for the current month, with totals for expected and spent amounts.
   Costs can be added, edited and deleted from the view.
-- **Planned spending** — keep one-off upcoming purchases in `panned_spending.csv`. The **Planned**
-  sidebar on the Spending view shows them as category-colored cards ordered by due date. Click a
-  card to edit or delete it, or use **+** to add one; the last edited values are remembered in the
-  browser.
+- **Planned spending** — keep one-off upcoming purchases in `panned_spending.csv`. A floating
+  **Planned** panel on the left of the Spending view shows them as category-colored cards ordered
+  by due date, with totals for this month and overall; cards past their due date get a yellow
+  border. Click a card to edit or delete it, or use **+** to add one; the last edited values are
+  remembered in the browser.
 - **Rolling backups** — every application start copies the five CSV files into
   `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
 - **Plain CSV storage** — the five data files can be opened in any spreadsheet program.
@@ -108,13 +109,15 @@ selected period, plus two recurring-cost cards for the current month: **Recurrin
 sum of the expected costs and **To spend** is that sum minus what has already been spent.
 Positive recurring entries (gains such as the expected monthly income) are excluded from both.
 
-The **Planned** sidebar on the right lists the one-off purchases stored in `panned_spending.csv`.
-Each card shows the title and expected amount on a background using the category color (or the
-neutral uncategorized color when `Category_Id` is empty), with the due date muted underneath.
-Undated items come last. Click a card to open a dialog where you can change the due date, title,
-amount or category, or delete the entry. The **+** button creates a new entry immediately and
-opens the same dialog; the values from the last edit are saved in local storage and used as the
-starting point for the next one.
+The **Planned** panel floating on the left lists the one-off purchases stored in
+`panned_spending.csv`. Its header shows **Total this month** (items whose `DueDate` falls in the
+current calendar month) and **Total overall** (all items). Each card shows the title and expected
+amount on a background using the category color (or the neutral uncategorized color when
+`Category_Id` is empty), with the due date muted underneath. Undated items come last, and cards
+whose due date is in the past have a yellow border. Click a card to open a dialog where you can
+change the due date, title, amount or category, or delete the entry. The **+** button creates a new
+entry immediately and opens the same dialog; the values from the last edit are saved in local
+storage and used as the starting point for the next one.
 
 ## Recurring view
 

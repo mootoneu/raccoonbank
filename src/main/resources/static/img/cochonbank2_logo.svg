@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g>
+        <g id="coin" transform="matrix(1.1,0,0,1.1,327.486,842.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear1);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear2);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin1" serif:id="coin" transform="matrix(1,0,0,1,407.486,807.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear3);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear4);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin2" serif:id="coin" transform="matrix(1.05,0,0,1.05,487.486,852.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear5);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear6);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin3" serif:id="coin" transform="matrix(1.2,0,0,1.2,577.486,802.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear7);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear8);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin4" serif:id="coin" transform="matrix(1.1,0,0,1.1,677.486,842.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear9);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear10);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin5" serif:id="coin" transform="matrix(1.1,0,0,1.1,327.486,842.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear11);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear12);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin6" serif:id="coin" transform="matrix(1.1,0,0,1.1,323.975,818.204)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear13);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear14);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin7" serif:id="coin" transform="matrix(1,0,0,1,407.486,807.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear15);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear16);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin8" serif:id="coin" transform="matrix(1,0,0,1,403.975,783.204)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear17);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear18);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin9" serif:id="coin" transform="matrix(1.05,0,0,1.05,487.486,852.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear19);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear20);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin10" serif:id="coin" transform="matrix(1.05,0,0,1.05,491.876,826.448)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear21);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear22);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin11" serif:id="coin" transform="matrix(1.2,0,0,1.2,577.486,802.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear23);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear24);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin12" serif:id="coin" transform="matrix(1.2,0,0,1.2,574.975,777.204)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear25);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear26);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin13" serif:id="coin" transform="matrix(1.1,0,0,1.1,677.486,842.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear27);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear28);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin14" serif:id="coin" transform="matrix(1.1,0,0,1.1,673.975,818.204)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear29);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear30);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin15" serif:id="coin" transform="matrix(1.1,0,0,1.1,327.486,791.865)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear31);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear32);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin16" serif:id="coin" transform="matrix(1,0,0,1,407.486,756.865)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear33);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear34);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin17" serif:id="coin" transform="matrix(1.05,0,0,1.05,487.486,802.865)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear35);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear36);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin18" serif:id="coin" transform="matrix(1.2,0,0,1.2,577.486,751.865)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear37);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear38);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin19" serif:id="coin" transform="matrix(1.1,0,0,1.1,677.486,791.865)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear39);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear40);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin20" serif:id="coin" transform="matrix(1.05,0,0,1.05,778.632,792.519)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear41);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear42);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin21" serif:id="coin" transform="matrix(1.05,0,0,1.05,778.632,767.058)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear43);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear44);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin22" serif:id="coin" transform="matrix(1.05,0,0,1.05,775.998,742.475)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear45);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear46);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin23" serif:id="coin" transform="matrix(1.05,0,0,1.05,783.9,720.526)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear47);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear48);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin24" serif:id="coin" transform="matrix(1.05,0,0,1.05,771.608,700.333)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear49);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear50);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin25" serif:id="coin" transform="matrix(1.15,0,0,1.15,867.486,842.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear51);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear52);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin26" serif:id="coin" transform="matrix(1.2,0,0,1.2,387.486,902.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear53);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear54);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin27" serif:id="coin" transform="matrix(1.25,0,0,1.25,507.486,922.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear55);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear56);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin28" serif:id="coin" transform="matrix(1.3,0,0,1.3,647.486,912.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear57);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear58);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin29" serif:id="coin" transform="matrix(1.2,0,0,1.2,394.51,874.692)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear59);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear60);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin30" serif:id="coin" transform="matrix(1.3,0,0,1.3,654.51,884.692)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear61);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear62);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin31" serif:id="coin" transform="matrix(1.2,0,0,1.2,787.486,922.787)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear63);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear64);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin32" serif:id="coin" transform="matrix(1.15,0,0,1.15,873.632,814.692)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear65);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear66);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin33" serif:id="coin" transform="matrix(1.25,0,0,1.25,513.632,894.692)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear67);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear68);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin34" serif:id="coin" transform="matrix(1.2,0,0,1.2,777.829,894.692)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear69);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear70);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin35" serif:id="coin" transform="matrix(1.15,0,0,1.15,873.632,787.475)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear71);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear72);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin36" serif:id="coin" transform="matrix(1.25,0,0,1.25,513.632,867.475)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear73);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear74);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin37" serif:id="coin" transform="matrix(1.2,0,0,1.2,777.829,867.475)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear75);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear76);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin38" serif:id="coin" transform="matrix(1.15,0,0,1.15,863.975,759.38)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear77);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear78);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin39" serif:id="coin" transform="matrix(1.25,0,0,1.25,503.975,839.38)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear79);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear80);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin40" serif:id="coin" transform="matrix(1.2,0,0,1.2,783.975,839.38)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <rect x="-42" y="0" width="84" height="20" style="fill:url(#_Linear81);stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:url(#_Linear82);stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-29.4996,-96.2247)">
+        <g id="coin41" serif:id="coin" transform="matrix(0.968272,0.393667,-0.451513,0.844221,860.233,344.463)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <clipPath id="_clip83">
+                <rect x="-42" y="0" width="84" height="20"/>
+            </clipPath>
+            <g clip-path="url(#_clip83)">
+                <g transform="matrix(0.848309,-0.395573,0.453699,0.972961,-817.344,87.0897)">
+                    <use xlink:href="#_Image84" x="786.523" y="231.925" width="90.365px" height="49.952px" transform="matrix(0.993023,0,0,0.999048,0,0)"/>
+                </g>
+            </g>
+            <rect x="-42" y="0" width="84" height="20" style="fill:none;stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <clipPath id="_clip85">
+                <ellipse cx="0" cy="0" rx="42" ry="12"/>
+            </clipPath>
+            <g clip-path="url(#_clip85)">
+                <g transform="matrix(0.848309,-0.395573,0.453699,0.972961,-817.344,87.0897)">
+                    <use xlink:href="#_Image86" x="798.733" y="230.14" width="82.062px" height="38.781px" transform="matrix(0.988694,0,0,0.994382,0,0)"/>
+                </g>
+            </g>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:none;stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin42" serif:id="coin" transform="matrix(1.04511,0.296072,-0.339577,0.911215,556.682,264.71)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <g transform="matrix(0.865466,-0.281207,0.322528,0.99264,-510.6,-18.9977)">
+                <use xlink:href="#_Image87" x="478.608" y="159.33" width="94.581px" height="43.094px" transform="matrix(0.995588,0,0,0.979417,0,0)"/>
+            </g>
+            <rect x="-42" y="0" width="84" height="20" style="fill:none;stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <g transform="matrix(0.865466,-0.281207,0.322528,0.99264,-510.6,-18.9977)">
+                <use xlink:href="#_Image88" x="487.634" y="156.005" width="88.172px" height="33.112px" transform="matrix(0.990695,0,0,0.973873,0,0)"/>
+            </g>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:none;stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+        <g id="coin43" serif:id="coin" transform="matrix(0.943503,-0.267287,0.306563,0.822625,709.306,158.254)">
+            <ellipse cx="0" cy="15" rx="42" ry="12" style="fill:rgb(141,85,0);fill-opacity:0.35;"/>
+            <clipPath id="_clip89">
+                <rect x="-42" y="0" width="84" height="20"/>
+            </clipPath>
+            <g clip-path="url(#_clip89)">
+                <g transform="matrix(0.958671,0.311491,-0.357262,1.09954,-629.55,-279.957)">
+                    <use xlink:href="#_Image90" x="644.787" y="50.927" width="85.386px" height="38.905px" transform="matrix(0.992855,0,0,0.997554,0,0)"/>
+                </g>
+            </g>
+            <rect x="-42" y="0" width="84" height="20" style="fill:none;stroke:rgb(166,102,0);stroke-width:2px;"/>
+            <ellipse cx="0" cy="20" rx="42" ry="12" style="fill:rgb(176,107,0);stroke:rgb(145,87,0);stroke-width:2px;"/>
+            <clipPath id="_clip91">
+                <ellipse cx="0" cy="0" rx="42" ry="12"/>
+            </clipPath>
+            <g clip-path="url(#_clip91)">
+                <g transform="matrix(0.958671,0.311491,-0.357262,1.09954,-629.55,-279.957)">
+                    <use xlink:href="#_Image92" x="643.226" y="47.252" width="79.6px" height="29.892px" transform="matrix(0.994995,0,0,0.996416,0,0)"/>
+                </g>
+            </g>
+            <ellipse cx="0" cy="0" rx="42" ry="12" style="fill:none;stroke:rgb(211,148,0);stroke-width:2px;"/>
+            <ellipse cx="-11" cy="-2" rx="14" ry="4" style="fill:rgb(255,248,213);fill-opacity:0.9;"/>
+            <ellipse cx="8" cy="2" rx="24" ry="5" style="fill:rgb(255,226,110);fill-opacity:0.7;"/>
+        </g>
+    </g>
+    <g transform="matrix(1.70019,0.552426,-0.552426,1.70019,719.886,426.775)">
+        <g transform="matrix(0.571928,-0.820304,0.820304,0.571928,-170.835,197.146)">
+            <path d="M163,62.628C163,56.762 158.238,52 152.372,52L135.628,52C129.762,52 125,56.762 125,62.628L125,123.372C125,129.238 129.762,134 135.628,134L152.372,134C158.238,134 163,129.238 163,123.372L163,62.628Z" style="fill:url(#_Linear93);stroke:rgb(197,67,130);stroke-width:6px;"/>
+        </g>
+        <g transform="matrix(0.690247,0.723574,-0.723574,0.690247,-113.101,103.692)">
+            <path d="M-14,94.628C-14,88.762 -18.762,84 -24.628,84L-41.372,84C-47.238,84 -52,88.762 -52,94.628L-52,155.372C-52,161.238 -47.238,166 -41.372,166L-24.628,166C-18.762,166 -14,161.238 -14,155.372L-14,94.628Z" style="fill:url(#_Linear94);stroke:rgb(197,67,130);stroke-width:6px;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-166.143,47.2554)">
+            <path d="M-175,-5C-192.333,-11.667 -197.333,-21 -190,-33C-178,-45 -166,-44.333 -154,-31C-144,-17.667 -148.667,-9 -168,-5" style="fill:none;fill-rule:nonzero;stroke:rgb(197,67,130);stroke-width:10px;stroke-linecap:round;"/>
+        </g>
+        <g transform="matrix(0.753664,0,-2.77556e-17,0.954918,-220.979,60.9654)">
+            <path d="M-175,-5C-192.333,-11.667 -197.333,-21 -190,-33C-178,-45 -166,-44.333 -154,-31C-144,-17.667 -148.667,-9 -168,-5" style="fill:none;fill-rule:nonzero;stroke:rgb(197,67,130);stroke-width:10px;stroke-linecap:round;"/>
+        </g>
+        <g transform="matrix(0.534311,-8.91444e-17,6.84574e-17,0.692142,-267.361,69.7824)">
+            <path d="M-175,-5C-192.333,-11.667 -197.333,-21 -190,-33C-178,-45 -166,-44.333 -154,-31C-144,-17.667 -148.667,-9 -168,-5" style="fill:none;fill-rule:nonzero;stroke:rgb(197,67,130);stroke-width:10px;stroke-linecap:round;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-158.962,56.2656)">
+            <ellipse cx="0" cy="0" rx="178" ry="112" style="fill:rgb(210,75,142);"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-158.962,56.2656)">
+            <ellipse cx="0" cy="-6" rx="168" ry="102" style="fill:url(#_Linear95);"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-158.962,56.2656)">
+            <ellipse cx="-55" cy="-42" rx="58" ry="24" style="fill:white;fill-opacity:0.28;"/>
+        </g>
+        <g transform="matrix(0.584358,-0.811496,0.811496,0.584358,-215.693,160.511)">
+            <path d="M93,82.628C93,76.762 88.238,72 82.372,72L65.628,72C59.762,72 55,76.762 55,82.628L55,143.372C55,149.238 59.762,154 65.628,154L82.372,154C88.238,154 93,149.238 93,143.372L93,82.628Z" style="fill:url(#_Linear96);stroke:rgb(197,67,130);stroke-width:6px;"/>
+        </g>
+        <g transform="matrix(1.16924,-1.11022e-16,1.11022e-16,1.16924,19.924,19.6247)">
+            <g transform="matrix(0.532004,-0.172859,0.172859,0.532004,-438.837,-87.2086)">
+                <path d="M770,650L770,688" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+                <path d="M751,669L789,669" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+            </g>
+            <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-143.926,68.0685)">
+                <circle cx="155" cy="-10" r="92" style="fill:rgb(210,75,142);"/>
+            </g>
+            <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-143.926,68.0685)">
+                <ellipse cx="155" cy="-18" rx="88" ry="80" style="fill:url(#_Linear97);"/>
+            </g>
+            <g transform="matrix(0.800048,-0.259951,0.259951,0.800048,-137.705,45.4744)">
+                <path d="M120,-78C113.167,-87 138,-142 138,-142C138,-142 182,-98.667 179,-88C176,-77.333 126.833,-69 120,-78Z" style="fill:rgb(255,156,203);fill-rule:nonzero;stroke:rgb(210,75,142);stroke-width:8px;"/>
+            </g>
+            <g transform="matrix(0.838164,-0.0716535,0.0716535,0.838164,-148.507,6.13028)">
+                <path d="M175,-72C177.167,-83.833 230,-126 230,-126C230,-126 226.167,-64 217,-55C207.833,-46 172.833,-60.167 175,-72Z" style="fill:rgb(255,156,203);fill-rule:nonzero;stroke:rgb(210,75,142);stroke-width:8px;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,1.3383,-1.31813)">
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-135.647,61.7637)">
+                    <ellipse cx="126" cy="-34" rx="25" ry="34" style="fill:white;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-135.647,61.7637)">
+                    <circle cx="132" cy="-28" r="13" style="fill:rgb(31,31,31);"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-135.647,61.7637)">
+                    <circle cx="136" cy="-33" r="4" style="fill:white;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-135.647,61.7637)">
+                    <path d="M102,-58C117.333,-67.333 131.667,-66.333 145,-55" style="fill:none;stroke:rgb(128,50,86);stroke-width:10px;stroke-linecap:round;"/>
+                </g>
+            </g>
+            <g transform="matrix(1,0,0,1,5.68209,3.89518)">
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-132.996,60.386)">
+                    <ellipse cx="174" cy="-28" rx="25" ry="34" style="fill:white;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-132.996,60.386)">
+                    <circle cx="180" cy="-22" r="13" style="fill:rgb(31,31,31);"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-132.996,60.386)">
+                    <circle cx="184" cy="-27" r="4" style="fill:white;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-139.058,53.9642)">
+                    <path d="M160,-48C174.667,-57.333 188.667,-55.333 202,-42" style="fill:none;stroke:rgb(128,50,86);stroke-width:10px;stroke-linecap:round;"/>
+                </g>
+            </g>
+            <g transform="matrix(1.01629,0.199304,-0.199304,1.01629,12.0009,-3.33968)">
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-183.385,101.057)">
+                    <ellipse cx="222" cy="-2" rx="44" ry="32" style="fill:rgb(255,201,223);stroke:rgb(210,75,142);stroke-width:8px;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-177.277,103.692)">
+                    <ellipse cx="222" cy="-2" rx="44" ry="32" style="fill:rgb(255,201,223);stroke:rgb(210,75,142);stroke-width:8px;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-177.277,103.692)">
+                    <ellipse cx="210" cy="-2" rx="6" ry="9" style="fill:rgb(126,51,87);"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-177.277,103.692)">
+                    <ellipse cx="230" cy="-2" rx="6" ry="9" style="fill:rgb(126,51,87);"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-168.03,113.081)">
+                    <ellipse cx="175" cy="15" rx="14" ry="10" style="fill:rgb(255,159,207);fill-opacity:0.8;"/>
+                </g>
+                <g transform="matrix(0.877456,-0.285103,0.285103,0.877456,-169.524,105.304)">
+                    <ellipse cx="248" cy="25" rx="14" ry="10" style="fill:rgb(255,159,207);fill-opacity:0.8;"/>
+                </g>
+            </g>
+        </g>
+        <g transform="matrix(0.963255,0.268588,-0.268588,0.963255,-180.008,50.103)">
+            <path d="M60.459,-80.782C60.459,-84.093 57.771,-86.782 54.459,-86.782C54.459,-86.782 37.787,-95.141 12.337,-94.695C-7.864,-94.341 -29.019,-87.21 -29.019,-87.21C-32.331,-87.21 -35.019,-84.522 -35.019,-81.21C-35.019,-77.899 -32.331,-75.21 -29.019,-75.21C-29.019,-75.21 -6.367,-82.898 11.046,-82.695C30.108,-82.473 54.459,-74.782 54.459,-74.782C57.771,-74.782 60.459,-77.47 60.459,-80.782Z" style="fill:rgb(142,48,90);"/>
+        </g>
+        <g transform="matrix(0.53816,0.842843,-0.842843,0.53816,-141.732,167.985)">
+            <path d="M-82,86.628C-82,80.762 -86.762,76 -92.628,76L-109.372,76C-115.238,76 -120,80.762 -120,86.628L-120,147.372C-120,153.238 -115.238,158 -109.372,158L-92.628,158C-86.762,158 -82,153.238 -82,147.372L-82,86.628Z" style="fill:url(#_Linear98);stroke:rgb(197,67,130);stroke-width:6px;"/>
+        </g>
+    </g>
+    <g opacity="0.9">
+        <g transform="matrix(1,0,0,1,-71.6418,-102.37)">
+            <g transform="matrix(1,0,0,1,-60.5795,-28.9728)">
+                <path d="M650,210L650,248" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+            </g>
+            <g transform="matrix(1,0,0,1,-60.5795,-28.9728)">
+                <path d="M631,229L669,229" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+            </g>
+        </g>
+        <g transform="matrix(1,0,0,1,-35.8147,52.0579)">
+            <path d="M280,640L280,678" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+            <path d="M261,659L299,659" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,21.9552,36.079)">
+            <path d="M770,650L770,688" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+            <path d="M751,669L789,669" style="fill:none;fill-rule:nonzero;stroke:rgb(255,241,168);stroke-width:8px;stroke-linecap:round;"/>
+        </g>
+    </g>
+    <g opacity="0.32">
+        <path d="M210,220C323.333,246.667 426.667,308.333 520,405" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:24px;stroke-linecap:round;"/>
+        <path d="M170,285C283.333,308.333 376.667,356.667 450,430" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:14px;stroke-linecap:round;"/>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear4" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear5" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear6" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear7" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear8" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear9" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear10" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear11" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear12" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear13" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear14" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear15" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear16" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear17" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear18" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear19" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear20" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear21" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear22" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear23" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear24" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear25" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear26" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear27" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear28" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear29" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear30" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear31" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear32" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear33" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear34" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear35" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear36" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear37" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear38" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear39" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear40" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear41" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear42" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear43" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear44" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear45" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear46" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear47" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear48" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear49" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear50" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear51" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear52" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear53" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear54" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear55" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear56" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear57" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear58" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear59" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear60" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear61" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear62" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear63" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear64" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear65" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear66" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear67" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear68" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear69" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear70" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear71" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear72" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear73" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear74" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear75" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear76" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear77" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear78" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear79" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear80" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear81" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.22465e-15,20,-20,1.22465e-15,-42,0)"><stop offset="0" style="stop-color:rgb(216,148,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(155,92,0);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear82" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(84,24,-24,84,-42,-12)"><stop offset="0" style="stop-color:rgb(255,244,181);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(255,216,79);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(241,165,0);stop-opacity:1"/></linearGradient>
+        <image id="_Image84" width="91px" height="50px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAAAyCAYAAAAzzacLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAC60lEQVR4nO2Zv4oVMRSHT8I8jM8gWGwhbCFYCBaihaUgWNiJoGCxWCy4sFi4WGy5nYWdnd2WFoIvMxOLO5mbnDknk+xkZpJJfrCw5J6d2fvd7+bPGQGO/L0AJQSA/sG59xqI0RouLKw/5zZoIQFkhT4rDfdC2xmgBYBQAEqgsR7xv0tQ+u8qeD4kmNszUJIAOxqrtgeFNLtrxxZLAaBktX1ORhB+fzzM1RIZTJpdbQ/KyOy2JSxW/Vgk20uFbr3pX+8Iq7HB0mG1Rx1OSeAts9v2AIQyU2mACo151HXMBwNQlu3DG/z5lp+rq+1xIgAAfryxDzASgXFCnKiTeE7nriXH/9zeoDcA/fRh7DiUsKcBa3E04OE6QdR1agzXmlaYOoD9bR/FzSvCajSVhG75fCwu0fZGL4rkotcvdOxCiOqohdDH4lJst2FLBFERYB11o724RGNcXW+xb51ObjuZI+xAi8kDjmGlEADSs04IAKWY+07UAeRjezN095hToq/tnZ6zJ/bXVB357RH96dSjLhfbm647/MKZ5Gtn7Lo92j6cIJUCaJWfSXMsvpPtvtvSvhY3wlKxfbj51fOjCcOLGozvAQdbHLnOWTtRh7MFePKGGDwLApnkhOLbpo1dx9iusyZ0542q7XHjfXGX7XNOnSXZHnzRNWyP2Qjj6rhanJjgZ12o2h6WKJ8aZXtIs8mrLhHb50CP9hUB4KeYrW1P5SFHVNhmqu3jLAZbx2X7onNwgo/0FodtZq+2+z7kWBW2Tqm2bwLbzKK2J/ZIb3PYOiXYngxsM0GNsKUsXsD2JGHrpGb73EZY0rDN7MH2bGDr5Nz2zQ62mdxszxq2Tg62338PYhewzcSyPfYC/ODDDmHrpGT7yadETpBrZMuHHA/PjoyLgK2zhe2nnwuFbWYN2x+d23yLha2zZCPs8ZcKm0zsR3pPLhPpZ6eeGLY//VphB+Wutj/7RnOtsD0TYvuL7xV2lEy1fV9e80z/A3ZeGzncd80pAAAAAElFTkSuQmCC"/>
+        <image id="_Image86" width="83px" height="39px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFMAAAAnCAYAAABzAXTXAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAChElEQVRoge3YuWsUURzA8d9bVjT6J4iIBxK8kCgqGsQjBCWVjZ2VnY2ljY12abSzsREViUgIwcZCUINHJCqrggSJBDF4NOaw0L3ma7GZ2Te7s1cymXlvxl8zM+/4zc5nf3PwFL9HERwRcaS6pebYERGkflxQe6Nx1bxq/RUlCQzFwghRQtbBbhhMDKxiYZi4IPVxauM161EV8/eJG7K2XW26biWsYv4eJkHqedXmG1ahKuaGMBGydpzaett4WMXcXeKD7CRvpV1tGzIWVTF7B1sga/Oq7hGjYBWzt7AR0tuCqO0PjEBV/LqJzZBo+wKS2fUwNthMkiBFkPL7fsrv+ojQ0ItskiDBnSdSzh1HqLRle55EUq2ZJEIKlX4W+0pvjlB63bvi1ZpNFOTisQ4pWl9x4hDuvFUHxkOv1kxaIBF8cwvj+ym83BdqtWbTCIlU+wrPe3Bzre7NLataA97m6YH050LyY7vJj+1ccrV6/wQ/r5JmSP28aP1rjk22Xa11A/kx2MbKezog3XyAdPVNtURtOoBvlwOW59IHKVq+rv7phmZtlTAzl/gPWZ9v7akZn19Hby++Xgx4BKQTUv8d6wa+q44xfbBfLjRYbUoXZPXYWTqmhzp9njghW154RJACy8f0wX4+R1ohCRvTQ50622TBOZmQIiuE6YP9dIY0QIZ+mzdFnTxNkiEjxdTD+ThA0iBjw3TD+XCSpEAiIXwahRXl3Alshoy9MoOi9PYoHV24IZBGYupRnDhM0ws3CNJ4TDeKrw5iOqRE8Z0ZdhRe7CU+SKey2+CzzjpMN/LP9mASpDW3eavIP91B3JChrBqZFH8fdxMXpJXPzHbjz6MtRAkpIP8Aq24DrhPMBpoAAAAASUVORK5CYII="/>
+        <image id="_Image87" width="95px" height="44px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF8AAAAsCAYAAAAD+mSaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAFIElEQVR4nO2aa4gVZRzGf48XtCIzSxNTAiUbkm5qmqmJaXuR/SBERTSCFOyXBuyKUlRYgSUVSwWxjFAI9UGioHLXVdFqxcxW7WISshUJWmZZGZKlu/Zh5uzMzs7ZnTk7857jug+cD3vOPOfM+3ve5z0s/yOK6MCr3CfxqEQT0Azsshw6il0/qPRSsRe+aWCLYLEE/uO4xGagCdhkORwzd5sDU7Hwv3yJKxGHJIZI3kWhEAA6Jfb4rWgC2iyHTnO3PTAUC3/Pi6xEvBAGXgiAmOckjkm04AXRYjkcN7iGc1ax8HevYb/ENOi+48MNIOY5/9EB7A61Yp/lcNbUgs4l9YC/8zlmSLT1AtczJg/lF4lNeEFsthz+Mre8ylYP+K2raRCs6GN3e2bFh9CL7wzwWaEVlsPXxlZageoGf/tTDJM4LDFO/qspzv1SQjks0YzXiq2Ww9/mll5+dYO/9QnqJD7sxxHTH99piR3Q1YoDpiCUS93gt6xig+CunOCm9f0UasU2y+GkGSTm1AV/42OMlvhZYmTC89t7g/Tnfim+fyU+JWjFQWOEclQX/A8eoV7QGAXS57lPWUL5PtSK7ZbDKUO8MlUX/PdX0CoxrwcU/6rUR0yJPqLv03dw/0h8TNCKHwyx67cE8O6DTEa0SyhvuIl8UU8630EF/+B9Yjn8ZxJoGg0D6OhkGfjgDezuPHwhz1SJqRIPSZz87nW2EbTikEm4fUkA79TTjpgSt9huC6uEUKKedL5vFXxX7LAcThsjHSOtv5+5EjtSLS5yTayPygmuiOeExFa8WUWT5XDEHHZPenM5jYL63hZWClzTvgxa8VWoFTtNDI60bhnvSdQJhqcGEre4cgdQxJeyFX/KGxw1A82Ww9Fc4AO4NqOAO4AlEjUSExLepFG4/fJFPcl9ZyX2hlrxeVaDI8U96drc6AdRKzFHMLTXndXL4iolgAxb8bu8wVEz3jj1t0zhR4K4FKgiaMW4pK2IDSUJkF58FdaKTokvFPzIoC3N4KhP+JEgBMwgaMUs4c15S2lFHj7jreju+1Xe4KgZb5z6R2bwY8K4HKj2w6iWuCxvuBXhSxKcN07dVWiF5bAvU/iRIIYAs/wglkhMFyjHyqf2xbYi6Q7vf5hHQq3YbDmcyAx+TBhXADUSS4AqidFpdo7JUMrgOw18lBv8sFybocAcglbckNPuKr7D+wCS4bmf9L4bjcCPyrWZANT6rVgsMSrnymfvC/1dom9uWeCH5doMB+YStGJanpUv87lfeLRPf5yryw4/KtdmEn4QwCKJi3KofLl9z9y8imcrDn5Yrs0IYD5BK65JWvkKPvfPSky55Ul+rGj4Ubk2k/G/KyQWAhcUOU/THRVJfIRe65+vdd7T3OY/fW7KtRkJLCQIY0rSM9dUK4r46hesxvVtA0OuzVSCIBYAIyqwFackxt/+vPd71QEDPyzX5kJgEUEYV1VIKzZUreGewn0OSPhRuTbXEgQxX+UbHNXVrmVj4b7OC/hhuTYXA4vxwqiVmJhnK0K+oxIT617mTOFezjv4Ubk21xO04lbBsJxa0bC0gYfDn33eww/LtbkEb3BUaMX4DFsx487X2Bv+vEH4ReQPjm4iaMVslT5O3X/3G1wX/YxB+Anl2ozBGxzVyhunjk3aComV9zayNvqeg/BLkD84mkkwTp2p4uPUTolJ9rqeP8oahJ+BXJuxQA1eK6olxoRasWX5W1TF+QbhZyx/cDSboBWvPLCet+Ou/R+FbgJcDiol6gAAAABJRU5ErkJggg=="/>
+        <image id="_Image88" width="89px" height="34px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAAAiCAYAAAA07nWtAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAFYklEQVRogeWaW2wUVRjHf2NbSws0gUaUEExUGgiIIqJCRC4WkSiIgIF4CaAhUaMPEk30gRfCgz6IPBEwYhA0IASEBB64WIEYEAJiACEg4A2sCBboKkJp+/19mL13djs73Z0t+iWbM3N6Tjbz+875nTNn65AWalzrIBsANhBZf7D+0fI2ZKVgpdGyDKkUrBlZA7IGsIvRMnZfj+wU2Elk9U6f+Zb+ff+HcGIXiqyrQvYCslfABiMBBrLcS8+/6Sqy01HgMfDfgx1ybv/gn/AfPbxwABRZPxXZSrCu/qEllx4JiV1nBw+yVrCjyA6A7Y+WR5w7PmwqAo+ChKPI+uHIdoB1yQIC/8B9gG+/bAY7jGw/2E5kO5x+n54PH09+wlHjur1gD+WmBeUKrW2ZLZHe5RGwOmRfIdvl9F8XCZlV4HDUuHYPshE5PjD+R6cPt/uZQallK9gBZHVIdUhfOwM3NYeLzn84alyzDdljwaZ2UVSS1EeAkHQZ2SakDUhbbxq8pVMtpI4urx4Htj1/WggKPtMIzzaihSQXdrytrkraimwD0qaSIXWXwgTqFe7u4tJnK8BmduyB/UJrZ0Tn4vAY5PT7RF0L0k5J65HWlN6/qyjAo5BXViN9B9Y3Px7OkpC8ONwFKRLXLuD4aI6P7kQS1IRso6TlSF+WPbinNVTIALq4vC+yLbhvev4hhq2ShIdTgLt1adDTkoAMucB/Q1qJ9EnZ8H0/hAYZQA0f9US2GTQidwBJIzAvSsk0oj09nAqdtDYZEhMFvhvZx0irb3744LWCQwbQn0srwVYhmxzInb5A+3R7MA+n1flIjHt/HmmxpCXljxy6UFDIALqw2AF7EdkisKpwtNCewwN5OHGfNQkk97vmqsQWlY8+erxgkOOwzy/qi2wZ2PjEAwfZYXRQJfnxcPbEpLWJ1m1GWthl7PGdBYMMoD/ed5DNAVuIrHteFsDYte+tXb493E5i2vbbLvRORe3JgwWBHIf9+7u3gs3DPQotzd3DPmdCWB5uAxM//T5Hmlcx/qfTBYEch10//y5kC8CezY8WPBbVUDwszzof/VokLUVaUDnhV18ngzlDjsM+O28o2Ht4nXt0aC8doofTEpPQSaY2KXV/Ib2JbFnlE/UqCOQ47DNvj0b2FtjEjnk4XSUhe9grMf76bROa0/XJc2cKBjkO+5e5A8DeQDYLzx8AsmmhWB7OsNDl1M9AiiDNRVre9akLbUZ13iDHYf/8+i3IXgV7DVmv3PfSRfRwm8R4tcnab6Ok57tNbkg5as075DjsH1/uEl0cXwIb2Vk9nDExwRP6DdjEbk9fvlhwyCnAT82qAZsdVUkfT5VEgRTXw14LXZB+dgzp8W5TI2dDgxyHffK5EmS10Vf2KWDlngtdMTzslRjfs8ozoWeQ7us+7e+GUCGnAD8xrQey6WDTkI1FKk1d6CiSh71mTOCEruj+zJXZRYOcHDo2qYewiUhTkCYgVXiPmAJ72CsxOfbzSMK4TgE5OezIhErQeElTkE1C6pE6qsLwcIY6Py8zbROzrdNBTo7WQ+PKkI1EqpVUi/QAWElBPeyVGP8e9ppVezo15PRo+XZUFbJRUeCPgu4pjIe9EhOkn4G094aCnB7N+4b3Qhoj2VjQMKR7kcqCejjrQhdod6NryMbc0JDT4/ruoeVIg4UNQ4p97kZWkruH/bXJ4GGQroBmVs24/sV/CrJXNO0aVCFpCLJBSDVI/YRqkPVDqsjo4YAHRpIdBi1BWlU143oEQn4Z6UxxdfudNyH1BtVIqkHWG6kaqRpULVnPpPsy3HPkZtx/mGkBtUg6h+wEkvtBxyQ7UTW9Scnf9S9LUJXTxzUHHAAAAABJRU5ErkJggg=="/>
+        <image id="_Image90" width="86px" height="39px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFYAAAAnCAYAAACVKL+TAAAACXBIWXMAAA7EAAAOxAGVKw4bAAACXElEQVRoge2aO07EMBCGJ1JuQ0lPzzWQ6JDotkOipuYEiJaejmtwmESh2JD1Yx6eiRM7m/xSGk9s2Z9/TzzabeAQq993GKjYMFyem2do3Fi7/NS2JwrmBBJ8qNjbTdy0P6W6kgL7/9yeLjx361jRlQFESIDrajdg1a4U3BnGwtGvOhVoXYk9wMWR9rvXM9OrcuwiruTSAfYhG7VpsCqQWFuKK43pYHOpQHMVglQ4TFyEjsTv36Cp3rG5rkIWQOJmUe9ApY61XNC1gFDwxr5YHq4CbC5XeqCsfYO4NZ0UA7uYK5m46MpE15LpwHlnNbBLuNJ9J9uHKhEuNzYsDdZyQS/1JacAWftmBbtG2ag9tiZXJsSkdDAbbImyMRm8YUNn5+HxUYOtoWyU4jnSSYoro01xJIKtsWzUAiJdOWdOJBWAx09oULDmq5AwERb8jL6LOR7bFAJk2NZwIMnFEu1rlo2qMaR+3JoIYTA9sCFUcRcVgFDwxr6iK6X+ivVYQIZqPZiGXa7mYzMExlD0zQEyAtv1Blcy8TXLxtKuZMH2PbOAcDIa8EQsZ9lY2pXZwOY6eknuVI6NnZS1Ybpqu05wpcFZNVzQ1wYZ6uxYSF981jws9RfGplQKpqtLKgDj0ZvjyhHOVl3JqQEA+HkZWVGuTDi2e3QlpxYAQOvaWsrGmjVN9vsEgxZQ6bKxZk0/f3eBa7d+QS+tCax3nwU57+Vw5TWBDOUt7OtpTAcSXCe2Z1dy8v4J0wWurb1srFke2Ki8BQTe4cokRQA+Hvh0gOkAGSv6U1zXyyABDpiS/gCzD+uBmZtiTQAAAABJRU5ErkJggg=="/>
+        <image id="_Image92" width="80px" height="30px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAeCAYAAAC7Q5mxAAAACXBIWXMAAA7EAAAOxAGVKw4bAAACjklEQVRogdVYv0scQRR+71yO4zD+GQHBJpBCiIVBiE2ChUK6lPYpU1unTG8pWlpY2liZQrAwJIRAIohBFIU0Iey+FDvnzc7c7Lz5tTf3NTt7OzP79rvvm/dmEGYY/z6/IKAKgCogIhi1oSIgqgDEb3Jb7dsYR2JcJbUN84zaxbRJcEF59pK0jxdAAKCJNzEhT1y3syewPH9FsnriQiekbmKtNK2PjuwIpC9v6NEqlbCKD2Q+wEOQzEFZEEhftwig1FUW+uUdWHkqBNL3dwRUAkAFQOUEa44DRERprTNYLhVTDCt3RiD92JZUVorgRoElRCi3lvHJCKSf74XKJNJ8wSYhPCm4BhaVQLr8IFQmSNNiReXqACMJYYSwRrd0CiKQrnaatoxeZkSEh4o5taUTgfT7Y135N2xpUxNXdQxVJrOyv4qtBNLNJ9KzpeFjH+MIsKoNxiqFSUKI4yeM1Qiku13FlgGLPysikDKywzBL//BUwVGxIJDu98icLRU1GSOzqI6tzlT1XUQrS9169HCQpFYPAcv4oatDpNWl1z577ASBzVtjPyYwVRGO1jaKdxsIzAH2j4j6Co95F97+RSmJGNTkWwyzt2qBGTvxVk3Fk80/jUCzOI3xg39ScOFsfuO29Z8txgHYgpWvpkhirZ1dn7qMp0UAGL6+Ztth5hTYWkV5nh0O1395L6w6gc67CW4xzFWxK1ytjDBY+xYtE+WnwNDjEQMGqxdJah6FwFi7CWU+X3X6QMTYXzlLVSQ2UMQvmiPA09b95dNOSJORwMKR/hAGicXzk84J02JofepbDAcfOJgfzj07njppMvJLIkpW7S0dZUWYiqLzrZpVnQC4eJg1aTKyUCA+3Z8ZwlT8B4I2VenD89XlAAAAAElFTkSuQmCC"/>
+        <linearGradient id="_Linear93" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(5.02105e-15,82,-82,5.02105e-15,125,52)"><stop offset="0" style="stop-color:rgb(255,136,194);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(215,74,142);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear94" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(5.02105e-15,82,-82,5.02105e-15,-52,84)"><stop offset="0" style="stop-color:rgb(255,136,194);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(215,74,142);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear95" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(336,204,-204,336,-168,-108)"><stop offset="0" style="stop-color:rgb(255,195,222);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,108,178);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear96" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(5.02105e-15,82,-82,5.02105e-15,55,72)"><stop offset="0" style="stop-color:rgb(255,136,194);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(215,74,142);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear97" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(168,168,-168,168,71,-102)"><stop offset="0" style="stop-color:rgb(255,195,222);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,108,178);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear98" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(5.02105e-15,82,-82,5.02105e-15,-120,76)"><stop offset="0" style="stop-color:rgb(255,136,194);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(215,74,142);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>

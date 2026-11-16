@@ -3167,8 +3167,7 @@ code {
 
 .spending-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 18px;
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
 }
 
@@ -3179,25 +3178,63 @@ code {
 }
 
 .planned-sidebar {
-    position: sticky;
-    top: 18px;
+    position: absolute;
+    right: -304px;
+    top: 362px;
+    z-index: 35;
     display: flex;
     flex-direction: column;
+    width: 300px;
     min-width: 0;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 108px);
     padding: 18px;
     border: 1px solid rgba(230, 224, 211, 0.9);
     border-radius: var(--radius);
     background: var(--surface);
-    box-shadow: var(--shadow);
+    box-shadow: 0 18px 48px rgba(21, 38, 33, 0.16);
 }
 
 .planned-sidebar-head {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.planned-head-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
+}
+
+.planned-totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.planned-total {
+    display: grid;
+    gap: 3px;
+    padding: 9px 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    background: var(--surface-soft);
+}
+
+.planned-total-label {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.planned-total-value {
+    font-size: 14px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
 }
 
 .planned-sidebar h2 {
@@ -3237,6 +3274,10 @@ code {
     text-align: left;
     cursor: pointer;
     transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+}
+
+.planned-card.is-overdue {
+    border: 2px solid #F2C230;
 }
 
 .planned-card:hover {
@@ -3351,13 +3392,24 @@ code {
     background: #FFF3EF;
 }
 
+@media (min-width: 1061px) and (max-width: 1319px) {
+    .planned-sidebar {
+        left: 12px;
+        width: 268px;
+        right: -270px;
+    }
+}
+
 @media (max-width: 1060px) {
     .spending-layout {
-        grid-template-columns: minmax(0, 1fr);
+        display: flex;
+        flex-direction: column;
     }
 
     .planned-sidebar {
         position: static;
+        order: -1;
+        width: 100%;
         max-height: none;
     }
 

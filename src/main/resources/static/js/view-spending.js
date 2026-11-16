@@ -1164,16 +1164,42 @@ function restoreSpendingFilters() {
 
 let editingPlannedIndex = null;
 
+function plannedIsPastDue(dueDate) {
+    const due = parseIsoDate(dueDate);
+    if (!due) {
+        return false;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return due < today;
+}
+
+function renderPlannedTotals(items) {
+    const month = monthKey(new Date());
+    let monthTotal = 0;
+    let overall = 0;
+    items.forEach(item => {
+        const amount = toNumber(item.amount);
+        overall += amount;
+        if (item.dueDate && String(item.dueDate).startsWith(month)) {
+            monthTotal += amount;
+        }
+    });
+    $('#planned-total-month').text(money.format(monthTotal));
+    $('#planned-total-overall').text(money.format(overall));
+}
+
 /** The backend returns the list already ordered by due date (undated last). */
 function renderPlannedSpending() {
     const items = state.plannedSpending;
     const $cards = $('#planned-spending-cards').empty();
+    renderPlannedTotals(items);
     items.forEach(item => {
         const palette = categoryPalette(getCategory(item.categoryId || 0).color);
         const amount = money.format(toNumber(item.amount));
         $('<button>', {
             type: 'button',
-            class: 'planned-card',
+            class: 'planned-card' + (plannedIsPastDue(item.dueDate) ? ' is-overdue' : ''),
             'data-index': item.index,
             'aria-label': 'Edit ' + item.title + ', ' + amount
         }).css({
