@@ -1263,6 +1263,15 @@ function renderPlannedCategoryOptions(selectedId) {
     $select.val(selectedId ? String(selectedId) : '');
 }
 
+function togglePlannedSidebar() {
+    const $sidebar = $('#planned-spending-sidebar');
+    const folded = $sidebar.toggleClass('is-folded').hasClass('is-folded');
+    $('#planned-toggle-btn')
+        .attr('aria-expanded', String(!folded))
+        .attr('aria-label', folded ? 'Expand planned spending' : 'Fold planned spending')
+        .attr('title', folded ? 'Expand planned spending' : 'Fold planned spending');
+}
+
 function isPlannedModalOpen() {
     return !$('#planned-modal').prop('hidden');
 }
@@ -1447,6 +1456,7 @@ export function initSpendingView(options) {
         renderSpending();
     });
 
+    $('#planned-toggle-btn').on('click', togglePlannedSidebar);
     $('#planned-add-btn').on('click', addPlannedSpending);
     $('#planned-spending-cards').on('click', '.planned-card', function () {
         openPlannedModal(this.getAttribute('data-index'));
