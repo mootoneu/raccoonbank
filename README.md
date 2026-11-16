@@ -62,6 +62,10 @@ mvnw.cmd spring-boot:run
 
 Then open <http://localhost:8080>.
 
+On Windows you can also double-click `start-server.cmd` instead of running Maven manually. It
+starts the server from the project root and keeps the console window open after the server stops,
+so you can read the logs.
+
 ## Overview cash flow chart
 
 The dashboard shows monthly earnings (positive amounts) and spending (negative amounts) as
@@ -334,6 +338,8 @@ the checklist for adding a view.
 ## Project layout
 
 ```
+start-server.cmd  Windows launcher that keeps the console open
+scripts/          helper and migration scripts
 src/main/java/com/cochonbank2/
   config/       startup, data-directory properties, rolling backups
   csv/          dependency-free RFC 4180 reader/writer and repositories
