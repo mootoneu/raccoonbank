@@ -201,6 +201,46 @@ class Cochonbank2IntegrationTest {
     }
 
     @Test
+    void managesRecurringCostsThroughTheRestApi() throws Exception {
+        String title = "TEST-RECURRING-" + UUID.randomUUID();
+
+        HttpResponse<String> create = postJson("/api/reccuring-costs",
+                "{\"day\":12,\"title\":\"" + title + "\",\"amount\":-99.50,\"categoryId\":10}");
+        assertEquals(201, create.statusCode(), create.body());
+        JsonNode created = json(create);
+        assertEquals(12, created.get("day").asInt());
+        assertEquals(title, created.get("title").asText());
+        assertEquals(0, created.get("amount").decimalValue()
+                .compareTo(new java.math.BigDecimal("-99.50")));
+        assertEquals(10, created.get("categoryId").asLong());
+
+        boolean listed = false;
+        for (JsonNode cost : json(get("/api/reccuring-costs"))) {
+            if (title.equals(cost.get("title").asText())) {
+                listed = true;
+            }
+        }
+        assertTrue(listed, "the recurring cost must be listed");
+
+        String renamed = title + "-RENAMED";
+        String updateBody = "{\"day\":15,\"title\":\"" + renamed
+                + "\",\"amount\":-100.00,\"categoryId\":10}";
+        HttpResponse<String> update = sendJson("PUT",
+                "/api/reccuring-costs/" + title, updateBody);
+        assertEquals(200, update.statusCode(), update.body());
+        assertEquals(15, json(update).get("day").asInt());
+        assertEquals(renamed, json(update).get("title").asText());
+
+        HttpResponse<String> delete = sendJson("DELETE",
+                "/api/reccuring-costs/" + renamed, null);
+        assertEquals(204, delete.statusCode(), delete.body());
+
+        for (JsonNode cost : json(get("/api/reccuring-costs"))) {
+            assertTrue(!renamed.equals(cost.get("title").asText()));
+        }
+    }
+
+    @Test
     void rejectsInvalidTransactionsWithAProblemDetail() throws Exception {
         String body = """
                 [{"categoryId":10,"paymentType":"DEBIT","amount":-5.00,"title":"NO DATE"}]
@@ -227,12 +267,19 @@ class Cochonbank2IntegrationTest {
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .timeout(Duration.ofSeconds(10))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        return sendJson("POST", path, body);
+    }
+
+    private HttpResponse<String> sendJson(String method, String path, String body) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .timeout(Duration.ofSeconds(10));
+        if (body == null) {
+            builder.method(method, HttpRequest.BodyPublishers.noBody());
+        } else {
+            builder.header("Content-Type", "application/json")
+                    .method(method, HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8));
+        }
+        return client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private JsonNode json(HttpResponse<String> response) {

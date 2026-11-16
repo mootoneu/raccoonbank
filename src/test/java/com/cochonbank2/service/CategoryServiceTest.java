@@ -19,9 +19,11 @@ import com.cochonbank2.config.CochonbankProperties;
 import com.cochonbank2.config.DataBackupService;
 import com.cochonbank2.domain.Category;
 import com.cochonbank2.domain.DefaultCategory;
+import com.cochonbank2.domain.ReccuringCosts;
 import com.cochonbank2.domain.Transaction;
 import com.cochonbank2.repository.CategoryRepository;
 import com.cochonbank2.repository.DefaultCategoryRepository;
+import com.cochonbank2.repository.ReccuringCostsRepository;
 import com.cochonbank2.repository.TransactionRepository;
 
 class CategoryServiceTest {
@@ -32,6 +34,7 @@ class CategoryServiceTest {
     private CategoryService service;
     private TransactionRepository transactionRepository;
     private DefaultCategoryRepository defaultCategoryRepository;
+    private ReccuringCostsRepository reccuringCostsRepository;
     private CategoryRepository categoryRepository;
 
     @BeforeEach
@@ -40,6 +43,7 @@ class CategoryServiceTest {
         categoryRepository = new CategoryRepository(properties);
         transactionRepository = new TransactionRepository(properties);
         defaultCategoryRepository = new DefaultCategoryRepository(properties);
+        reccuringCostsRepository = new ReccuringCostsRepository(properties);
 
         categoryRepository.appendAll(List.of(
                 new Category(100, 1, 0, "Loyer", "Loyer", "#8b0000"),
@@ -51,11 +55,14 @@ class CategoryServiceTest {
                 transaction(3, 0, "-4.20")));
         defaultCategoryRepository.appendAll(List.of(
                 new DefaultCategory(1, 110, "VEOLIA", "")));
+        reccuringCostsRepository.appendAll(List.of(
+                new ReccuringCosts(5, "EAU", new BigDecimal("-12.50"), 110)));
 
         service = new CategoryService(
                 categoryRepository,
                 transactionRepository,
                 defaultCategoryRepository,
+                reccuringCostsRepository,
                 new TransactionService(transactionRepository, categoryRepository),
                 new DefaultCategoryService(defaultCategoryRepository, categoryRepository),
                 new DataBackupService(properties));
@@ -107,6 +114,7 @@ class CategoryServiceTest {
         assertEquals(100L, transactionRepository.findAll().get(1).categoryId());
         assertEquals(0L, transactionRepository.findAll().get(2).categoryId());
         assertEquals(115L, defaultCategoryRepository.findAll().get(0).categoryId());
+        assertEquals(115L, reccuringCostsRepository.findAll().get(0).categoryId());
         assertTrue(categoryRepository.findAll().stream().anyMatch(category ->
                 category.id() == 115 && category.name().equals("Eau")));
         assertFalse(categoryRepository.findAll().stream().anyMatch(category -> category.id() == 110));
@@ -157,6 +165,7 @@ class CategoryServiceTest {
         assertEquals(new CategoryService.Deletion(110, 0, 1, 1), deletion);
         assertEquals(0L, transactionRepository.findAll().get(0).categoryId());
         assertEquals(0L, defaultCategoryRepository.findAll().get(0).categoryId());
+        assertEquals(0L, reccuringCostsRepository.findAll().get(0).categoryId());
         assertEquals(List.of(100L, 200L), categoryRepository.findAll().stream()
                 .map(Category::id)
                 .sorted()

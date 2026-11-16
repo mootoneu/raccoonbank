@@ -16,6 +16,7 @@ import com.cochonbank2.csv.CsvException;
 import com.cochonbank2.domain.Category;
 import com.cochonbank2.repository.CategoryRepository;
 import com.cochonbank2.repository.DefaultCategoryRepository;
+import com.cochonbank2.repository.ReccuringCostsRepository;
 import com.cochonbank2.repository.TransactionRepository;
 
 @Service
@@ -31,6 +32,7 @@ public class CategoryService {
     private final CategoryRepository repository;
     private final TransactionRepository transactionRepository;
     private final DefaultCategoryRepository defaultCategoryRepository;
+    private final ReccuringCostsRepository reccuringCostsRepository;
     private final TransactionService transactionService;
     private final DefaultCategoryService defaultCategoryService;
     private final DataBackupService backupService;
@@ -39,12 +41,14 @@ public class CategoryService {
             CategoryRepository repository,
             TransactionRepository transactionRepository,
             DefaultCategoryRepository defaultCategoryRepository,
+            ReccuringCostsRepository reccuringCostsRepository,
             TransactionService transactionService,
             DefaultCategoryService defaultCategoryService,
             DataBackupService backupService) {
         this.repository = repository;
         this.transactionRepository = transactionRepository;
         this.defaultCategoryRepository = defaultCategoryRepository;
+        this.reccuringCostsRepository = reccuringCostsRepository;
         this.transactionService = transactionService;
         this.defaultCategoryService = defaultCategoryService;
         this.backupService = backupService;
@@ -114,6 +118,9 @@ public class CategoryService {
                 .count()
                 + defaultCategoryRepository.findAll().stream()
                         .filter(rule -> rule.categoryId() == newId)
+                        .count()
+                + reccuringCostsRepository.findAll().stream()
+                        .filter(cost -> cost.categoryId() == newId)
                         .count();
         if (references > 0) {
             throw new IllegalArgumentException("Id " + newId + " is already used by "
@@ -123,6 +130,7 @@ public class CategoryService {
         backup();
         int transactions = transactionRepository.replaceLongValue("Category_Id", oldId, newId);
         int rules = defaultCategoryRepository.replaceLongValue("Category_Id", oldId, newId);
+        reccuringCostsRepository.replaceLongValue("Category_Id", oldId, newId);
         repository.replaceLongValue("Id", oldId, newId);
         return new IdChange(oldId, newId, transactions, rules);
     }
@@ -159,6 +167,7 @@ public class CategoryService {
         backup();
         int transactions = transactionRepository.replaceLongValue("Category_Id", id, replacementId);
         int rules = defaultCategoryRepository.replaceLongValue("Category_Id", id, replacementId);
+        reccuringCostsRepository.replaceLongValue("Category_Id", id, replacementId);
         repository.deleteLongValue("Id", id);
         return new Deletion(id, replacementId, transactions, rules);
     }

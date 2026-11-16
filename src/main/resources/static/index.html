@@ -33,6 +33,7 @@
                 <button type="button" class="nav-link is-active nav-home" id="nav-home" aria-current="page">Overview</button>
                 <button type="button" class="nav-link" id="nav-spending">Spending</button>
                 <button type="button" class="nav-link" id="nav-transactions">Transactions</button>
+                <button type="button" class="nav-link" id="nav-reccuring">Recurring</button>
                 <button type="button" class="nav-link" id="nav-admin">Admin</button>
             </nav>
             <span class="header-note">
@@ -64,7 +65,7 @@
                 </div>
                 <p class="trust-note">
                     <span class="trust-dot" aria-hidden="true"></span>
-                    No cloud, no database — just three CSV files you can open anytime.
+                    No cloud, no database — just four CSV files you can open anytime.
                 </p>
             </div>
         </div>
@@ -484,6 +485,109 @@
 
         <footer class="page-footer">
             <span>Changes are written to <code>transactions.csv</code> as soon as you save them.</span>
+        </footer>
+    </section>
+
+    <!-- ============================ RECURRING =========================== -->
+    <section id="reccuring-view" class="view" hidden>
+        <div class="view-head">
+            <div class="view-heading">
+                <button type="button" class="link-btn" id="reccuring-back-home">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Back to home
+                </button>
+                <h1>Recurring costs.</h1>
+                <p>Expected monthly costs, compared with the matching transactions saved for the current month.</p>
+            </div>
+        </div>
+
+        <section class="stats reccuring-stats" aria-label="Recurring cost summary">
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#E3EFE9;--icon-ink:#17433C">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm3 8h6m-6 4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Total Expected</p>
+                    <p class="stat-value" id="reccuring-total-expected">—</p>
+                    <p class="stat-sub" id="reccuring-expected-sub">No recurring costs yet</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#FBE7E0;--icon-ink:#B9422C">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm0 0 2-3h12l2 3M8 13h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Total Spent</p>
+                    <p class="stat-value" id="reccuring-total-spent">—</p>
+                    <p class="stat-sub" id="reccuring-spent-sub">Current month</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-icon" style="--icon-bg:#FFF3D6;--icon-ink:#8A5A00">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M7 8h7.5a2.5 2.5 0 0 1 0 5H9.5a2.5 2.5 0 0 0 0 5H17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">Total Remaining</p>
+                    <p class="stat-value" id="reccuring-total-remaining">—</p>
+                    <p class="stat-sub" id="reccuring-remaining-sub">Expected minus spent</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="card reccuring-form-card" aria-labelledby="reccuring-form-title">
+            <div class="card-head">
+                <div>
+                    <h2 id="reccuring-form-title">Add a recurring cost</h2>
+                    <p class="card-sub" id="reccuring-form-sub">The title is matched against the transaction titles of the current month.</p>
+                </div>
+            </div>
+            <form id="reccuring-form" class="reccuring-form" novalidate>
+                <div class="reccuring-form-grid">
+                    <label class="field" for="reccuring-day">
+                        <span class="field-label">Expected day</span>
+                        <input type="number" id="reccuring-day" class="text-input" min="1" max="31" step="1" inputmode="numeric" placeholder="1–31">
+                    </label>
+                    <label class="field" for="reccuring-title">
+                        <span class="field-label">Title</span>
+                        <input type="text" id="reccuring-title" class="text-input" maxlength="120" autocomplete="off" placeholder="e.g. RENT">
+                    </label>
+                    <label class="field" for="reccuring-amount">
+                        <span class="field-label">Expected amount</span>
+                        <input type="number" id="reccuring-amount" class="text-input" step="0.01" inputmode="decimal" placeholder="-800.00">
+                    </label>
+                    <label class="field" for="reccuring-category">
+                        <span class="field-label">Category</span>
+                        <select id="reccuring-category" class="text-input"></select>
+                    </label>
+                </div>
+                <div class="admin-actions reccuring-form-actions">
+                    <button type="button" class="btn btn-ghost btn-sm" id="reccuring-cancel" hidden>Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="reccuring-submit">Add recurring cost</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card tx-list-card reccuring-list-card" aria-label="Recurring costs">
+            <div class="table-scroll reccuring-table-wrap" id="reccuring-table-wrap">
+                <table class="recent-table reccuring-table" id="reccuring-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Expected Day</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="align-right">Expected Amount</th>
+                        <th scope="col" class="align-right">Spent Amount</th>
+                        <th scope="col" class="col-action"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody id="reccuring-body"></tbody>
+                </table>
+            </div>
+            <p class="tx-empty" id="reccuring-empty" hidden>No recurring cost yet. Add one above to compare it with your transactions.</p>
+        </section>
+
+        <footer class="page-footer">
+            <span>Changes are written to <code>reccuringcosts.csv</code> as soon as you save them.</span>
         </footer>
     </section>
 

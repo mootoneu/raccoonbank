@@ -2666,6 +2666,50 @@ code {
 }
 
 /* ==========================================================================
+   Recurring costs
+   ========================================================================== */
+
+.reccuring-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.reccuring-form-card {
+    margin-bottom: 18px;
+    padding: 22px 24px 20px;
+}
+
+.reccuring-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.reccuring-form-actions {
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.reccuring-list-card {
+    overflow: hidden;
+}
+
+.reccuring-table-wrap {
+    max-height: 420px;
+    min-height: 120px;
+}
+
+.reccuring-table .col-action {
+    width: 88px;
+    text-align: right;
+}
+
+.reccuring-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 

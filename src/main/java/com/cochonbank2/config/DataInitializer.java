@@ -23,7 +23,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
     private static final String[] FILES = {
-            "transactions.csv", "categories.csv", "defaultcategories.csv"
+            "transactions.csv", "categories.csv", "defaultcategories.csv", "reccuringcosts.csv"
     };
 
     private final CochonbankProperties properties;

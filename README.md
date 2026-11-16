@@ -34,9 +34,13 @@ transaction lives in a plain CSV file on your machine. No database, no cloud, no
   can be combined freely; its options are colored chips in category id order. The **By category
   group** checkbox aggregates the histogram, legend, totals and filter by `GroupId`, using each
   group root's name and color, so the whole `Loisir` group appears as one segment.
-- **Rolling backups** — every application start copies the three CSV files into
+- **Recurring costs** — keep the expected day, title, amount and category of your regular
+  costs in `reccuringcosts.csv`. The **Recurring** view compares them with the matching
+  transactions saved for the current month, with totals for expected and spent amounts.
+  Costs can be added, edited and deleted from the view.
+- **Rolling backups** — every application start copies the four CSV files into
   `data/backup/backup-yyyyMMdd-HHmmss-SSS/` and keeps the three most recent snapshots.
-- **Plain CSV storage** — the three data files can be opened in any spreadsheet program.
+- **Plain CSV storage** — the four data files can be opened in any spreadsheet program.
 
 ## Requirements
 
@@ -89,6 +93,20 @@ more chips restricts the totals, legend and histogram to those categories while 
 navigation keeps covering the whole ledger. In group mode the control lists groups instead and
 is labelled **All groups**. **Reset** (or the button in an empty histogram) clears the filter.
 
+## Recurring view
+
+Open **Recurring** in the header to compare your expected regular costs with what you have
+actually spent during the current month. The three cards above the table show the **Total
+Expected** and **Total Spent** sums and the **Total Remaining** difference, and each row lists
+the expected day, title, category chip, expected amount and spent amount.
+
+The spent amount is the sum of `Transactions.Amount` for transactions whose bank date falls in
+the current month and whose title matches the recurring cost's title. Titles are compared
+trimmed, with repeated spaces collapsed and ignoring case.
+
+Use the form to add a cost, the pencil button to edit it, or the bin button to delete it. A
+title must be unique among recurring costs because it is what links a cost to its transactions.
+
 On first launch the `data/` directory is created next to the working directory and populated
 from `src/main/resources/seed/`:
 
@@ -97,6 +115,7 @@ from `src/main/resources/seed/`:
 | `data/transactions.csv` | your saved ledger (starts empty) |
 | `data/categories.csv` | 11 sample categories |
 | `data/defaultcategories.csv` | 29 sample title-matching rules |
+| `data/reccuringcosts.csv` | your expected recurring costs (starts empty) |
 
 Existing files are never overwritten, so the app can be restarted safely. Delete the `data/`
 directory to start over from the seed files.
@@ -110,12 +129,13 @@ data/backup/backup-20261026-143012-412/
   transactions.csv
   categories.csv
   defaultcategories.csv
+  reccuringcosts.csv
 ```
 
 Only the three most recent snapshots are kept; older ones are deleted automatically. The backup
 runs before any data file is created, so a fresh install with no data yet does not produce an
 empty snapshot. A copy failure stops startup instead of risking data loss. To restore a backup,
-stop the app and copy the three files from the snapshot back into `data/`.
+stop the app and copy the four files from the snapshot back into `data/`.
 
 ### Try it
 
@@ -152,7 +172,7 @@ Blank ids stay blank and files already in the current format are left untouched.
 ## Build and test
 
 ```bash
-mvnw.cmd test          # 47 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
+mvnw.cmd test          # 76 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
 java -jar target/cochonbank2-1.0.0.jar
 ```
@@ -200,6 +220,17 @@ checked with a case-insensitive *starts-with* match against each pattern. If sev
 match, the longest one wins. If none match, the category is `0` (Uncategorized). A non-empty
 `Description` is copied onto drafts whose description is still empty.
 
+### `reccuringcosts.csv`
+
+```csv
+Day,Title,Amount,Category_Id
+5,RENT,-800.00,100
+```
+
+`Day` is the typical day of the month (`1`–`31`), `Title` is matched against transaction titles
+and must be unique (ignoring case), `Amount` is the expected amount and `Category_Id` refers to
+`categories.csv`. Amounts can be negative like their matching expenses.
+
 ## OFX mapping
 
 The importer accepts both SGML (OFX 1.x) and XML (OFX 2.x) statements, and detects the file
@@ -231,6 +262,10 @@ contain any text, not only digits.
 | `GET` | `/api/categories` | List categories |
 | `GET` | `/api/default-categories` | List title-matching rules |
 | `POST` | `/api/default-categories` | Create a rule from `{"categoryId": n, "pattern": "TITLE", "description": "optional note"}` |
+| `GET` | `/api/reccuring-costs` | List recurring costs |
+| `POST` | `/api/reccuring-costs` | Create a cost from `{"day": 5, "title": "RENT", "amount": -800.00, "categoryId": 100}` |
+| `PUT` | `/api/reccuring-costs/{title}` | Update the cost identified by its current title |
+| `DELETE` | `/api/reccuring-costs/{title}` | Delete the cost identified by its title |
 
 Example preview response:
 
@@ -282,7 +317,7 @@ location.
 src/main/java/com/cochonbank2/
   config/       startup, data-directory properties, rolling backups
   csv/          dependency-free RFC 4180 reader/writer and repositories
-  domain/       Transaction, TransactionDraft, Category, DefaultCategory
+  domain/       Transaction, TransactionDraft, Category, DefaultCategory, ReccuringCosts
   ofx/          SGML/XML OFX parser
   service/      import mapping and batch saving
   web/          REST controllers and error handling

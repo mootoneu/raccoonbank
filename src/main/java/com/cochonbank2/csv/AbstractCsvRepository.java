@@ -200,6 +200,92 @@ public abstract class AbstractCsvRepository<T> {
     }
 
     /**
+     * Sets the named columns of every row whose text key column holds
+     * {@code key}, ignoring case and surrounding whitespace. Other rows are
+     * written back exactly as stored.
+     *
+     * @return the number of rows changed
+     */
+    public int updateRowsByText(String keyColumn, String key, Map<String, String> values) {
+        int keyIndex = columnIndex(keyColumn);
+        Map<Integer, String> changes = new LinkedHashMap<>();
+        values.forEach((column, value) -> changes.put(columnIndex(column), value));
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return 0;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> updated = new ArrayList<>(rows.size());
+            updated.add(rows.get(0));
+            int changed = 0;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (!isBlank(row) && holdsText(row, keyIndex, key)) {
+                    List<String> copy = new ArrayList<>(pad(row));
+                    for (Map.Entry<Integer, String> change : changes.entrySet()) {
+                        copy.set(change.getKey(), change.getValue());
+                    }
+                    updated.add(copy);
+                    changed++;
+                } else {
+                    updated.add(row);
+                }
+            }
+            if (changed == 0) {
+                return 0;
+            }
+            writeRows(updated);
+            return changed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Removes every row whose text column holds {@code value}, ignoring case
+     * and surrounding whitespace.
+     *
+     * @return the number of rows removed
+     */
+    public int deleteRowsByText(String column, String value) {
+        int index = columnIndex(column);
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return 0;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> kept = new ArrayList<>(rows.size());
+            kept.add(rows.get(0));
+            int removed = 0;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (!isBlank(row) && holdsText(row, index, value)) {
+                    removed++;
+                } else {
+                    kept.add(row);
+                }
+            }
+            if (removed == 0) {
+                return 0;
+            }
+            writeRows(kept);
+            return removed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
      * Removes every row whose numeric column holds {@code value}.
      *
      * @return the number of rows removed
@@ -388,6 +474,13 @@ public abstract class AbstractCsvRepository<T> {
         } catch (NumberFormatException ex) {
             return false;
         }
+    }
+
+    private static boolean holdsText(List<String> row, int index, String expected) {
+        if (index >= row.size() || expected == null) {
+            return false;
+        }
+        return text(row, index).equalsIgnoreCase(expected.trim());
     }
 
     private static boolean holdsLong(List<String> row, int index, long expected) {
