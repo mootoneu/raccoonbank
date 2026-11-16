@@ -1,7 +1,8 @@
 # CochonBank2
 
-A single-user personal finance app. Spring Boot serves a jQuery + D3.js frontend, and every
-transaction lives in a plain CSV file on your machine. No database, no cloud, no account.
+A single-user personal finance app. Spring Boot serves a small ES-module frontend built on
+jQuery and D3.js, and every transaction lives in a plain CSV file on your machine. No database,
+no cloud, no account.
 
 ## Features
 
@@ -306,10 +307,19 @@ curl -X POST http://localhost:8080/api/transactions \
 cochonbank.data-directory=./data
 server.port=8080
 spring.servlet.multipart.max-file-size=10MB
+spring.web.resources.cache.cachecontrol.no-cache=true
 ```
 
 Point `cochonbank.data-directory` at any absolute or relative path to use a different ledger
-location.
+location. The cache setting makes browsers revalidate the ES modules after an update.
+
+## Frontend
+
+The UI is split into native ES modules under `src/main/resources/static/js/`; there is no build
+step. `app.js` is the entry point and application core, each screen lives in `view-<name>.js`,
+shared state and selectors are in `state.js`, and formatting/storage/DOM helpers are in
+`utils.js`. See [docs/frontend.md](docs/frontend.md) for the module map, dependency rules and
+the checklist for adding a view.
 
 ## Project layout
 
@@ -322,10 +332,11 @@ src/main/java/com/cochonbank2/
   service/      import mapping and batch saving
   web/          REST controllers and error handling
 src/main/resources/
-  static/       index.html, app.css, app.js, vendor jQuery + D3
+  static/       index.html, app.css, js/ modules, vendor jQuery + D3
   seed/         initial CSV files
 src/test/       unit and HTTP integration tests
 samples/        sample.ofx for a demo import
+docs/           frontend module guide
 ```
 
 ## Notes
@@ -333,3 +344,5 @@ samples/        sample.ofx for a demo import
 - This is a single-user app; there is no authentication. Run it on your own machine and do not
   expose it to the internet.
 - The frontend assets are vendored locally, so the app works fully offline.
+- The frontend uses native ES modules and must be served over HTTP. Run the app with the command
+  above instead of opening `index.html` from the filesystem.
