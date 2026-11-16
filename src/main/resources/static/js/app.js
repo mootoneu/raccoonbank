@@ -50,6 +50,7 @@
         spendingSelection: null,
         spendingCategories: new Set(),
         spendingGrouped: false,
+        spendingEarningsHidden: false,
         chartGrouped: true,
         chartCurrentYear: true,
         editingTransactionId: null,
@@ -182,6 +183,11 @@
 
         $('#period-next').on('click', function () {
             moveSpendingPeriod(1);
+        });
+
+        $('#spending-earnings-toggle').on('click', function () {
+            state.spendingEarningsHidden = !state.spendingEarningsHidden;
+            renderSpending();
         });
 
         $('#spending-filter-btn').on('click', function (event) {
@@ -1270,10 +1276,17 @@
         let recurringTotal = 0;
         if (range === 'month') {
             const daysInMonth = buckets.length;
+            // A recurring cost already paid this month is shown by its transaction instead.
+            const paidTitles = new Set(
+                source.filter(entry => entry.date >= start && entry.date < end)
+                    .map(entry => normalizeReccuringTitle(entry.transaction.title).toLowerCase()));
             state.reccuringCosts.forEach(cost => {
                 const rawAmount = toNumber(cost.amount);
                 // Spending is measured from outgoing (negative) amounts, like transactions.
                 if (!(rawAmount < 0)) {
+                    return;
+                }
+                if (paidTitles.has(normalizeReccuringTitle(cost.title).toLowerCase())) {
                     return;
                 }
                 const amount = Math.abs(rawAmount);
@@ -1399,6 +1412,11 @@
             $(this).toggleClass('is-active', active).attr('aria-pressed', String(active));
         });
 
+        const earningsVisible = !state.spendingEarningsHidden;
+        $('#spending-earnings-toggle')
+            .attr('aria-pressed', String(earningsVisible))
+            .attr('title', earningsVisible ? 'Hide the earnings line' : 'Show the earnings line');
+
         const hasData = model.bounds.minMonth !== null;
         const prevDisabled = !hasData || (model.range === 'month'
             ? state.spendingMonth <= model.bounds.minMonth
@@ -1418,11 +1436,13 @@
             all: 'Each bar is a year'
         };
         const description = barText[model.range] + ', stacked by ' + spendingBucketLabel();
+        const earningsNote = state.spendingEarningsHidden
+            ? ''
+            : ' The line traces earnings for the same period.';
         const recurringNote = model.range === 'month' && model.recurringTotal > 0
             ? ' Hashed bars are expected recurring costs.'
             : '';
-        $('#histogram-sub').text(description + '. The line traces earnings for the same period.'
-            + recurringNote);
+        $('#histogram-sub').text(description + '.' + earningsNote + recurringNote);
         $('#spending-subtitle').text(
             barText[model.range] + '. Click a '
             + (model.range === 'month' && model.recurringTotal > 0 ? 'solid' : 'colored')
@@ -1439,14 +1459,16 @@
 
         $legend.prop('hidden', false);
         const over = overspentBuckets(model).length;
-        $('<div>', {
-            class: 'hist-legend-item',
-            title: 'Earnings · ' + money.format(model.earned)
-        }).append(
-            $('<span>', { class: 'legend-dot' }).css('background-color', EARNED_COLOR),
-            $('<span>', { class: 'hist-legend-name', text: 'Earned (line)' }),
-            $('<span>', { class: 'hist-legend-value', text: money.format(model.earned) })
-        ).appendTo($legend);
+        if (!state.spendingEarningsHidden) {
+            $('<div>', {
+                class: 'hist-legend-item',
+                title: 'Earnings · ' + money.format(model.earned)
+            }).append(
+                $('<span>', { class: 'legend-dot' }).css('background-color', EARNED_COLOR),
+                $('<span>', { class: 'hist-legend-name', text: 'Earned (line)' }),
+                $('<span>', { class: 'hist-legend-value', text: money.format(model.earned) })
+            ).appendTo($legend);
+        }
         $('<div>', {
             class: 'hist-legend-item',
             title: 'Periods where spending is higher than earnings'
@@ -1487,7 +1509,8 @@
         svg.selectAll('*').remove();
         d3.select('#histogram-tooltip').style('opacity', 0).html('');
 
-        const empty = !model.rangeSource.length && !model.earned && !model.recurringTotal;
+        const empty = !model.rangeSource.length && !model.recurringTotal
+            && (state.spendingEarningsHidden || !model.earned);
         $('#histogram-empty').prop('hidden', !empty);
         $('#histogram-scroll').prop('hidden', empty);
 
@@ -1515,13 +1538,15 @@
 
         const scroll = document.getElementById('histogram-scroll');
         const available = Math.max(scroll.clientWidth - 2, 300);
-        const margin = { top: 14, right: 16, bottom: 38, left: 58 };
+        const todayKey = model.range === 'month' ? isoDay(new Date()) : null;
+        const showToday = todayKey !== null && model.bucketByKey.has(todayKey);
+        const margin = { top: showToday ? 26 : 14, right: 16, bottom: 38, left: 58 };
         const minBand = model.range === 'month' ? 20 : (model.range === 'year' ? 32 : 56);
         const plotWidth = Math.max(
             available - margin.left - margin.right,
             model.buckets.length * minBand);
         const width = Math.round(plotWidth + margin.left + margin.right);
-        const height = 384;
+        const height = 684;
         const innerHeight = height - margin.top - margin.bottom;
 
         svg
@@ -1544,7 +1569,8 @@
             .paddingOuter(0.08);
 
         const maxTotal = d3.max(model.buckets,
-            bucket => Math.max(bucket.total + bucket.recurring, bucket.earned)) || 1;
+            bucket => Math.max(bucket.total + bucket.recurring,
+                state.spendingEarningsHidden ? 0 : bucket.earned)) || 1;
         const y = d3.scaleLinear()
             .domain([0, maxTotal])
             .nice()
@@ -1661,7 +1687,12 @@
             .classed('is-selected', segment => !segment.recurring && isSpendingSelected(segment));
 
         drawOverspendMarkers(root, model, x, y);
-        drawEarningsLine(root, model, x, y);
+        if (!state.spendingEarningsHidden) {
+            drawEarningsLine(root, model, x, y);
+        }
+        if (showToday) {
+            drawTodayMarker(root, todayKey, x, innerHeight);
+        }
 
         const tooltip = d3.select('#histogram-tooltip');
 
@@ -1721,6 +1752,31 @@
         return entry
             ? { key: entry.id, category: entry.category, recurring: false }
             : null;
+    }
+
+    function drawTodayMarker(root, todayKey, x, innerHeight) {
+        const cx = x(todayKey) + x.bandwidth() / 2;
+        const labelX = Math.min(Math.max(cx, 16), x.range()[1] - 16);
+        const group = root.append('g')
+            .attr('class', 'histogram-today')
+            .attr('pointer-events', 'none');
+        group.append('line')
+            .attr('x1', cx)
+            .attr('x2', cx)
+            .attr('y1', -8)
+            .attr('y2', innerHeight)
+            .attr('stroke', '#5F6D68')
+            .attr('stroke-width', 1.4)
+            .attr('stroke-dasharray', '4 4')
+            .attr('opacity', 0.7);
+        group.append('text')
+            .attr('x', labelX)
+            .attr('y', -12)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#5F6D68')
+            .style('font-size', '9.5px')
+            .style('font-weight', '700')
+            .text('Today');
     }
 
     function overspentBuckets(model) {

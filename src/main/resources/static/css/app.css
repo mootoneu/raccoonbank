@@ -1400,6 +1400,20 @@ code {
     accent-color: var(--brand);
 }
 
+.spending-earnings-toggle {
+    font-family: inherit;
+}
+
+.spending-earnings-toggle svg {
+    width: 14px;
+    height: 14px;
+}
+
+.spending-earnings-toggle[aria-pressed="false"] {
+    color: var(--muted-light);
+    background: var(--surface-soft);
+}
+
 .filter-trigger {
     display: inline-flex;
     align-items: center;
