@@ -835,6 +835,12 @@ code {
     border-radius: 50%;
 }
 
+.legend-dot-hatched {
+    background-color: var(--surface-soft);
+    background-image: repeating-linear-gradient(45deg, #5F6D68 0 1.5px, transparent 1.5px 4.5px);
+    border: 1px solid #D6CEBD;
+}
+
 .legend-name {
     min-width: 0;
     overflow: hidden;
@@ -1618,6 +1624,14 @@ code {
 .hist-segment.is-selected {
     stroke: var(--ink);
     stroke-width: 2.2;
+}
+
+.hist-segment-recurring {
+    cursor: default;
+}
+
+.hist-segment-recurring:hover {
+    filter: brightness(1.02);
 }
 
 .hist-segment:focus-visible {

@@ -972,18 +972,20 @@
        ---------------------------------------------------------------------- */
 
     function spendingGroupId(transaction) {
-        const categoryId = Number(transaction.categoryId) || 0;
-        if (categoryId === 0) {
-            return 0;
+        return spendingCategoryKey(transaction.categoryId);
+    }
+
+    function spendingCategoryKey(categoryId) {
+        const id = Number(categoryId) || 0;
+        if (!state.spendingGrouped || id === 0) {
+            return id;
         }
-        const category = state.categoryById.get(categoryId);
+        const category = state.categoryById.get(id);
         return category ? (Number(category.groupId) || 0) : 0;
     }
 
     function spendingEntryKey(transaction) {
-        return state.spendingGrouped
-            ? spendingGroupId(transaction)
-            : (Number(transaction.categoryId) || 0);
+        return spendingCategoryKey(transaction.categoryId);
     }
 
     function spendingGroupCategory(groupId) {
@@ -1263,6 +1265,41 @@
             }
         });
 
+        // Expected recurring costs only make sense in the day-by-day monthly view.
+        const recurringTotals = new Map();
+        let recurringTotal = 0;
+        if (range === 'month') {
+            const daysInMonth = buckets.length;
+            state.reccuringCosts.forEach(cost => {
+                const rawAmount = toNumber(cost.amount);
+                // Spending is measured from outgoing (negative) amounts, like transactions.
+                if (!(rawAmount < 0)) {
+                    return;
+                }
+                const amount = Math.abs(rawAmount);
+                const categoryKey = spendingCategoryKey(cost.categoryId);
+                if (state.spendingCategories.size > 0
+                        && !state.spendingCategories.has(categoryKey)) {
+                    return;
+                }
+                const dayNumber = Math.trunc(Number(cost.day));
+                if (!Number.isFinite(dayNumber) || dayNumber < 1) {
+                    return;
+                }
+                // A cost on the 31st falls on the last day of shorter months.
+                const bucket = buckets[Math.min(dayNumber, daysInMonth) - 1];
+                if (!bucket) {
+                    return;
+                }
+                bucket.recurring += amount;
+                bucket.recurringValues.set(categoryKey,
+                    (bucket.recurringValues.get(categoryKey) || 0) + amount);
+                bucket.recurringCosts.push({ key: categoryKey, amount: amount, cost: cost });
+                recurringTotals.set(categoryKey, (recurringTotals.get(categoryKey) || 0) + amount);
+                recurringTotal += amount;
+            });
+        }
+
         const categories = Array.from(categoryTotals, entry => ({
             id: entry[0],
             category: spendingDisplayCategory(entry[0]),
@@ -1271,11 +1308,19 @@
             .filter(entry => entry.total > 0)
             .sort((a, b) => a.id - b.id);
 
+        const recurringCategories = Array.from(recurringTotals, entry => ({
+            key: entry[0],
+            category: spendingDisplayCategory(entry[0]),
+            total: entry[1]
+        })).sort((a, b) => a.key - b.key);
+
         return {
             range: range,
             buckets: buckets,
             bucketByKey: bucketByKey,
             categories: categories,
+            recurringCategories: recurringCategories,
+            recurringTotal: recurringTotal,
             rangeSource: rangeSource,
             total: d3.sum(rangeSource, entry => entry.amount),
             earned: earned,
@@ -1305,7 +1350,10 @@
             values: new Map(),
             counts: new Map(),
             total: 0,
-            earned: 0
+            earned: 0,
+            recurring: 0,
+            recurringValues: new Map(),
+            recurringCosts: []
         };
     }
 
@@ -1377,15 +1425,21 @@
             all: 'Each bar is a year'
         };
         const description = barText[model.range] + ', stacked by ' + spendingBucketLabel();
-        $('#histogram-sub').text(description + '. The line traces earnings for the same period.');
+        const recurringNote = model.range === 'month' && model.recurringTotal > 0
+            ? ' Hashed bars are expected recurring costs.'
+            : '';
+        $('#histogram-sub').text(description + '. The line traces earnings for the same period.'
+            + recurringNote);
         $('#spending-subtitle').text(
-            barText[model.range] + '. Click a colored segment to see the transactions behind it.');
+            barText[model.range] + '. Click a '
+            + (model.range === 'month' && model.recurringTotal > 0 ? 'solid' : 'colored')
+            + ' segment to see the transactions behind it.');
         $('#histogram-range-tag').text(model.rangeTag);
     }
 
     function renderSpendingLegend(model) {
         const $legend = $('#histogram-legend').empty();
-        if (!model.rangeSource.length && !model.earned) {
+        if (!model.rangeSource.length && !model.earned && !model.recurringTotal) {
             $legend.prop('hidden', true);
             return;
         }
@@ -1412,6 +1466,17 @@
             })
         ).appendTo($legend);
 
+        if (model.recurringTotal > 0) {
+            $('<div>', {
+                class: 'hist-legend-item',
+                title: 'Expected recurring costs in this period'
+            }).append(
+                $('<span>', { class: 'legend-dot legend-dot-hatched' }),
+                $('<span>', { class: 'hist-legend-name', text: 'Recurring (expected)' }),
+                $('<span>', { class: 'hist-legend-value', text: money.format(model.recurringTotal) })
+            ).appendTo($legend);
+        }
+
         model.categories.forEach(entry => {
             $('<div>', {
                 class: 'hist-legend-item',
@@ -1429,7 +1494,7 @@
         svg.selectAll('*').remove();
         d3.select('#histogram-tooltip').style('opacity', 0).html('');
 
-        const empty = !model.rangeSource.length && !model.earned;
+        const empty = !model.rangeSource.length && !model.earned && !model.recurringTotal;
         $('#histogram-empty').prop('hidden', !empty);
         $('#histogram-scroll').prop('hidden', empty);
 
@@ -1471,7 +1536,10 @@
             .attr('width', width)
             .attr('height', height)
             .attr('aria-label', 'Spending histogram for ' + model.periodLabel
-                + ', total ' + money.format(model.total));
+                + ', total ' + money.format(model.total)
+                + (model.recurringTotal > 0
+                    ? ', plus ' + money.format(model.recurringTotal) + ' expected recurring costs'
+                    : ''));
 
         const root = svg.append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -1482,7 +1550,8 @@
             .paddingInner(model.buckets.length === 1 ? 0.55 : 0.26)
             .paddingOuter(0.08);
 
-        const maxTotal = d3.max(model.buckets, bucket => Math.max(bucket.total, bucket.earned)) || 1;
+        const maxTotal = d3.max(model.buckets,
+            bucket => Math.max(bucket.total + bucket.recurring, bucket.earned)) || 1;
         const y = d3.scaleLinear()
             .domain([0, maxTotal])
             .nice()
@@ -1518,14 +1587,42 @@
             .style('font-size', '10.5px')
             .style('font-weight', '600');
 
-        const keys = model.categories.map(entry => 'c' + entry.id);
+        const keys = model.categories.map(entry => 'c' + entry.id)
+            .concat(model.recurringCategories.map(entry => 'r' + entry.key));
         const rows = model.buckets.map(bucket => {
             const row = { bucket: bucket };
             model.categories.forEach(entry => {
                 row['c' + entry.id] = bucket.values.get(entry.id) || 0;
             });
+            model.recurringCategories.forEach(entry => {
+                row['r' + entry.key] = bucket.recurringValues.get(entry.key) || 0;
+            });
             return row;
         });
+
+        if (model.recurringCategories.length) {
+            const defs = svg.append('defs');
+            model.recurringCategories.forEach(entry => {
+                const pattern = defs.append('pattern')
+                    .attr('id', recurringHatchId(entry.key))
+                    .attr('width', 7)
+                    .attr('height', 7)
+                    .attr('patternUnits', 'userSpaceOnUse')
+                    .attr('patternTransform', 'rotate(45)');
+                pattern.append('rect')
+                    .attr('width', 7)
+                    .attr('height', 7)
+                    .attr('fill', safeColor(entry.category.color));
+                pattern.append('line')
+                    .attr('x1', 0)
+                    .attr('y1', 0)
+                    .attr('x2', 0)
+                    .attr('y2', 7)
+                    .attr('stroke', '#FFFFFF')
+                    .attr('stroke-width', 2.4)
+                    .attr('opacity', 0.72);
+            });
+        }
 
         const stack = d3.stack().keys(keys)(rows);
         const layers = root.append('g')
@@ -1534,24 +1631,28 @@
             .data(stack)
             .join('g')
             .attr('fill', series => {
-                const entry = model.categories.find(category => 'c' + category.id === series.key);
-                return safeColor(entry.category.color);
+                const entry = spendingSeriesEntry(series.key, model);
+                return entry.recurring
+                    ? 'url(#' + recurringHatchId(entry.key) + ')'
+                    : safeColor(entry.category.color);
             });
 
         const segments = layers.selectAll('rect')
             .data(series => {
-                const entry = model.categories.find(category => 'c' + category.id === series.key);
+                const entry = spendingSeriesEntry(series.key, model);
                 return series.map(segment => ({
                     bucket: segment.data.bucket,
-                    key: entry.id,
+                    key: entry.key,
                     category: entry.category,
+                    recurring: entry.recurring,
                     amount: segment[1] - segment[0],
                     y0: segment[0],
                     y1: segment[1]
                 })).filter(segment => segment.amount > 0.004);
             })
             .join('rect')
-            .attr('class', 'hist-segment')
+            .attr('class', segment => 'hist-segment'
+                + (segment.recurring ? ' hist-segment-recurring' : ''))
             .attr('x', segment => x(segment.bucket.key))
             .attr('width', Math.max(1, x.bandwidth()))
             .attr('y', segment => y(segment.y1))
@@ -1559,11 +1660,12 @@
             .attr('rx', Math.min(2.5, x.bandwidth() / 4))
             .attr('stroke', '#FFFFFF')
             .attr('stroke-width', 0.8)
-            .attr('tabindex', 0)
-            .attr('role', 'button')
+            .attr('tabindex', segment => (segment.recurring ? null : 0))
+            .attr('role', segment => (segment.recurring ? 'img' : 'button'))
             .attr('aria-label', segment => segment.category.name + ', ' + segment.bucket.fullLabel
-                + ', ' + money.format(segment.amount) + '. Show transactions.')
-            .classed('is-selected', segment => isSpendingSelected(segment));
+                + ', ' + money.format(segment.amount)
+                + (segment.recurring ? ' expected recurring cost.' : '. Show transactions.'))
+            .classed('is-selected', segment => !segment.recurring && isSpendingSelected(segment));
 
         drawOverspendMarkers(root, model, x, y);
         drawEarningsLine(root, model, x, y);
@@ -1574,12 +1676,17 @@
             .on('mouseenter', function (event, segment) {
                 segments.attr('opacity', other => (other === segment ? 1 : 0.3));
                 d3.select(this).attr('stroke', '#152621').attr('stroke-width', 1.4);
-                const count = segment.bucket.counts.get(segment.key) || 0;
+                const count = segment.recurring
+                    ? segment.bucket.recurringCosts.filter(item => item.key === segment.key).length
+                    : (segment.bucket.counts.get(segment.key) || 0);
                 tooltip
-                    .html('<span class="tt-category">' + esc(segment.category.name) + '</span>'
+                    .html('<span class="tt-category">' + esc(segment.category.name)
+                        + (segment.recurring ? ' · recurring' : '') + '</span>'
                         + '<span class="tt-meta">' + esc(segment.bucket.fullLabel) + '</span>'
                         + '<span class="tt-value">' + esc(money.format(segment.amount))
-                        + ' · ' + count + (count === 1 ? ' transaction' : ' transactions') + '</span>')
+                        + (segment.recurring
+                            ? ' expected' + (count > 1 ? ' · ' + count + ' costs' : '')
+                            : ' · ' + count + (count === 1 ? ' transaction' : ' transactions')) + '</span>')
                     .style('opacity', 1);
             })
             .on('mousemove', function (event) {
@@ -1593,18 +1700,39 @@
                 tooltip.style('opacity', 0);
             })
             .on('click', function (event, segment) {
-                selectSpendingSegment(segment.key, segment.bucket.key);
+                if (!segment.recurring) {
+                    selectSpendingSegment(segment.key, segment.bucket.key);
+                }
             })
             .on('keydown', function (event, segment) {
-                if (event.key === 'Enter' || event.key === ' ') {
+                if (!segment.recurring && (event.key === 'Enter' || event.key === ' ')) {
                     event.preventDefault();
                     selectSpendingSegment(segment.key, segment.bucket.key);
                 }
             });
     }
 
+    function recurringHatchId(key) {
+        return 'hist-hatch-' + key;
+    }
+
+    function spendingSeriesEntry(key, model) {
+        if (key.charAt(0) === 'r') {
+            const recurringKey = Number(key.slice(1));
+            const entry = model.recurringCategories.find(item => item.key === recurringKey);
+            return entry
+                ? { key: entry.key, category: entry.category, recurring: true }
+                : null;
+        }
+        const entry = model.categories.find(item => 'c' + item.id === key);
+        return entry
+            ? { key: entry.id, category: entry.category, recurring: false }
+            : null;
+    }
+
     function overspentBuckets(model) {
-        return model.buckets.filter(bucket => bucket.total > bucket.earned + 0.005);
+        return model.buckets.filter(bucket =>
+            bucket.total + bucket.recurring > bucket.earned + 0.005);
     }
 
     function drawOverspendMarkers(root, model, x, y) {
@@ -1614,7 +1742,7 @@
             .data(overspentBuckets(model))
             .join('circle')
             .attr('cx', bucket => x(bucket.key) + x.bandwidth() / 2)
-            .attr('cy', bucket => y(bucket.total) - 7)
+            .attr('cy', bucket => y(bucket.total + bucket.recurring) - 7)
             .attr('r', Math.min(3.5, Math.max(2, x.bandwidth() / 5)))
             .attr('fill', OVERSPEND_COLOR)
             .attr('stroke', '#FFFFFF')
@@ -1665,11 +1793,14 @@
             .on('mouseenter', function (event, point) {
                 const bucket = point.bucket;
                 const net = bucket.earned - bucket.total;
+                const expected = bucket.recurring > 0
+                    ? ' · Recurring ' + esc(money.format(bucket.recurring))
+                    : '';
                 tooltip
                     .html('<span class="tt-category">Earned ' + esc(money.format(bucket.earned)) + '</span>'
                         + '<span class="tt-meta">' + esc(bucket.fullLabel) + '</span>'
                         + '<span class="tt-value">Spent ' + esc(money.format(bucket.total))
-                        + ' · Net ' + esc(signedMoney(net)) + '</span>')
+                        + expected + ' · Net ' + esc(signedMoney(net)) + '</span>')
                     .style('opacity', 1);
             })
             .on('mousemove', function (event) {
