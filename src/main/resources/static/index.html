@@ -433,6 +433,14 @@
                     <span class="field-label">Description</span>
                     <input type="search" id="tx-filter-description" class="text-input tx-filter" placeholder="Contains…" autocomplete="off">
                 </label>
+                <label class="field" for="tx-filter-start">
+                    <span class="field-label">Start date</span>
+                    <input type="date" id="tx-filter-start" class="text-input tx-filter">
+                </label>
+                <label class="field" for="tx-filter-end">
+                    <span class="field-label">End date</span>
+                    <input type="date" id="tx-filter-end" class="text-input tx-filter">
+                </label>
             </div>
             <div class="tx-filter-footer">
                 <span class="tx-count" id="tx-count" aria-live="polite"></span>
@@ -825,6 +833,6 @@
 
 <script src="/vendor/jquery-3.7.1.min.js"></script>
 <script src="/vendor/d3-7.9.0.min.js"></script>
-<script type="module" src="/js/app.js?v=30"></script>
+<script type="module" src="/js/app.js?v=31"></script>
 </body>
 </html>

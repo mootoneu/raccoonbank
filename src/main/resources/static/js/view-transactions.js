@@ -38,6 +38,10 @@ function readTransactionFilters() {
         return raw === '' || !Number.isFinite(value) ? null : value;
     };
     const textOf = selector => String($(selector).val() || '').trim().toLowerCase();
+    const dateOf = selector => {
+        const value = String($(selector).val() || '').trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+    };
     const category = String($('#tx-filter-category').val() || '');
     const group = String($('#tx-filter-group').val() || '');
     return {
@@ -46,7 +50,9 @@ function readTransactionFilters() {
         min: numberOf('#tx-filter-min'),
         max: numberOf('#tx-filter-max'),
         name: textOf('#tx-filter-name'),
-        description: textOf('#tx-filter-description')
+        description: textOf('#tx-filter-description'),
+        start: dateOf('#tx-filter-start'),
+        end: dateOf('#tx-filter-end')
     };
 }
 
@@ -64,6 +70,13 @@ function filterTransactions(list, filters) {
             return false;
         }
         if (filters.max !== null && amount > filters.max) {
+            return false;
+        }
+        const bankDate = String(transaction.bankDate || '');
+        if (filters.start !== null && bankDate < filters.start) {
+            return false;
+        }
+        if (filters.end !== null && bankDate > filters.end) {
             return false;
         }
         if (filters.name && !String(transaction.title || '').toLowerCase().includes(filters.name)) {
@@ -338,7 +351,9 @@ function saveTransactionFilters() {
         min: String($('#tx-filter-min').val() || ''),
         max: String($('#tx-filter-max').val() || ''),
         name: String($('#tx-filter-name').val() || ''),
-        description: String($('#tx-filter-description').val() || '')
+        description: String($('#tx-filter-description').val() || ''),
+        start: String($('#tx-filter-start').val() || ''),
+        end: String($('#tx-filter-end').val() || '')
     });
 }
 
@@ -360,7 +375,7 @@ function restoreTransactionFilters() {
     };
     restoreSelect('#tx-filter-category', stored.category);
     restoreSelect('#tx-filter-group', stored.group);
-    ['min', 'max', 'name', 'description'].forEach(key => {
+    ['min', 'max', 'name', 'description', 'start', 'end'].forEach(key => {
         if (typeof stored[key] === 'string') {
             $('#tx-filter-' + key).val(stored[key]);
         }
