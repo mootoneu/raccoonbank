@@ -95,12 +95,21 @@ more chips restricts the totals, legend and histogram to those categories while 
 navigation keeps covering the whole ledger. In group mode the control lists groups instead and
 is labelled **All groups**. **Reset** (or the button in an empty histogram) clears the filter.
 
+The summary cards at the top show the total spent, total earned and transaction count for the
+selected period, plus two recurring-cost cards for the current month: **Recurring costs** is the
+sum of the expected costs and **To spend** is that sum minus what has already been spent.
+Positive recurring entries (gains such as the expected monthly income) are excluded from both.
+
 ## Recurring view
 
 Open **Recurring** in the header to compare your expected regular costs with what you have
 actually spent during the current month. The three cards above the table show the **Total
 Expected** and **Total Spent** sums and the **Total Remaining** difference, and each row lists
 the expected day, title, category chip, expected amount and spent amount.
+
+Entries with a negative amount are costs and feed the three cards. Positive entries are gains and
+are shown in the table but excluded from the cards; this is how an expected monthly income can be
+declared without reducing the cost totals.
 
 The spent amount is the sum of `Transactions.Amount` for transactions whose bank date falls in
 the current month and whose title matches the recurring cost's title. Titles are compared

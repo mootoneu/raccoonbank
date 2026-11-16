@@ -5,8 +5,8 @@
 
 import { state, CATEGORY_NONE, getCategory, refreshReccuring } from './state.js';
 import {
-    categoryChip, errorDetail, esc, keepSelection, money, normalizeReccuringTitle,
-    reccuringSpent, toNumber, toast
+    categoryChip, errorDetail, esc, isReccuringCost, keepSelection, money,
+    normalizeReccuringTitle, reccuringSpent, toNumber, toast
 } from './utils.js';
 
 function findReccuring(title) {
@@ -59,8 +59,9 @@ function renderReccuringRow(cost) {
 }
 
 function renderReccuringSummary(costs) {
-    const expected = d3.sum(costs, cost => toNumber(cost.amount));
-    const spent = d3.sum(costs, cost => reccuringSpent(cost.title));
+    const costEntries = costs.filter(isReccuringCost);
+    const expected = d3.sum(costEntries, cost => toNumber(cost.amount));
+    const spent = d3.sum(costEntries, cost => reccuringSpent(cost.title));
     const remaining = expected - spent;
     const monthLabel = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
@@ -73,8 +74,8 @@ function renderReccuringSummary(costs) {
     $('#reccuring-total-remaining')
         .text(money.format(remaining))
         .toggleClass('negative', remaining < 0);
-    $('#reccuring-expected-sub').text(costs.length
-        ? costs.length + (costs.length === 1 ? ' recurring cost' : ' recurring costs')
+    $('#reccuring-expected-sub').text(costEntries.length
+        ? costEntries.length + (costEntries.length === 1 ? ' recurring cost' : ' recurring costs')
             + ' · ' + monthLabel
         : 'No recurring costs yet');
     $('#reccuring-spent-sub').text('Matching transactions · ' + monthLabel);

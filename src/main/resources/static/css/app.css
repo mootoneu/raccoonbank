@@ -1556,7 +1556,7 @@ code {
 
 .period-stats {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 14px;
     margin-bottom: 18px;
 }
@@ -1589,6 +1589,10 @@ code {
     text-overflow: ellipsis;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+}
+
+.period-stat-value.negative {
+    color: var(--accent-ink);
 }
 
 .period-stat-sub {
@@ -2812,6 +2816,10 @@ code {
 
     .period-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .period-stats .period-stat:last-child {
+        grid-column: 1 / -1;
     }
 
     .card-head {

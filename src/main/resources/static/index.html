@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
     <title>CochonBank2 — Personal finance</title>
-    <link rel="stylesheet" href="/css/app.css?v=22">
+    <link rel="stylesheet" href="/css/app.css?v=24">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -310,7 +310,12 @@
             <article class="period-stat">
                 <p class="period-stat-label">Recurring costs</p>
                 <p class="period-stat-value" id="spending-recurring">—</p>
-                <p class="period-stat-sub" id="spending-recurring-sub">Remaining · this month</p>
+                <p class="period-stat-sub" id="spending-recurring-sub">Expected · this month</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">To spend</p>
+                <p class="period-stat-value" id="spending-to-spend">—</p>
+                <p class="period-stat-sub" id="spending-to-spend-sub">Remaining · this month</p>
             </article>
         </div>
 
@@ -833,6 +838,6 @@
 
 <script src="/vendor/jquery-3.7.1.min.js"></script>
 <script src="/vendor/d3-7.9.0.min.js"></script>
-<script type="module" src="/js/app.js?v=31"></script>
+<script type="module" src="/js/app.js?v=32"></script>
 </body>
 </html>

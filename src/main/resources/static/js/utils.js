@@ -282,6 +282,16 @@ export function normalizeReccuringTitle(value) {
         .replace(/\s+/g, ' ');
 }
 
+/** A recurring entry is a cost when its expected amount is negative. */
+export function isReccuringCost(cost) {
+    return toNumber(cost.amount) < 0;
+}
+
+/** A recurring entry is a gain when its expected amount is positive. */
+export function isReccuringGain(cost) {
+    return toNumber(cost.amount) > 0;
+}
+
 export function reccuringSpent(title) {
     const currentMonth = monthKey(new Date());
     const key = normalizeReccuringTitle(title).toLowerCase();

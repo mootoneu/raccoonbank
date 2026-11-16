@@ -7,7 +7,7 @@
 import { state, getCategory, categoryKey, groupCategory } from './state.js';
 import {
     EARNED_COLOR, OVERSPEND_COLOR, STORAGE_KEYS, categoryPalette, compactMoney,
-    esc, formatDate, formatLongDate, isoDay, money, monthKey,
+    esc, formatDate, formatLongDate, isoDay, isReccuringCost, isReccuringGain, money, monthKey,
     normalizeReccuringTitle, parseIsoDate, readStoredState, reccuringSpent,
     renderDetailEditRow, safeColor, saveTransactionEdit, signedMoney, storeState,
     toNumber
@@ -458,8 +458,12 @@ function renderSpending() {
 
 function renderSpendingStats(model) {
     const average = model.buckets.length ? model.total / model.buckets.length : 0;
-    const recurringExpected = d3.sum(state.reccuringCosts, cost => toNumber(cost.amount));
-    const recurringSpent = d3.sum(state.reccuringCosts, cost => reccuringSpent(cost.title));
+    const recurringCostEntries = state.reccuringCosts.filter(isReccuringCost);
+    const recurringExpected = d3.sum(recurringCostEntries, cost => toNumber(cost.amount));
+    const recurringSpent = d3.sum(recurringCostEntries, cost => reccuringSpent(cost.title));
+    const remainingRecurring = recurringExpected - recurringSpent;
+    const totalGains =  d3.sum(state.reccuringCosts.filter(isReccuringGain), cost => toNumber(cost.amount));
+    const toSpend =  totalGains - model.total + remainingRecurring;
     const monthLabel = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
     $('#spending-total').text(money.format(model.total));
@@ -472,11 +476,12 @@ function renderSpendingStats(model) {
             ? money.format(average) + ' avg / ' + model.unit
             : 'No spending in this period');
 
-    $('#spending-recurring')
-        .text(money.format(-(recurringExpected - recurringSpent)));
-    $('#spending-recurring-sub').text(state.reccuringCosts.length
-        ? 'Remaining · ' + monthLabel
-        : 'No recurring costs yet');
+    $('#spending-recurring').text(money.format(Math.abs(remainingRecurring)));
+    $('#spending-recurring-sub').text('remaining of '+money.format(Math.abs(recurringExpected)));
+    $('#spending-to-spend')
+        .text(money.format(toSpend || 0)) 
+        .toggleClass('negative', toSpend < 0);
+    $('#spending-to-spend-sub').text('Expected gain of '+money.format(totalGains));
 }
 
 function renderPeriodControls(model) {
