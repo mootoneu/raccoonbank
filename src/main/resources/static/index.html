@@ -6,7 +6,7 @@
     <meta name="description" content="CochonBank2 — personal finance, kept in plain CSV files.">
     <title>CochonBank2 — Personal finance</title>
     <link rel="stylesheet" href="/css/app.css?v=27">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317433C'/%3E%3Cellipse cx='32' cy='35' rx='20' ry='14' fill='%23F2A08E'/%3E%3Cellipse cx='48' cy='32' rx='7' ry='6' fill='%23F2A08E'/%3E%3Ccircle cx='50' cy='30' r='1.5' fill='%2317433C'/%3E%3Ccircle cx='20' cy='29' r='2' fill='%2317433C'/%3E%3Crect x='25' y='23' width='12' height='3' rx='1.5' fill='%2317433C'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/x-icon" href="/img/cochonbank2_logo.ico">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -15,16 +15,7 @@
     <div class="container header-inner">
         <a href="#" class="brand" id="brand-home" aria-label="CochonBank2 home">
             <span class="brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 64 64" role="presentation">
-                    <ellipse cx="31" cy="35" rx="21" ry="14.5" fill="currentColor"/>
-                    <path d="M17 23c-1-5 2-8 6-8 2 0 3 1 4 3z" fill="currentColor"/>
-                    <ellipse cx="49" cy="33" rx="7.5" ry="6.5" fill="currentColor"/>
-                    <circle cx="50.5" cy="31" r="1.4" fill="#17433C"/>
-                    <circle cx="47" cy="31" r="1.4" fill="#17433C"/>
-                    <circle cx="21" cy="29.5" r="2.1" fill="#17433C"/>
-                    <rect x="25" y="23.5" width="12" height="3.2" rx="1.6" fill="#17433C"/>
-                    <path d="M18 46v4M30 46v4M43 46v4" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-                </svg>
+                <img src="/img/cochonbank2_logo.svg" alt="">
             </span>
             <span class="brand-name">CochonBank<sup>2</sup></span>
         </a>
@@ -890,8 +881,9 @@
             </label>
             <label class="field">
                 <span class="field-label">Amount</span>
-                <input type="number" name="amount" id="planned-amount" class="text-input"
-                    step="0.01" required>
+                <input type="text" name="amount" id="planned-amount" class="text-input"
+                    inputmode="text" placeholder="e.g. 100 + 20" required>
+                <span class="field-error" id="planned-amount-error" role="alert" hidden></span>
             </label>
             <label class="field">
                 <span class="field-label">Category</span>

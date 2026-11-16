@@ -1236,6 +1236,122 @@ function rememberPlannedDraft(values) {
     });
 }
 
+/* Evaluate a simple arithmetic expression (+, -, *, /, parentheses).
+   A small recursive-descent parser is used instead of eval() so that only
+   numbers and the supported operators are ever accepted. */
+function evaluateArithmeticExpression(input) {
+    const text = String(input == null ? '' : input).trim();
+    if (!text) {
+        throw new Error('Enter an expression.');
+    }
+    let pos = 0;
+
+    function skipWhitespace() {
+        while (pos < text.length && /\s/.test(text[pos])) {
+            pos++;
+        }
+    }
+
+    function parseNumber() {
+        skipWhitespace();
+        const match = text.slice(pos).match(/^(?:\d+(?:\.\d*)?|\.\d+)/);
+        if (!match) {
+            throw new Error('Expected a number.');
+        }
+        pos += match[0].length;
+        return Number(match[0]);
+    }
+
+    function parsePrimary() {
+        skipWhitespace();
+        const char = text[pos];
+        if (char === '+') {
+            pos++;
+            return parsePrimary();
+        }
+        if (char === '-') {
+            pos++;
+            return -parsePrimary();
+        }
+        if (char === '(') {
+            pos++;
+            const value = parseSum();
+            skipWhitespace();
+            if (text[pos] !== ')') {
+                throw new Error('Missing closing parenthesis.');
+            }
+            pos++;
+            return value;
+        }
+        return parseNumber();
+    }
+
+    function parseProduct() {
+        let value = parsePrimary();
+        for (;;) {
+            skipWhitespace();
+            const op = text[pos];
+            if (op !== '*' && op !== '/') {
+                break;
+            }
+            pos++;
+            const right = parsePrimary();
+            if (op === '*') {
+                value *= right;
+            } else {
+                if (right === 0) {
+                    throw new Error('Division by zero.');
+                }
+                value /= right;
+            }
+        }
+        return value;
+    }
+
+    function parseSum() {
+        let value = parseProduct();
+        for (;;) {
+            skipWhitespace();
+            const op = text[pos];
+            if (op !== '+' && op !== '-') {
+                break;
+            }
+            pos++;
+            const right = parseProduct();
+            value = op === '+' ? value + right : value - right;
+        }
+        return value;
+    }
+
+    const result = parseSum();
+    skipWhitespace();
+    if (pos !== text.length) {
+        throw new Error('Invalid character in expression.');
+    }
+    if (!Number.isFinite(result)) {
+        throw new Error('Result is not a finite number.');
+    }
+    return Number(result.toPrecision(12));
+}
+
+function clearPlannedAmountError() {
+    $('#planned-amount').removeClass('is-invalid');
+    $('#planned-amount-error').text('').prop('hidden', true);
+}
+
+function evaluatePlannedAmount() {
+    const $input = $('#planned-amount');
+    try {
+        const value = evaluateArithmeticExpression($input.val());
+        $input.val(String(value));
+        clearPlannedAmountError();
+        $input.trigger('change');
+    } catch (error) {
+        $input.addClass('is-invalid').trigger('focus');
+        $('#planned-amount-error').text(error.message || 'Invalid expression.').prop('hidden', false);
+    }
+}
+
 function plannedFormValues() {
     const dueDate = String($('#planned-due-date').val() || '').trim();
     const title = String($('#planned-title').val() || '').trim().replace(/\s+/g, ' ');
@@ -1291,6 +1407,7 @@ function openPlannedModal(index) {
     $('#planned-delete-btn').prop('hidden', false);
     $('#planned-save-btn').text('Save changes');
     $('#planned-form .text-input').removeClass('is-invalid');
+    clearPlannedAmountError();
     $('#planned-modal').prop('hidden', false);
     window.requestAnimationFrame(() => {
         $('#planned-title').trigger('focus').trigger('select');
@@ -1471,7 +1588,16 @@ export function initSpendingView(options) {
     $('#planned-form').on('submit', savePlannedSpending);
     $('#planned-form').on('input change', 'input, select', function () {
         this.classList.remove('is-invalid');
+        if (this.id === 'planned-amount') {
+            $('#planned-amount-error').text('').prop('hidden', true);
+        }
         rememberPlannedDraft(plannedFormValues());
+    });
+    $('#planned-amount').on('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === 'Return') {
+            event.preventDefault();
+            evaluatePlannedAmount();
+        }
     });
 
     $(document).on('click', function () {
