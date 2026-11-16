@@ -20,6 +20,10 @@
     const MIN_CONTRAST = 4.5;
     const categoryPaletteCache = new Map();
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const STORAGE_KEYS = Object.freeze({
+        spendingFilters: 'cochonbank2.spending.filters',
+        transactionFilters: 'cochonbank2.transactions.filters'
+    });
 
     const money = new Intl.NumberFormat('en-GB', {
         style: 'currency',
@@ -58,6 +62,7 @@
         transactionSelection: new Set(),
         transactionVisible: [],
         transactionFilterTimer: null,
+        filtersRestored: { spending: false, transactions: false },
         reccuringCosts: [],
         editingReccuring: null,
         spendingData: null,
@@ -363,6 +368,7 @@
             return;
         }
         resetImportState();
+        restoreSpendingFilters();
         ensureSpendingAnchors();
         showView('spending');
         renderSpending();
@@ -402,6 +408,8 @@
             setCategories(results[0]);
             state.transactions = Array.isArray(results[1]) ? results[1] : [];
             state.reccuringCosts = Array.isArray(results[2]) ? results[2] : [];
+            restoreSpendingFilters();
+            restoreTransactionFilters();
             $('#home-error').prop('hidden', true);
         } catch (xhr) {
             showHomeError(errorDetail(xhr));
@@ -409,7 +417,11 @@
         renderHome();
         if (!$('#spending-view').prop('hidden')) {
             resetSpendingState();
+            restoreSpendingFilters();
             renderSpending();
+        }
+        if (!$('#transactions-view').prop('hidden')) {
+            renderTransactions();
         }
         if (!$('#reccuring-view').prop('hidden')) {
             renderReccuring();
@@ -1381,6 +1393,7 @@
         if (state.spendingSelection) {
             renderSpendingDetail();
         }
+        saveSpendingFilters();
     }
 
     function renderSpendingStats(model) {
@@ -2143,6 +2156,7 @@
         $('#tx-empty').prop('hidden', visible.length > 0);
         renderSortIndicators();
         updateTransactionSelectionUi();
+        saveTransactionFilters();
     }
 
     function renderTransactionRow(transaction) {
@@ -3526,6 +3540,109 @@
         state.spendingYear = null;
         state.spendingData = null;
         closeSpendingDetail();
+    }
+
+    /* ----------------------------------------------------------------------
+       Saved filter state
+       ---------------------------------------------------------------------- */
+
+    function readStoredState(key) {
+        try {
+            const raw = window.localStorage.getItem(key);
+            if (!raw) {
+                return null;
+            }
+            const value = JSON.parse(raw);
+            return value && typeof value === 'object' ? value : null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function storeState(key, value) {
+        try {
+            window.localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            // Filtering still works when storage is unavailable (private mode, quota).
+        }
+    }
+
+    function saveSpendingFilters() {
+        if (!state.filtersRestored.spending) {
+            return;
+        }
+        storeState(STORAGE_KEYS.spendingFilters, {
+            range: state.spendingRange,
+            month: state.spendingMonth,
+            year: state.spendingYear,
+            categories: Array.from(state.spendingCategories),
+            grouped: state.spendingGrouped
+        });
+    }
+
+    function restoreSpendingFilters() {
+        state.filtersRestored.spending = true;
+        const stored = readStoredState(STORAGE_KEYS.spendingFilters);
+        if (!stored) {
+            return;
+        }
+        if (stored.range === 'month' || stored.range === 'year' || stored.range === 'all') {
+            state.spendingRange = stored.range;
+        }
+        if (typeof stored.month === 'string' && /^\d{4}-\d{2}$/.test(stored.month)) {
+            state.spendingMonth = stored.month;
+        }
+        if (Number.isInteger(stored.year)) {
+            state.spendingYear = stored.year;
+        }
+        if (Array.isArray(stored.categories)) {
+            state.spendingCategories = new Set(stored.categories
+                .map(id => Number(id))
+                .filter(id => Number.isFinite(id)));
+        }
+        if (typeof stored.grouped === 'boolean') {
+            state.spendingGrouped = stored.grouped;
+            $('#spending-group-mode').prop('checked', state.spendingGrouped);
+        }
+    }
+
+    function saveTransactionFilters() {
+        if (!state.filtersRestored.transactions) {
+            return;
+        }
+        storeState(STORAGE_KEYS.transactionFilters, {
+            category: String($('#tx-filter-category').val() || ''),
+            group: String($('#tx-filter-group').val() || ''),
+            min: String($('#tx-filter-min').val() || ''),
+            max: String($('#tx-filter-max').val() || ''),
+            name: String($('#tx-filter-name').val() || ''),
+            description: String($('#tx-filter-description').val() || '')
+        });
+    }
+
+    function restoreTransactionFilters() {
+        state.filtersRestored.transactions = true;
+        const stored = readStoredState(STORAGE_KEYS.transactionFilters);
+        if (!stored) {
+            return;
+        }
+        ensureTransactionOptions();
+        const restoreSelect = (selector, value) => {
+            const $select = $(selector);
+            if (typeof value === 'string' && value !== ''
+                    && $select.find('option').filter(function () {
+                        return this.value === value;
+                    }).length) {
+                $select.val(value);
+            }
+        };
+        restoreSelect('#tx-filter-category', stored.category);
+        restoreSelect('#tx-filter-group', stored.group);
+        ['min', 'max', 'name', 'description'].forEach(key => {
+            if (typeof stored[key] === 'string') {
+                $('#tx-filter-' + key).val(stored[key]);
+            }
+        });
     }
 
     function setTodayLabel() {
