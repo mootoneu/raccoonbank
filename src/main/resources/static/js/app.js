@@ -1677,8 +1677,8 @@
             .attr('y', segment => y(segment.y1))
             .attr('height', segment => Math.max(0.8, y(segment.y0) - y(segment.y1)))
             .attr('rx', Math.min(2.5, x.bandwidth() / 4))
-            .attr('stroke', '#FFFFFF')
-            .attr('stroke-width', 0.8)
+            .attr('stroke', segment => (segment.recurring ? '#000000' : '#FFFFFF'))
+            .attr('stroke-width', segment => (segment.recurring ? 2 : 0.8))
             .attr('tabindex', segment => (segment.recurring ? null : 0))
             .attr('role', segment => (segment.recurring ? 'img' : 'button'))
             .attr('aria-label', segment => segment.category.name + ', ' + segment.bucket.fullLabel
@@ -1699,7 +1699,7 @@
         segments
             .on('mouseenter', function (event, segment) {
                 segments.attr('opacity', other => (other === segment ? 1 : 0.3));
-                d3.select(this).attr('stroke', '#152621').attr('stroke-width', 1.4);
+                d3.select(this).attr('stroke', '#152621');
                 const count = segment.recurring
                     ? segment.bucket.recurringCosts.filter(item => item.key === segment.key).length
                     : (segment.bucket.counts.get(segment.key) || 0);
@@ -1718,9 +1718,9 @@
                     .style('left', Math.min(Math.max(event.clientX, 90), window.innerWidth - 90) + 'px')
                     .style('top', Math.max(event.clientY, 70) + 'px');
             })
-            .on('mouseleave', function () {
+            .on('mouseleave', function (event, segment) {
                 segments.attr('opacity', 1);
-                d3.select(this).attr('stroke', '#FFFFFF').attr('stroke-width', 0.8);
+                d3.select(this).attr('stroke', segment.recurring ? '#000000' : '#FFFFFF');
                 tooltip.style('opacity', 0);
             })
             .on('click', function (event, segment) {
