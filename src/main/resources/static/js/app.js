@@ -126,6 +126,9 @@
                 state.editingTransactionId = Number(this.getAttribute('data-id'));
                 renderTransactions();
             })
+            .on('click', '.tx-reccuring-btn', function () {
+                openReccuringFromTransaction(Number(this.getAttribute('data-id')), this);
+            })
             .on('click', '.detail-edit-cancel', function () {
                 state.editingTransactionId = null;
                 renderTransactions();
@@ -1980,12 +1983,58 @@
             + '<td>' + categoryChip(getCategory(transaction.categoryId)) + '</td>'
             + '<td class="align-right"><span class="amount ' + (amount < 0 ? 'negative' : 'positive') + '">'
                 + esc(money.format(amount)) + '</span></td>'
-            + '<td class="col-action"><button type="button" class="icon-btn tx-edit-btn" data-id="' + id + '"'
+            + '<td class="col-action"><div class="tx-actions">'
+                + '<button type="button" class="icon-btn tx-reccuring-btn" data-id="' + id + '"'
+                + ' aria-label="Set recurring cost for ' + esc(transaction.title) + '" title="Set recurring">'
+                + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14'
+                + 'M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" fill="none" stroke="currentColor"'
+                + ' stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg></button>'
+                + '<button type="button" class="icon-btn tx-edit-btn" data-id="' + id + '"'
                 + ' aria-label="Edit transaction ' + esc(transaction.title) + '" title="Edit transaction">'
                 + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"'
                 + ' fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"'
-                + ' stroke-linecap="round"/></svg></button></td>'
+                + ' stroke-linecap="round"/></svg></button>'
+                + '</div></td>'
             + '</tr>';
+    }
+
+    async function openReccuringFromTransaction(id, button) {
+        const transaction = state.transactions.find(item => Number(item.id) === Number(id));
+        if (!transaction) {
+            toast('That transaction could not be found.', 'error');
+            return;
+        }
+        const parts = String(transaction.bankDate || '').split('-');
+        const day = Number(parts[2]);
+        if (!Number.isInteger(day) || day < 1 || day > 31) {
+            toast('That transaction has no valid bank date to copy the day from.', 'error');
+            return;
+        }
+        const payload = {
+            day: day,
+            title: normalizeReccuringTitle(transaction.title),
+            amount: toNumber(transaction.amount),
+            categoryId: Number(transaction.categoryId) || 0
+        };
+        const $button = $(button || []);
+        $button.prop('disabled', true).attr('aria-busy', 'true');
+        try {
+            const created = await $.ajax({
+                url: '/api/reccuring-costs',
+                method: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(payload)
+            });
+            const title = created && created.title ? created.title : payload.title;
+            toast('Recurring cost “' + title + '” added.', 'success');
+            await refreshReccuring();
+            renderReccuring();
+        } catch (xhr) {
+            toast(errorDetail(xhr), 'error');
+        } finally {
+            $button.prop('disabled', false).removeAttr('aria-busy');
+        }
     }
 
     function toggleTransactionSelection(id, selected) {

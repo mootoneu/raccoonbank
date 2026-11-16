@@ -2644,8 +2644,14 @@ code {
 }
 
 .tx-table .col-action {
-    width: 44px;
-    text-align: center;
+    width: 88px;
+    text-align: right;
+}
+
+.tx-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
 }
 
 .tx-ref {
