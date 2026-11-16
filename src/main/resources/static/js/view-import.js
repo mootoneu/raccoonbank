@@ -22,6 +22,7 @@ function resetImportState() {
     $('#import-subtitle').text('Choose an OFX file to begin.');
     $('#save-all-top').prop('disabled', true);
     $('#save-all').prop('disabled', true);
+    $('#discard-saved-import').prop('hidden', true).prop('disabled', true);
     $('#import-filename').text('—');
 }
 
@@ -118,6 +119,7 @@ function showEditorEmptyState(title, text) {
     $('#import-empty').prop('hidden', false);
     $('#import-editor').prop('hidden', true);
     $('#save-all-top').prop('disabled', true);
+    $('#discard-saved-import').prop('hidden', true).prop('disabled', true);
 }
 
 function showImportError(message) {
@@ -379,11 +381,44 @@ function updateImportSummary() {
         $note.prop('hidden', true).text('');
     }
 
+    $('#discard-saved-import')
+        .prop('hidden', duplicates === 0)
+        .prop('disabled', state.saving || duplicates === 0);
+
     $('#import-count').text($rows.length);
     $('#import-count-label').text($rows.length === 1 ? 'transaction' : 'transactions');
     $('#import-total').text($rows.length ? 'Net ' + money.format(net) : '');
     $('#save-all').prop('disabled', state.saving || $rows.length === 0);
     $('#save-all-top').prop('disabled', state.saving || $rows.length === 0);
+}
+
+/** Refresh the review table after one or more rows were removed. */
+function afterRowsRemoved() {
+    const remaining = $('#import-tbody tr').length;
+    if (remaining === 0) {
+        $('#import-subtitle').text('All imported rows were removed. Nothing will be saved.');
+        showEditorEmptyState(
+            'All rows removed',
+            'Nothing will be written to transactions.csv. Choose another file or go back home.'
+        );
+        updateImportSummary();
+        return;
+    }
+    updateImportSubtitle(remaining);
+    renumberRows();
+    updateImportSummary();
+}
+
+/** Remove every review row whose status is "Saved" (already in transactions.csv). */
+function discardSavedRows() {
+    const $savedRows = $('#import-tbody tr.is-duplicate');
+    if (!$savedRows.length) {
+        return;
+    }
+    const removed = $savedRows.length;
+    $savedRows.remove();
+    afterRowsRemoved();
+    toast(removed === 1 ? '1 saved row discarded.' : removed + ' saved rows discarded.', 'success');
 }
 
 /* --------------------------------------------------------------------------
@@ -496,6 +531,8 @@ function setSaving(saving) {
         .text(saving ? 'Saving…' : 'Save all transactions');
     $('#save-all, #save-all-top').prop('disabled', saving || $('#import-tbody tr').length === 0);
     $('#discard-import, #back-home').prop('disabled', saving);
+    $('#discard-saved-import').prop('disabled',
+        saving || $('#import-tbody tr.is-duplicate').length === 0);
 }
 
 /* --------------------------------------------------------------------------
@@ -518,6 +555,7 @@ export function initImportView(options) {
     });
 
     $('#save-all, #save-all-top').on('click', saveAll);
+    $('#discard-saved-import').on('click', discardSavedRows);
 
     $('#import-tbody')
         .on('change', '.category-select', function () {
@@ -534,19 +572,7 @@ export function initImportView(options) {
         })
         .on('click', '.row-remove', function () {
             $(this).closest('tr').remove();
-            const remaining = $('#import-tbody tr').length;
-            if (remaining === 0) {
-                $('#import-subtitle').text('All imported rows were removed. Nothing will be saved.');
-                showEditorEmptyState(
-                    'All rows removed',
-                    'Nothing will be written to transactions.csv. Choose another file or go back home.'
-                );
-                updateImportSummary();
-            } else {
-                updateImportSubtitle(remaining);
-                renumberRows();
-                updateImportSummary();
-            }
+            afterRowsRemoved();
         });
 }
 

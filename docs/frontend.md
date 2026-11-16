@@ -19,7 +19,7 @@ are globals inside every module. Everything else is imported explicitly.
 | `view-transactions.js` | Transaction filters, sorting, selection, bulk category editing and inline edits. | `initTransactionsView`, `renderTransactions`, `restoreTransactionFilters` |
 | `view-reccuring.js` | Recurring costs for the current month and their matching transactions. The file keeps the existing `reccuring` spelling used by the API and DOM ids. | `initReccuringView`, `renderReccuring` |
 | `view-admin.js` | Category creation, category id changes and category deletion. | `initAdminView`, `renderAdmin` |
-| `view-import.js` | OFX upload, editable review table, duplicate marking and saving. | `initImportView`, `resetImportState` |
+| `view-import.js` | OFX upload, editable review table, duplicate marking/discarding and saving. | `initImportView`, `resetImportState` |
 
 ## Dependency direction
 

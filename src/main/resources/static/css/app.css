@@ -3008,8 +3008,16 @@ code {
     }
 
     .save-bar-actions {
-        display: grid;
-        grid-template-columns: 0.75fr 1.25fr;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .save-bar-actions .btn {
+        flex: 1 1 8rem;
+    }
+
+    #save-all {
+        flex-basis: 100%;
     }
 
     .import-table-wrap {

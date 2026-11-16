@@ -18,6 +18,7 @@ no cloud, no account.
   amber and marked **Saved** in the review table. A row counts as a duplicate when its amount,
   bank date and title all match a saved transaction; titles are compared trimmed, with repeated
   spaces collapsed. Duplicates remain editable and can still be saved if you really want them.
+  The **Discard saved** button removes every **Saved** row from the review table in one click.
 - **Automatic categorization** — the title is matched against `defaultcategories.csv`
   (case-insensitive, longest pattern wins) and the matching category is preselected. When a
   rule has a description, it is copied onto the draft if the description is still empty. In the
