@@ -16,7 +16,8 @@ const categoryPaletteCache = new Map();
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 export const STORAGE_KEYS = Object.freeze({
     spendingFilters: 'cochonbank2.spending.filters',
-    transactionFilters: 'cochonbank2.transactions.filters'
+    transactionFilters: 'cochonbank2.transactions.filters',
+    plannedSpendingDraft: 'cochonbank2.planned-spending.draft'
 });
 
 export const money = new Intl.NumberFormat('en-GB', {

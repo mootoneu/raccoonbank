@@ -323,6 +323,106 @@ public abstract class AbstractCsvRepository<T> {
         }
     }
 
+    /**
+     * Replaces the values of the data row at {@code index}, counting only
+     * non-blank rows after the header (the same rows {@link #findAll()} reads).
+     * Other rows are written back exactly as stored.
+     *
+     * @return {@code true} when a row at that index existed
+     */
+    public boolean updateRowAt(int index, Map<String, String> values) {
+        if (index < 0) {
+            return false;
+        }
+        Map<Integer, String> changes = new LinkedHashMap<>();
+        values.forEach((column, value) -> changes.put(columnIndex(column), value));
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return false;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> updated = new ArrayList<>(rows.size());
+            updated.add(rows.get(0));
+            int current = -1;
+            boolean changed = false;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (isBlank(row)) {
+                    updated.add(row);
+                    continue;
+                }
+                current++;
+                if (current == index) {
+                    List<String> copy = new ArrayList<>(pad(row));
+                    for (Map.Entry<Integer, String> change : changes.entrySet()) {
+                        copy.set(change.getKey(), change.getValue());
+                    }
+                    updated.add(copy);
+                    changed = true;
+                } else {
+                    updated.add(row);
+                }
+            }
+            if (changed) {
+                writeRows(updated);
+            }
+            return changed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Removes the data row at {@code index}, counting only non-blank rows after
+     * the header. Other rows are written back exactly as stored.
+     *
+     * @return {@code true} when a row at that index existed
+     */
+    public boolean deleteRowAt(int index) {
+        if (index < 0) {
+            return false;
+        }
+        lock.lock();
+        try {
+            ensureExists();
+            List<List<String>> rows = readRows();
+            if (rows.isEmpty()) {
+                return false;
+            }
+            checkHeader(rows.get(0));
+            List<List<String>> kept = new ArrayList<>(rows.size());
+            kept.add(rows.get(0));
+            int current = -1;
+            boolean removed = false;
+            for (int i = 1; i < rows.size(); i++) {
+                List<String> row = rows.get(i);
+                if (isBlank(row)) {
+                    kept.add(row);
+                    continue;
+                }
+                current++;
+                if (current == index) {
+                    removed = true;
+                } else {
+                    kept.add(row);
+                }
+            }
+            if (removed) {
+                writeRows(kept);
+            }
+            return removed;
+        } catch (IOException ex) {
+            throw new CsvException("Cannot update " + file + ": " + ex.getMessage(), ex);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     protected abstract T fromRow(List<String> row);
 
     protected abstract List<String> toRow(T value);

@@ -241,6 +241,47 @@ class Cochonbank2IntegrationTest {
     }
 
     @Test
+    void managesPlannedSpendingThroughTheRestApi() throws Exception {
+        String title = "TEST-PLANNED-" + UUID.randomUUID();
+
+        HttpResponse<String> create = postJson("/api/planned-spending",
+                "{\"dueDate\":\"2026-11-27\",\"title\":\"" + title
+                        + "\",\"amount\":79.97,\"categoryId\":10}");
+        assertEquals(201, create.statusCode(), create.body());
+        JsonNode created = json(create);
+        assertEquals("2026-11-27", created.get("dueDate").asText());
+        assertEquals(title, created.get("title").asText());
+        assertEquals(0, created.get("amount").decimalValue()
+                .compareTo(new java.math.BigDecimal("79.97")));
+        int index = created.get("index").asInt();
+
+        boolean listed = false;
+        for (JsonNode spending : json(get("/api/planned-spending"))) {
+            if (title.equals(spending.get("title").asText())) {
+                listed = true;
+            }
+        }
+        assertTrue(listed, "the planned spending must be listed");
+
+        String updateBody = "{\"dueDate\":\"2026-12-01\",\"title\":\"" + title
+                + "-RENAMED\",\"amount\":85.00,\"categoryId\":null}";
+        HttpResponse<String> update = sendJson("PUT",
+                "/api/planned-spending?index=" + index, updateBody);
+        assertEquals(200, update.statusCode(), update.body());
+        assertEquals("2026-12-01", json(update).get("dueDate").asText());
+        assertEquals(title + "-RENAMED", json(update).get("title").asText());
+        assertTrue(json(update).get("categoryId").isNull());
+
+        HttpResponse<String> delete = sendJson("DELETE",
+                "/api/planned-spending?index=" + json(update).get("index").asInt(), null);
+        assertEquals(204, delete.statusCode(), delete.body());
+
+        for (JsonNode spending : json(get("/api/planned-spending"))) {
+            assertTrue(!(title + "-RENAMED").equals(spending.get("title").asText()));
+        }
+    }
+
+    @Test
     void rejectsInvalidTransactionsWithAProblemDetail() throws Exception {
         String body = """
                 [{"categoryId":10,"paymentType":"DEBIT","amount":-5.00,"title":"NO DATE"}]

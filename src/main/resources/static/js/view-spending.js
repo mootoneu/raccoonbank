@@ -4,12 +4,14 @@
    transaction detail panel.
    ========================================================================== */
 
-import { state, getCategory, categoryKey, groupCategory } from './state.js';
+import {
+    state, getCategory, categoryKey, groupCategory, refreshPlannedSpending
+} from './state.js';
 import {
     EARNED_COLOR, OVERSPEND_COLOR, STORAGE_KEYS, categoryPalette, compactMoney,
-    esc, formatDate, formatLongDate, isoDay, isReccuringCost, isReccuringGain, money, monthKey,
+    errorDetail, esc, formatDate, formatLongDate, isoDay, isReccuringCost, isReccuringGain, money, monthKey,
     normalizeReccuringTitle, parseIsoDate, readStoredState, reccuringSpent,
-    renderDetailEditRow, safeColor, saveTransactionEdit, signedMoney, storeState,
+    renderDetailEditRow, safeColor, saveTransactionEdit, signedMoney, storeState, toast,
     toNumber
 } from './utils.js';
 
@@ -450,6 +452,7 @@ function renderSpending() {
     renderPeriodControls(model);
     renderSpendingLegend(model);
     renderHistogram(model);
+    renderPlannedSpending();
     if (state.spendingSelection) {
         renderSpendingDetail();
     }
@@ -1156,6 +1159,213 @@ function restoreSpendingFilters() {
 }
 
 /* --------------------------------------------------------------------------
+   Planned spending sidebar
+   -------------------------------------------------------------------------- */
+
+let editingPlannedIndex = null;
+
+/** The backend returns the list already ordered by due date (undated last). */
+function renderPlannedSpending() {
+    const items = state.plannedSpending;
+    const $cards = $('#planned-spending-cards').empty();
+    items.forEach(item => {
+        const palette = categoryPalette(getCategory(item.categoryId || 0).color);
+        const amount = money.format(toNumber(item.amount));
+        $('<button>', {
+            type: 'button',
+            class: 'planned-card',
+            'data-index': item.index,
+            'aria-label': 'Edit ' + item.title + ', ' + amount
+        }).css({
+            backgroundColor: palette.background,
+            color: palette.foreground
+        }).html(
+            '<span class="planned-card-top">'
+            + '<span class="planned-card-title">' + esc(item.title) + '</span>'
+            + '<span class="planned-card-amount">' + esc(amount) + '</span>'
+            + '</span>'
+            + '<span class="planned-card-due">'
+            + (item.dueDate ? esc(formatDate(item.dueDate)) : 'No due date')
+            + '</span>'
+        ).appendTo($cards);
+    });
+    $('#planned-spending-cards').prop('hidden', items.length === 0);
+    $('#planned-spending-empty').prop('hidden', items.length > 0);
+    $('#planned-sidebar-sub').text(items.length
+        ? items.length + (items.length === 1 ? ' item' : ' items') + ' · ordered by due date'
+        : 'Upcoming one-off spending');
+}
+
+function plannedDraft() {
+    return readStoredState(STORAGE_KEYS.plannedSpendingDraft) || {};
+}
+
+function rememberPlannedDraft(values) {
+    storeState(STORAGE_KEYS.plannedSpendingDraft, {
+        dueDate: values.dueDate || '',
+        title: values.title || '',
+        amount: values.amount === null || values.amount === undefined
+            ? '' : values.amount,
+        categoryId: values.categoryId || ''
+    });
+}
+
+function plannedFormValues() {
+    const dueDate = String($('#planned-due-date').val() || '').trim();
+    const title = String($('#planned-title').val() || '').trim().replace(/\s+/g, ' ');
+    const amountText = String($('#planned-amount').val() || '').trim();
+    const categoryId = String($('#planned-category').val() || '').trim();
+    return {
+        dueDate: dueDate || null,
+        title: title,
+        amount: amountText === '' ? null : Number(amountText),
+        categoryId: categoryId ? Number(categoryId) : null
+    };
+}
+
+function renderPlannedCategoryOptions(selectedId) {
+    const $select = $('#planned-category').empty();
+    $('<option>', { value: '', text: 'No category' }).appendTo($select);
+    state.categories.slice()
+        .sort((a, b) => Number(a.id) - Number(b.id))
+        .forEach(category => {
+            const palette = categoryPalette(category.color);
+            $('<option>', { value: category.id, text: category.name })
+                .css({ backgroundColor: palette.background, color: palette.foreground })
+                .appendTo($select);
+        });
+    $select.val(selectedId ? String(selectedId) : '');
+}
+
+function isPlannedModalOpen() {
+    return !$('#planned-modal').prop('hidden');
+}
+
+function openPlannedModal(index) {
+    const item = state.plannedSpending.find(entry => Number(entry.index) === Number(index));
+    if (!item) {
+        return;
+    }
+    editingPlannedIndex = Number(index);
+    $('#planned-modal-title').text('Edit planned spending');
+    $('#planned-modal-sub').text('Change the details or remove this item.');
+    $('#planned-due-date').val(item.dueDate || '');
+    $('#planned-title').val(item.title || '');
+    $('#planned-amount').val(toNumber(item.amount));
+    renderPlannedCategoryOptions(item.categoryId);
+    $('#planned-delete-btn').prop('hidden', false);
+    $('#planned-save-btn').text('Save changes');
+    $('#planned-form .text-input').removeClass('is-invalid');
+    $('#planned-modal').prop('hidden', false);
+    window.requestAnimationFrame(() => {
+        $('#planned-title').trigger('focus').trigger('select');
+    });
+}
+
+function closePlannedModal() {
+    $('#planned-modal').prop('hidden', true);
+    editingPlannedIndex = null;
+}
+
+async function addPlannedSpending() {
+    if (isPlannedModalOpen()) {
+        return;
+    }
+    const draft = plannedDraft();
+    const amount = Number(draft.amount);
+    const payload = {
+        dueDate: draft.dueDate || null,
+        title: draft.title || 'New planned spending',
+        amount: draft.amount !== '' && draft.amount !== null && draft.amount !== undefined
+            && Number.isFinite(amount) ? amount : 0,
+        categoryId: draft.categoryId ? Number(draft.categoryId) : null
+    };
+    $('#planned-add-btn').prop('disabled', true);
+    try {
+        const created = await $.ajax({
+            url: '/api/planned-spending',
+            method: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(payload)
+        });
+        toast('Planned spending added.', 'success');
+        rememberPlannedDraft(payload);
+        await refreshPlannedSpending();
+        renderSpending();
+        openPlannedModal(created.index);
+    } catch (xhr) {
+        toast(errorDetail(xhr), 'error');
+    } finally {
+        $('#planned-add-btn').prop('disabled', false);
+    }
+}
+
+async function savePlannedSpending(event) {
+    event.preventDefault();
+    if (editingPlannedIndex === null) {
+        return;
+    }
+    const values = plannedFormValues();
+    if (!values.title) {
+        $('#planned-title').addClass('is-invalid').trigger('focus');
+        toast('Give the planned spending a title.', 'error');
+        return;
+    }
+    if (values.amount === null || !Number.isFinite(values.amount)) {
+        $('#planned-amount').addClass('is-invalid').trigger('focus');
+        toast('Enter an expected amount.', 'error');
+        return;
+    }
+
+    $('#planned-save-btn').prop('disabled', true).attr('aria-busy', 'true');
+    try {
+        await $.ajax({
+            url: '/api/planned-spending?index=' + encodeURIComponent(editingPlannedIndex),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(values)
+        });
+        rememberPlannedDraft(values);
+        toast('Planned spending updated.', 'success');
+        closePlannedModal();
+        await refreshPlannedSpending();
+        renderSpending();
+    } catch (xhr) {
+        toast(errorDetail(xhr), 'error');
+    } finally {
+        $('#planned-save-btn').prop('disabled', false).removeAttr('aria-busy');
+    }
+}
+
+async function deletePlannedSpending() {
+    if (editingPlannedIndex === null) {
+        return;
+    }
+    const item = state.plannedSpending.find(entry => Number(entry.index) === editingPlannedIndex);
+    const label = item ? item.title : 'this item';
+    if (!window.confirm('Delete the planned spending “' + label + '”?')) {
+        return;
+    }
+    $('#planned-delete-btn').prop('disabled', true);
+    try {
+        await $.ajax({
+            url: '/api/planned-spending?index=' + encodeURIComponent(editingPlannedIndex),
+            method: 'DELETE'
+        });
+        toast('Planned spending deleted.', 'success');
+        closePlannedModal();
+        await refreshPlannedSpending();
+        renderSpending();
+    } catch (xhr) {
+        toast(errorDetail(xhr), 'error');
+    } finally {
+        $('#planned-delete-btn').prop('disabled', false);
+    }
+}
+
+/* --------------------------------------------------------------------------
    Events
    -------------------------------------------------------------------------- */
 
@@ -1211,6 +1421,23 @@ export function initSpendingView(options) {
         renderSpending();
     });
 
+    $('#planned-add-btn').on('click', addPlannedSpending);
+    $('#planned-spending-cards').on('click', '.planned-card', function () {
+        openPlannedModal(this.getAttribute('data-index'));
+    });
+    $('#planned-modal-close, #planned-cancel-btn').on('click', closePlannedModal);
+    $('#planned-modal').on('click', function (event) {
+        if (event.target === this) {
+            closePlannedModal();
+        }
+    });
+    $('#planned-delete-btn').on('click', deletePlannedSpending);
+    $('#planned-form').on('submit', savePlannedSpending);
+    $('#planned-form').on('input change', 'input, select', function () {
+        this.classList.remove('is-invalid');
+        rememberPlannedDraft(plannedFormValues());
+    });
+
     $(document).on('click', function () {
         closeSpendingFilter();
     });
@@ -1237,7 +1464,9 @@ export function initSpendingView(options) {
         if (event.key !== 'Escape') {
             return;
         }
-        if (isSpendingFilterOpen()) {
+        if (isPlannedModalOpen()) {
+            closePlannedModal();
+        } else if (isSpendingFilterOpen()) {
             closeSpendingFilter(true);
         } else if (!$('#spending-detail').prop('hidden')) {
             closeSpendingDetail();

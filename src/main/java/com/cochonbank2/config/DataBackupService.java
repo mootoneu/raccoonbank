@@ -28,7 +28,8 @@ public class DataBackupService {
 
     private static final Logger log = LoggerFactory.getLogger(DataBackupService.class);
     private static final List<String> DATA_FILES = List.of(
-            "transactions.csv", "categories.csv", "defaultcategories.csv", "reccuringcosts.csv");
+            "transactions.csv", "categories.csv", "defaultcategories.csv", "reccuringcosts.csv",
+            "panned_spending.csv");
     private static final DateTimeFormatter SNAPSHOT_STAMP =
             DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
     private static final Pattern SNAPSHOT_NAME =

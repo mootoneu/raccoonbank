@@ -78,8 +78,8 @@ callback from `app.js` instead of importing it:
 - `groupCategory(groupId)` builds the display object for a category group.
 - `adminGroups()` lists the groups used by the admin and transaction filters.
 
-`loadLedger()`, `refreshTransactions()` and `refreshReccuring()` are the only frontend code that
-calls `GET /api/...` for the ledger.
+`loadLedger()`, `refreshTransactions()`, `refreshReccuring()` and `refreshPlannedSpending()` are
+the only frontend code that calls `GET /api/...` for the ledger.
 
 ## View filter persistence
 
@@ -89,6 +89,7 @@ The Spending and Transactions views remember their filters in `localStorage`:
 | --- | --- |
 | `cochonbank2.spending.filters` | range, month, year, selected category/group ids, grouping toggle |
 | `cochonbank2.transactions.filters` | category, category group, min/max amount, name, description and start/end bank dates |
+| `cochonbank2.planned-spending.draft` | last due date, title, amount and category used in the Planned editor |
 
 Each view exports a restore function that the core calls once the ledger has loaded. Saves are
 guarded by `state.filtersRestored` so an early render cannot overwrite the stored values. Keep

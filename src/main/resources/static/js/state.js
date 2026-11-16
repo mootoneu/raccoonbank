@@ -38,6 +38,7 @@ export const state = {
     filtersRestored: { spending: false, transactions: false },
     reccuringCosts: [],
     editingReccuring: null,
+    plannedSpending: [],
     spendingData: null,
     spendingResizeTimer: null
 };
@@ -138,15 +139,22 @@ export async function loadLedger() {
     const results = await Promise.all([
         $.getJSON('/api/categories'),
         $.getJSON('/api/transactions'),
-        $.getJSON('/api/reccuring-costs')
+        $.getJSON('/api/reccuring-costs'),
+        $.getJSON('/api/planned-spending')
     ]);
     setCategories(results[0]);
     state.transactions = Array.isArray(results[1]) ? results[1] : [];
     state.reccuringCosts = Array.isArray(results[2]) ? results[2] : [];
+    state.plannedSpending = Array.isArray(results[3]) ? results[3] : [];
 }
 
 export async function refreshReccuring() {
     const costs = await $.getJSON('/api/reccuring-costs');
     state.reccuringCosts = Array.isArray(costs) ? costs : [];
+}
+
+export async function refreshPlannedSpending() {
+    const items = await $.getJSON('/api/planned-spending');
+    state.plannedSpending = Array.isArray(items) ? items : [];
 }
 
