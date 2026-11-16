@@ -1372,9 +1372,9 @@
 
     function renderSpendingStats(model) {
         const average = model.buckets.length ? model.total / model.buckets.length : 0;
-        const top = model.categories.reduce(
-            (best, entry) => (!best || entry.total > best.total ? entry : best),
-            null);
+        const recurringExpected = d3.sum(state.reccuringCosts, cost => toNumber(cost.amount));
+        const recurringSpent = d3.sum(state.reccuringCosts, cost => reccuringSpent(cost.title));
+        const monthLabel = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
         $('#spending-total').text(money.format(model.total));
         $('#spending-total-sub').text(model.rangeTag);
@@ -1386,18 +1386,11 @@
                 ? money.format(average) + ' avg / ' + model.unit
                 : 'No spending in this period');
 
-        if (top) {
-            $('#spending-top')
-                .text(top.category.name)
-                .attr('title', top.category.name);
-            $('#spending-top-sub').text(
-                money.format(top.total) + ' · ' + Math.round(top.total / model.total * 100) + '% of spending');
-        } else {
-            $('#spending-top').text('—').removeAttr('title');
-            $('#spending-top-sub').text(
-                state.spendingGrouped ? 'No group to rank' : 'No category to rank');
-        }
-        $('#spending-top-label').text(state.spendingGrouped ? 'Top group' : 'Top category');
+        $('#spending-recurring')
+            .text(money.format(-(recurringExpected - recurringSpent)));
+        $('#spending-recurring-sub').text(state.reccuringCosts.length
+            ? 'Remaining · ' + monthLabel
+            : 'No recurring costs yet');
     }
 
     function renderPeriodControls(model) {
@@ -2356,7 +2349,7 @@
         const title = String(cost.title || '');
         const expected = toNumber(cost.amount);
         const spent = reccuringSpent(title);
-        return '<tr>'
+        return '<tr' + (spent > expected ? ' class="is-spent-below-expected"' : '') + '>'
             + '<td class="date-cell">' + esc(cost.day) + '</td>'
             + '<td><div class="tx-title" title="' + esc(title) + '">' + esc(title) + '</div></td>'
             + '<td>' + categoryChip(getCategory(cost.categoryId)) + '</td>'
@@ -3100,6 +3093,11 @@
         const palette = categoryPalette(category.color);
         select.style.backgroundColor = palette.background;
         select.style.color = palette.foreground;
+        const row = select.closest ? select.closest('tr') : null;
+        if (row) {
+            row.classList.toggle('is-uncategorized',
+                Number(select.value) === Number(CATEGORY_NONE.id));
+        }
     }
 
     /**

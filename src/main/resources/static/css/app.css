@@ -1577,10 +1577,6 @@ code {
     font-variant-numeric: tabular-nums;
 }
 
-.period-stat-name {
-    font-size: clamp(1.08rem, 1.7vw, 1.38rem);
-}
-
 .period-stat-sub {
     margin-top: 4px;
     overflow: hidden;
@@ -2107,6 +2103,22 @@ code {
 }
 
 .import-table tbody tr.is-duplicate .cell-input:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.import-table tbody tr.is-uncategorized {
+    background: #FFE7E7;
+}
+
+.import-table tbody tr.is-uncategorized:hover {
+    background: #FFD9D9;
+}
+
+.import-table tbody tr.is-uncategorized .cell-input {
+    background: transparent;
+}
+
+.import-table tbody tr.is-uncategorized .cell-input:hover {
     background: rgba(255, 255, 255, 0.55);
 }
 
@@ -2727,6 +2739,14 @@ code {
     display: flex;
     justify-content: flex-end;
     gap: 4px;
+}
+
+.reccuring-table tbody tr.is-spent-below-expected {
+    background: #FFE7E7;
+}
+
+.reccuring-table tbody tr.is-spent-below-expected:hover {
+    background: #FFD9D9;
 }
 
 /* ==========================================================================
