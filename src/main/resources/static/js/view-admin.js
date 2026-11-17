@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - Administration view
+   RaccoonBank - Administration view
    Category creation, category ids and category deletion.
    ========================================================================== */
 

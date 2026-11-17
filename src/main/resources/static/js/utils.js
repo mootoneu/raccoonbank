@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - shared utilities
+   RaccoonBank - shared utilities
    Formatting, colors, escaping, storage, categories and small DOM helpers used
    by the core and by every view module.
    ========================================================================== */
@@ -15,9 +15,9 @@ const MIN_CONTRAST = 4.5;
 const categoryPaletteCache = new Map();
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 export const STORAGE_KEYS = Object.freeze({
-    spendingFilters: 'cochonbank2.spending.filters',
-    transactionFilters: 'cochonbank2.transactions.filters',
-    plannedSpendingDraft: 'cochonbank2.planned-spending.draft'
+    spendingFilters: 'raccoonbank.spending.filters',
+    transactionFilters: 'raccoonbank.transactions.filters',
+    plannedSpendingDraft: 'raccoonbank.planned-spending.draft'
 });
 
 export const money = new Intl.NumberFormat('en-GB', {
@@ -384,7 +384,7 @@ export function errorDetail(xhr) {
         return body.detail || body.message || body.title || 'Something went wrong.';
     }
     if (xhr && xhr.status === 0) {
-        return 'The server could not be reached. Is CochonBank2 still running?';
+        return 'The server could not be reached. Is RaccoonBank still running?';
     }
     if (typeof xhr === 'string') {
         return xhr;

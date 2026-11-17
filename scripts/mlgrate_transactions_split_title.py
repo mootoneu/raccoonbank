@@ -71,7 +71,7 @@ def split_title_and_description(input_filepath, output_filepath):
         print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
-    # Define relative paths based on script location (D:\Projects\cochonbank2\scripts\)
+    # Define relative paths based on script location (D:\Projects\raccoonbank\scripts\)
     # Relative to scripts folder: ..\data\
     
     script_dir = os.path.dirname(os.path.abspath(__file__))

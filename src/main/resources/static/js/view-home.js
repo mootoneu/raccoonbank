@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - Overview view
+   RaccoonBank - Overview view
    Dashboard totals, recent transactions, the donut chart and cash flow chart.
    ========================================================================== */
 

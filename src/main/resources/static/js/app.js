@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - application core
+   RaccoonBank - application core
    Bootstraps the views, owns navigation and orchestrates data loading.
    ========================================================================== */
 

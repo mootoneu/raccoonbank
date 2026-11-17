@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - OFX import view
+   RaccoonBank - OFX import view
    Upload, review, edit and save an imported statement.
    ========================================================================== */
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - Transactions view
+   RaccoonBank - Transactions view
    Filtering, sorting, selection, bulk editing and inline transaction edits.
    ========================================================================== */
 

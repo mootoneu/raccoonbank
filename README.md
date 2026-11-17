@@ -1,4 +1,4 @@
-# CochonBank2
+# RaccoonBank
 
 A single-user personal finance app. Spring Boot serves a small ES-module frontend built on
 jQuery and D3.js, and every transaction lives in a plain CSV file on your machine. No database,
@@ -57,7 +57,7 @@ no cloud, no account.
 ## Run
 
 ```bash
-cd cochonbank2
+cd raccoonbank
 # Windows
 mvnw.cmd spring-boot:run
 
@@ -179,7 +179,7 @@ then save.
 
 ## Legacy ledger migration
 
-A ledger written by the first CochonBank version uses eight columns
+A ledger written by the first RaccoonBank version uses eight columns
 (`Id,…,Title,Bill_Id`) and dates such as `12/31/2016 00:00:00`. On startup, if that
 legacy header is detected, the app backs the file up first and then rewrites it in the current
 nine-column format: an empty `Description` column is added and both dates are converted to
@@ -208,7 +208,7 @@ Blank ids stay blank and files already in the current format are left untouched.
 ```bash
 mvnw.cmd test          # 76 tests: CSV, OFX parser, import mapping, backups, migration, services, REST flow
 mvnw.cmd package       # executable jar in target/
-java -jar target/cochonbank2-1.0.0.jar
+java -jar target/raccoonbank-1.0.0.jar
 ```
 
 ## Data files
@@ -337,13 +337,13 @@ curl -X POST http://localhost:8080/api/transactions \
 `src/main/resources/application.properties`:
 
 ```properties
-cochonbank.data-directory=./data
+raccoonbank.data-directory=./data
 server.port=8080
 spring.servlet.multipart.max-file-size=10MB
 spring.web.resources.cache.cachecontrol.no-cache=true
 ```
 
-Point `cochonbank.data-directory` at any absolute or relative path to use a different ledger
+Point `raccoonbank.data-directory` at any absolute or relative path to use a different ledger
 location. The cache setting makes browsers revalidate the ES modules after an update.
 
 ## Frontend
@@ -359,7 +359,7 @@ the checklist for adding a view.
 ```
 start-server.cmd  Windows launcher that keeps the console open
 scripts/          helper and migration scripts
-src/main/java/com/cochonbank2/
+src/main/java/com/raccoonbank/
   config/       startup, data-directory properties, rolling backups
   csv/          dependency-free RFC 4180 reader/writer and repositories
   domain/       Transaction, TransactionDraft, Category, DefaultCategory, ReccuringCosts

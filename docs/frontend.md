@@ -87,9 +87,9 @@ The Spending and Transactions views remember their filters in `localStorage`:
 
 | Key | Contents |
 | --- | --- |
-| `cochonbank2.spending.filters` | range, month, year, selected category/group ids, grouping toggle |
-| `cochonbank2.transactions.filters` | category, category group, min/max amount, name, description and start/end bank dates |
-| `cochonbank2.planned-spending.draft` | last due date, title, amount and category used in the Planned editor |
+| `raccoonbank.spending.filters` | range, month, year, selected category/group ids, grouping toggle |
+| `raccoonbank.transactions.filters` | category, category group, min/max amount, name, description and start/end bank dates |
+| `raccoonbank.planned-spending.draft` | last due date, title, amount and category used in the Planned editor |
 
 Each view exports a restore function that the core calls once the ledger has loaded. Saves are
 guarded by `state.filtersRestored` so an early render cannot overwrite the stored values. Keep

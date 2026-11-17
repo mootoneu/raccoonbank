@@ -1,7 +1,7 @@
 -- Generated in OpenCode With DeepSeek V4.1 Flash
 
 
-The aim is to create an application named cochonbank2 from scratch to handle personnal (single user) finances.
+The aim is to create an application named raccoonbank from scratch to handle personnal (single user) finances.
 The application has to be written in java spring boot for the backend and jquery+d3.js for the frontend.
 The data has to travel between frontend and backend through REST API
 The data has to be stored as plain csv files
@@ -28,11 +28,11 @@ Id,Category_Id,Pattern
 # User story
 # Import new bank statements
  - The user can download an OFX file containing one or more bank statements from its bank website.
- - The user open the application cochonbank2
+ - The user open the application raccoonbank
  - The user click the "Import OFX" button
  - The user select the .ofx file to import via a dialog box
  - The selected file importation process starts
-	- cochonbank2 convert the statements into transactions
+	- raccoonbank convert the statements into transactions
 		- OFX.TRNTYPE is mapped to Transaction.PaymentType
 		- OFX.DTPOSTED is mapped to Transaction.BankDate
 		- OFX.TRNAMT is mapped to Transaction.Amount

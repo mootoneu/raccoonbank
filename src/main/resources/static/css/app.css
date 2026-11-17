@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 — stylesheet
+   RaccoonBank — stylesheet
    ========================================================================== */
 
 :root {
@@ -179,14 +179,6 @@ code {
     font-weight: 750;
     letter-spacing: -0.035em;
     color: var(--brand);
-}
-
-.brand-name sup {
-    font-size: 0.52em;
-    top: -0.65em;
-    margin-left: 1px;
-    color: var(--accent);
-    font-weight: 800;
 }
 
 .header-actions {

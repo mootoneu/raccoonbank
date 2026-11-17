@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - Recurring costs view
+   RaccoonBank - Recurring costs view
    Expected costs for the current month and their matching transactions.
    ========================================================================== */
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - shared application state and selectors
+   RaccoonBank - shared application state and selectors
    Views read and mutate the single state object. The API actions at the
    bottom are the only place in the frontend that load server data.
    ========================================================================== */

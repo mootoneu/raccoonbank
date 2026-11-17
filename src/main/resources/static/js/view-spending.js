@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CochonBank2 - Spending view
+   RaccoonBank - Spending view
    The stacked histogram, its category/group filter, period navigation and the
    transaction detail panel.
    ========================================================================== */

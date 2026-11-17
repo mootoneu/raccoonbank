@@ -11,10 +11,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.cochonbank2</groupId>
-    <artifactId>cochonbank2</artifactId>
+    <groupId>com.raccoonbank</groupId>
+    <artifactId>raccoonbank</artifactId>
     <version>1.0.0</version>
-    <name>cochonbank2</name>
+    <name>raccoonbank</name>
     <description>Personal finance manager backed by plain CSV files</description>
 
     <properties>
