@@ -235,10 +235,81 @@
             </div>
         </div>
 
+        
+        <div class="period-stats" aria-label="Spending summary for the selected period">
+            <article class="period-stat">
+                <p class="period-stat-label">Total spent</p>
+                <p class="period-stat-value" id="spending-total">—</p>
+                <p class="period-stat-sub" id="spending-total-sub">—</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">Total earned</p>
+                <p class="period-stat-value" id="spending-earned">—</p>
+                <p class="period-stat-sub" id="spending-earned-sub">—</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">Transactions</p>
+                <p class="period-stat-value" id="spending-count">—</p>
+                <p class="period-stat-sub" id="spending-count-sub">—</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">Recurring costs</p>
+                <p class="period-stat-value" id="spending-recurring">—</p>
+                <p class="period-stat-sub" id="spending-recurring-sub">Expected · this month</p>
+            </article>
+            <article class="period-stat">
+                <p class="period-stat-label">To spend</p>
+                <p class="period-stat-value" id="spending-to-spend">—</p>
+                <p class="period-stat-sub" id="spending-to-spend-sub">Remaining · this month</p>
+            </article>
+        </div>
+
+        <div id="planned-spending-section" class="planned-section" aria-labelledby="planned-section-title">
+            <button type="button" class="icon-btn planned-toggle-btn" id="planned-toggle-btn"
+                            aria-expanded="true" aria-controls="planned-spending-body"
+                            aria-label="Fold planned spending" title="Fold planned spending">
+                            <svg class="planned-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+            <div class="planned-section-head">
+                <div class="planned-head-row">
+                    <div class="planned-heading">
+                        <h2 id="planned-section-title">Planned</h2>
+                        <p class="planned-section-sub" id="planned-section-sub">Upcoming one-off spending</p>
+                    </div>
+                    <div class="planned-head-actions">
+                        <button type="button" class="icon-btn planned-add-btn" id="planned-add-btn"
+                            aria-label="Add planned spending" title="Add planned spending">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="planned-totals" aria-label="Planned spending totals">
+                    <div class="planned-total planned-total-month">
+                        <span class="planned-total-label">Total this month</span>
+                        <span class="planned-total-value" id="planned-total-month">€0.00</span>
+                    </div>
+                    <div class="planned-total planned-total-overall">
+                        <span class="planned-total-label">Total overall</span>
+                        <span class="planned-total-value" id="planned-total-overall">€0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="planned-section-body" id="planned-spending-body">
+                <div class="planned-cards" id="planned-spending-cards" role="group"
+                    aria-label="Planned spending"></div>
+                <p class="planned-empty" id="planned-spending-empty" hidden>
+                    No planned spending yet. Use + to add one.
+                </p>
+            </div>
+        </div>
+
         <div class="spending-controls">
             <div class="segmented" id="spending-range" role="group" aria-label="Group spending bars by">
-                <button type="button" class="segment-btn is-active" data-range="month" aria-pressed="true">By month</button>
-                <button type="button" class="segment-btn" data-range="year" aria-pressed="false">By year</button>
+                <button type="button" class="segment-btn is-active" data-range="month" aria-pressed="true">This month</button>
+                <button type="button" class="segment-btn" data-range="year" aria-pressed="false">This year</button>
                 <button type="button" class="segment-btn" data-range="all" aria-pressed="false">All time</button>
             </div>
             <div class="spending-tools">
@@ -281,76 +352,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="period-stats" aria-label="Spending summary for the selected period">
-            <article class="period-stat">
-                <p class="period-stat-label">Total spent</p>
-                <p class="period-stat-value" id="spending-total">—</p>
-                <p class="period-stat-sub" id="spending-total-sub">—</p>
-            </article>
-            <article class="period-stat">
-                <p class="period-stat-label">Total earned</p>
-                <p class="period-stat-value" id="spending-earned">—</p>
-                <p class="period-stat-sub" id="spending-earned-sub">—</p>
-            </article>
-            <article class="period-stat">
-                <p class="period-stat-label">Transactions</p>
-                <p class="period-stat-value" id="spending-count">—</p>
-                <p class="period-stat-sub" id="spending-count-sub">—</p>
-            </article>
-            <article class="period-stat">
-                <p class="period-stat-label">Recurring costs</p>
-                <p class="period-stat-value" id="spending-recurring">—</p>
-                <p class="period-stat-sub" id="spending-recurring-sub">Expected · this month</p>
-            </article>
-            <article class="period-stat">
-                <p class="period-stat-label">To spend</p>
-                <p class="period-stat-value" id="spending-to-spend">—</p>
-                <p class="period-stat-sub" id="spending-to-spend-sub">Remaining · this month</p>
-            </article>
-        </div>
-
-        <aside id="planned-spending-sidebar" class="planned-sidebar" aria-labelledby="planned-sidebar-title">
-            <button type="button" class="icon-btn planned-toggle-btn" id="planned-toggle-btn"
-                            aria-expanded="true" aria-controls="planned-spending-body"
-                            aria-label="Fold planned spending" title="Fold planned spending">
-                            <svg class="planned-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-            <div class="planned-sidebar-head">
-                <div class="planned-head-row">
-                    <div class="planned-heading">
-                        <h2 id="planned-sidebar-title">Planned</h2>
-                        <p class="planned-sidebar-sub" id="planned-sidebar-sub">Upcoming one-off spending</p>
-                    </div>
-                    <div class="planned-head-actions">
-                        <button type="button" class="icon-btn planned-add-btn" id="planned-add-btn"
-                            aria-label="Add planned spending" title="Add planned spending">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="planned-totals" aria-label="Planned spending totals">
-                    <div class="planned-total planned-total-month">
-                        <span class="planned-total-label">Total this month</span>
-                        <span class="planned-total-value" id="planned-total-month">€0.00</span>
-                    </div>
-                    <div class="planned-total planned-total-overall">
-                        <span class="planned-total-label">Total overall</span>
-                        <span class="planned-total-value" id="planned-total-overall">€0.00</span>
-                    </div>
-                </div>
-            </div>
-            <div class="planned-sidebar-body" id="planned-spending-body">
-                <div class="planned-cards" id="planned-spending-cards" role="group"
-                    aria-label="Planned spending"></div>
-                <p class="planned-empty" id="planned-spending-empty" hidden>
-                    No planned spending yet. Use + to add one.
-                </p>
-            </div>
-        </aside>
 
         <div class="spending-layout">
             <div class="spending-main">

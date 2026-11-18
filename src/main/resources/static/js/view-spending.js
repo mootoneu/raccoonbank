@@ -1159,7 +1159,7 @@ function restoreSpendingFilters() {
 }
 
 /* --------------------------------------------------------------------------
-   Planned spending sidebar
+   Planned spending section
    -------------------------------------------------------------------------- */
 
 let editingPlannedIndex = null;
@@ -1217,7 +1217,7 @@ function renderPlannedSpending() {
     });
     $('#planned-spending-cards').prop('hidden', items.length === 0);
     $('#planned-spending-empty').prop('hidden', items.length > 0);
-    $('#planned-sidebar-sub').text(items.length
+    $('#planned-section-sub').text(items.length
         ? items.length + (items.length === 1 ? ' item' : ' items') + ' · ordered by due date'
         : 'Upcoming one-off spending');
 }
@@ -1379,9 +1379,9 @@ function renderPlannedCategoryOptions(selectedId) {
     $select.val(selectedId ? String(selectedId) : '');
 }
 
-function togglePlannedSidebar() {
-    const $sidebar = $('#planned-spending-sidebar');
-    const folded = $sidebar.toggleClass('is-folded').hasClass('is-folded');
+function togglePlannedSection() {
+    const $section = $('#planned-spending-section');
+    const folded = $section.toggleClass('is-folded').hasClass('is-folded');
     $('#planned-toggle-btn')
         .attr('aria-expanded', String(!folded))
         .attr('aria-label', folded ? 'Expand planned spending' : 'Fold planned spending')
@@ -1573,7 +1573,7 @@ export function initSpendingView(options) {
         renderSpending();
     });
 
-    $('#planned-toggle-btn').on('click', togglePlannedSidebar);
+    $('#planned-toggle-btn').on('click', togglePlannedSection);
     $('#planned-add-btn').on('click', addPlannedSpending);
     $('#planned-spending-cards').on('click', '.planned-card', function () {
         openPlannedModal(this.getAttribute('data-index'));

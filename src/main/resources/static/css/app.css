@@ -3168,7 +3168,7 @@ code {
 }
 
 /* ==========================================================================
-   Planned spending sidebar and editor
+   Planned spending section and editor
    ========================================================================== */
 
 .spending-layout {
@@ -3183,7 +3183,7 @@ code {
     min-width: 0;
 }
 
-.planned-sidebar {
+.planned-section {
     margin-bottom: 18px;
     padding: 16px 20px;
     border: 1px solid rgba(230, 224, 211, 0.9);
@@ -3192,7 +3192,7 @@ code {
     box-shadow: var(--shadow);
 }
 
-.planned-sidebar-head {
+.planned-section-head {
     display: grid;
     gap: 10px;
     margin-bottom: 12px;
@@ -3252,13 +3252,13 @@ code {
     letter-spacing: -0.01em;
 }
 
-.planned-sidebar h2 {
+.planned-section h2 {
     margin: 0;
     font-size: 17px;
     letter-spacing: -0.01em;
 }
 
-.planned-sidebar-sub {
+.planned-section-sub {
     margin: 3px 0 0;
     color: var(--muted);
     font-size: 11.5px;
@@ -3349,11 +3349,11 @@ code {
 }
 
 /* Folded: a single compact line with the title and this month's total. */
-.planned-sidebar.is-folded {
+.planned-section.is-folded {
     padding: 10px 20px;
 }
 
-.planned-sidebar.is-folded .planned-sidebar-head {
+.planned-section.is-folded .planned-section-head {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -3361,31 +3361,31 @@ code {
     white-space: nowrap;
 }
 
-.planned-sidebar.is-folded .planned-head-row {
+.planned-section.is-folded .planned-head-row {
     flex: 0 0 auto;
 }
 
-.planned-sidebar.is-folded .planned-sidebar-sub,
-.planned-sidebar.is-folded .planned-add-btn,
-.planned-sidebar.is-folded .planned-sidebar-body {
+.planned-section.is-folded .planned-section-sub,
+.planned-section.is-folded .planned-add-btn,
+.planned-section.is-folded .planned-section-body {
     display: none;
 }
 
-.planned-sidebar.is-folded .planned-toggle-icon {
+.planned-section.is-folded .planned-toggle-icon {
     transform: rotate(-90deg);
 }
 
-.planned-sidebar.is-folded .planned-toggle-btn {
+.planned-section.is-folded .planned-toggle-btn {
     transform: rotate(-90deg);
     margin-top: -4px;
 }
 
-.planned-sidebar.is-folded .planned-totals {
+.planned-section.is-folded .planned-totals {
     display: flex;
     align-items: center;
 }
 
-.planned-sidebar.is-folded .planned-total-month {
+.planned-section.is-folded .planned-total-month {
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -3394,7 +3394,7 @@ code {
     background: none;
 }
 
-.planned-sidebar.is-folded .planned-total-overall{
+.planned-section.is-folded .planned-total-overall{
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -3403,11 +3403,11 @@ code {
     background: none;
 }
 
-.planned-sidebar.is-folded .planned-total-month .planned-total-label {
+.planned-section.is-folded .planned-total-month .planned-total-label {
     font-size: 11px;
 }
 
-.planned-sidebar.is-folded .planned-total-month .planned-total-value {
+.planned-section.is-folded .planned-total-month .planned-total-value {
     font-size: 13px;
 }
 
